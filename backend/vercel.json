@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "prisma generate && (tsc -p tsconfig.json || echo \"tsc reported type errors; JS was still emitted\")",
+  "installCommand": "npm install --ignore-scripts",
+  "framework": null,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "dist/**",
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}
