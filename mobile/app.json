@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Phedikhola Citizen Survey",
+    "slug": "phedikhola-citizen-survey",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "phedikhola",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "android": {
+      "package": "np.gov.phedikhola.citizensurvey",
+      "versionCode": 1,
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      ["expo-location", { "locationWhenInUsePermission": "Allow Phedikhola Citizen Survey to capture the location where a service is provided." }],
+      ["expo-image-picker", { "cameraPermission": "Allow Phedikhola Citizen Survey to take citizen/service photos.", "photosPermission": "Allow Phedikhola Citizen Survey to choose citizen/service photos.", "microphonePermission": false }]
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}

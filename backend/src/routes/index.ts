@@ -1,0 +1,23 @@
+import { Router } from "express";
+import { authRouter } from "../modules/auth/routes.js";
+import { citizenRouter } from "../modules/citizens/routes.js";
+import { masterRouter } from "../modules/master/routes.js";
+import { serviceRouter } from "../modules/services/routes.js";
+import { syncRouter } from "../modules/sync/routes.js";
+import { dashboardRouter } from "../modules/dashboard/routes.js";
+import { publicRouter } from "../modules/public/routes.js";
+import { staffRouter } from "../modules/staff/routes.js";
+import { dataRouter } from "../modules/data/routes.js";
+import { storageRouter } from "../modules/storage/routes.js";
+
+export const apiRouter = Router();
+apiRouter.use("/public", publicRouter);
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/citizens", citizenRouter);
+apiRouter.use("/master", masterRouter);
+apiRouter.use("/services", serviceRouter);
+apiRouter.use("/sync", syncRouter);
+apiRouter.use("/dashboard", dashboardRouter);
+apiRouter.use("/staff", staffRouter);
+apiRouter.use("/data", dataRouter);
+apiRouter.use("/storage", storageRouter);

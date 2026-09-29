@@ -1,0 +1,318 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  OTHER
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  SYNCED
+  FAILED
+  CONFLICT
+}
+
+enum RecordStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model User {
+  id              String          @id @default(uuid())
+  name            String
+  email           String          @unique
+  phone           String?
+  passwordHash    String
+  role            Role
+  isActive        Boolean         @default(true)
+  lastLoginAt     DateTime?
+  lastSyncAt      DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  staffProfile    StaffProfile?
+  createdCitizens Citizen[]       @relation("CitizenCreatedBy")
+  serviceRecords  CitizenServiceRecord[] @relation("ServiceCreatedBy")
+  refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]
+  syncLogs        SyncLog[]
+
+  @@index([role, isActive])
+}
+
+model StaffProfile {
+  id                  String @id @default(uuid())
+  userId              String @unique
+  employeeCode        String? @unique
+  assignedWardId      String?
+  citizenEntryCount   Int @default(0)
+  serviceEntryCount   Int @default(0)
+  user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedWard        Ward? @relation(fields: [assignedWardId], references: [id], onDelete: SetNull)
+}
+
+model Citizen {
+  id                         String @id @default(uuid())
+  clientUuid                 String @unique
+  publicId                   String @unique
+  fullName                   String
+  dateOfBirth                DateTime?
+  approximateAge             Int?
+  gender                     Gender
+  phone                      String?
+  casteGroupCode             String?
+  casteOther                 String?
+  maritalStatusCode          String?
+  occupationCode             String?
+  occupationOther            String?
+  livingStatusCode           String?
+  householdForeignEmployment Boolean?
+  profilePhotoUrl            String?
+  status                     RecordStatus @default(ACTIVE)
+  version                    Int @default(1)
+  createdById                String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+  deletedAt                  DateTime?
+  createdBy                  User? @relation("CitizenCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  categories                 CitizenCategoryAssignment[]
+  wards                      CitizenWardAssignment[]
+  serviceRecords             CitizenServiceRecord[]
+
+  @@index([fullName])
+  @@index([phone])
+  @@index([status, updatedAt])
+}
+
+model CitizenCategory {
+  id        String @id @default(uuid())
+  code      String @unique
+  nameEn    String
+  nameNe    String
+  active    Boolean @default(true)
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  citizens  CitizenCategoryAssignment[]
+}
+
+model CitizenCategoryAssignment {
+  citizenId String
+  categoryId String
+  citizen   Citizen @relation(fields: [citizenId], references: [id], onDelete: Cascade)
+  category  CitizenCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@id([citizenId, categoryId])
+}
+
+model CitizenWardAssignment {
+  citizenId String
+  wardId    String
+  citizen   Citizen @relation(fields: [citizenId], references: [id], onDelete: Cascade)
+  ward      Ward @relation(fields: [wardId], references: [id], onDelete: Restrict)
+
+  @@id([citizenId, wardId])
+  @@index([wardId])
+}
+
+model Ward {
+  id        String @id @default(uuid())
+  code      String @unique
+  nameEn    String
+  nameNe    String
+  locationNameEn String?
+  locationNameNe String?
+  active    Boolean @default(true)
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  services  CitizenServiceRecord[]
+  staff     StaffProfile[]
+  citizens  CitizenWardAssignment[]
+}
+
+model HealthCondition {
+  id          String @id @default(uuid())
+  code        String @unique
+  nameEn      String
+  nameNe      String
+  description String?
+  active      Boolean @default(true)
+  sortOrder   Int @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  services    ServiceHealthCondition[]
+}
+
+model MedicineUnit {
+  id        String @id @default(uuid())
+  code      String @unique
+  nameEn    String
+  nameNe    String
+  active    Boolean @default(true)
+  medicines Medicine[]
+}
+
+model Medicine {
+  id            String @id @default(uuid())
+  code          String @unique
+  name          String
+  genericName   String?
+  strength      String?
+  dosageForm    String?
+  description   String?
+  defaultUnitId String?
+  active        Boolean @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  defaultUnit   MedicineUnit? @relation(fields: [defaultUnitId], references: [id], onDelete: SetNull)
+  services      ServiceMedicine[]
+
+  @@index([name])
+  @@index([active])
+}
+
+model CitizenServiceRecord {
+  id           String @id @default(uuid())
+  clientUuid   String @unique
+  citizenId    String
+  wardId       String
+  createdById  String?
+  serviceType  String @default("SENIOR_CITIZEN_HEALTH")
+  serviceDate  DateTime
+  nepaliYear   Int?
+  nepaliMonth  String?
+  systolic     Int?
+  diastolic    Int?
+  pulseRate    Int?
+  temperatureF Decimal? @db.Decimal(5,2)
+  latitude     Decimal? @db.Decimal(10,7)
+  longitude    Decimal? @db.Decimal(10,7)
+  altitude     Decimal? @db.Decimal(8,2)
+  accuracy     Decimal? @db.Decimal(8,2)
+  notes        String?
+  otherHealthProblem String?
+  visitPhotoUrl String?
+  status       RecordStatus @default(ACTIVE)
+  version      Int @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+  citizen      Citizen @relation(fields: [citizenId], references: [id], onDelete: Restrict)
+  ward         Ward @relation(fields: [wardId], references: [id], onDelete: Restrict)
+  createdBy    User? @relation("ServiceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  conditions   ServiceHealthCondition[]
+  medicines    ServiceMedicine[]
+
+  @@index([citizenId, serviceDate])
+  @@index([wardId, serviceDate])
+  @@index([updatedAt])
+}
+
+model ServiceHealthCondition {
+  serviceId   String
+  conditionId String
+  service     CitizenServiceRecord @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  condition   HealthCondition @relation(fields: [conditionId], references: [id], onDelete: Restrict)
+
+  @@id([serviceId, conditionId])
+}
+
+model ServiceMedicine {
+  id                String @id @default(uuid())
+  serviceId         String
+  medicineId        String?
+  quantity          Decimal @db.Decimal(12,2)
+  unit              String
+  otherMedicineName String?
+  service            CitizenServiceRecord @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  medicine           Medicine? @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+
+  @@index([serviceId])
+  @@index([medicineId])
+}
+
+model RefreshToken {
+  id        String @id @default(uuid())
+  userId    String
+  tokenHash String @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model PasswordResetOtp {
+  id        String @id @default(uuid())
+  email     String
+  otpHash   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  attempts  Int @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([email, expiresAt])
+}
+
+model SyncLog {
+  id          String @id @default(uuid())
+  userId      String?
+  deviceId    String?
+  status      SyncStatus
+  pushedCount Int @default(0)
+  pulledCount Int @default(0)
+  error       String?
+  createdAt   DateTime @default(now())
+  user        User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+}
+
+model AuditLog {
+  id         String @id @default(uuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  beforeJson Json?
+  afterJson  Json?
+  createdAt  DateTime @default(now())
+  user       User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([userId, createdAt])
+}
+
+model AppVersion {
+  id                  String @id @default(uuid())
+  platform            String @default("ANDROID")
+  latestVersion       String
+  minimumVersion      String
+  updateMessageEn     String?
+  updateMessageNe     String?
+  updatedAt           DateTime @updatedAt
+}
+
+model SystemSetting {
+  key       String @id
+  valueJson Json
+  updatedAt DateTime @updatedAt
+}
