@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  BarChart3, ClipboardList, Database, Home, Landmark, LogOut, MapPinned,
+  BarChart3, ClipboardList, FileBarChart, Database, Home, Landmark, LogOut, MapPinned,
   Menu, PanelLeftClose, PanelLeftOpen, Pill, UserCog, Users, X,
 } from "lucide-react";
 import { api, clearTokens, getAccessToken } from "@/lib/api";
@@ -18,6 +18,7 @@ const links = [
   [/^\/admin\/medicines/, "/admin/medicines", "Medicines", Pill],
   [/^\/admin\/wards/, "/admin/wards", "Ward Management", MapPinned],
   [/^\/admin\/staff/, "/admin/staff", "Staff", UserCog],
+  [/^\/admin\/reports/,"/admin/reports", "Reports", FileBarChart],
   [/^\/admin\/data/, "/admin/data", "Import / Export", Database],
 ] as const;
 
