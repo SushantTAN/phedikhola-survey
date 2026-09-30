@@ -22,6 +22,7 @@ import { uploadImage } from "@/lib/supabase-storage";
 import { compressImageToWebp } from "@/lib/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -91,6 +92,7 @@ const schema = yup.object({
   otherHealthProblem: yup.string().nullable(),
   notes: yup.string().nullable(),
   visitPhotoUrl: yup.string().nullable(),
+  needsFollowup: yup.boolean().optional(),
   version: yup.number().optional(),
 });
 type Values = yup.InferType<typeof schema>;
@@ -160,6 +162,7 @@ export function ServiceForm({
       otherHealthProblem: "",
       notes: "",
       visitPhotoUrl: "",
+      needsFollowup: false,
     },
   });
   useEffect(() => {
@@ -203,6 +206,7 @@ export function ServiceForm({
       otherHealthProblem: initialData.otherHealthProblem ?? "",
       notes: initialData.notes ?? "",
       visitPhotoUrl: initialData.visitPhotoUrl ?? "",
+      needsFollowup: !!initialData.needsFollowup,
       version: initialData.version,
     });
     setConditionIds(
@@ -384,18 +388,21 @@ export function ServiceForm({
         <Card>
           <CardHeader>
             <CardTitle>Vital signs</CardTitle>
-            <CardDescription>
-              Store blood pressure as separate systolic and diastolic values for
-              analysis.
-            </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            <Field label="Systolic (mmHg)">
-              <Input type="number" {...register("systolic")} />
-            </Field>
-            <Field label="Diastolic (mmHg)">
-              <Input type="number" {...register("diastolic")} />
-            </Field>
+          <CardContent className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-3 rounded-xl border border-slate-200 p-4 sm:col-span-2">
+              <p className="text-sm font-semibold text-slate-800">
+                Blood pressure (रक्तचाप)
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Upper value – Systolic (mmHg)">
+                  <Input type="number" placeholder="e.g. 120" {...register("systolic")} />
+                </Field>
+                <Field label="Lower value – Diastolic (mmHg)">
+                  <Input type="number" placeholder="e.g. 80" {...register("diastolic")} />
+                </Field>
+              </div>
+            </div>
             <Field label="Pulse rate / minute">
               <Input type="number" {...register("pulseRate")} />
             </Field>
@@ -579,6 +586,19 @@ export function ServiceForm({
             <Textarea
               {...register("notes")}
               placeholder="Additional observations…"
+            />
+            <Controller
+              control={control}
+              name="needsFollowup"
+              render={({ field }) => (
+                <label className="mt-4 flex items-center gap-2 text-sm font-medium">
+                  <Checkbox
+                    checked={!!field.value}
+                    onCheckedChange={(v) => field.onChange(v === true)}
+                  />
+                  Needs follow-up
+                </label>
+              )}
             />
           </CardContent>
         </Card>

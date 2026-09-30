@@ -209,6 +209,7 @@ model CitizenServiceRecord {
   notes        String?
   otherHealthProblem String?
   visitPhotoUrl String?
+  needsFollowup Boolean @default(false) @map("needs_followup")
   status       RecordStatus @default(ACTIVE)
   version      Int @default(1)
   createdAt    DateTime @default(now())

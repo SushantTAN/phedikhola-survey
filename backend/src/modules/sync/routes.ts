@@ -81,7 +81,7 @@ syncRouter.post("/push", asyncHandler(async (req, res) => {
         systolic: item.systolic == null ? null : Number(item.systolic), diastolic: item.diastolic == null ? null : Number(item.diastolic),
         pulseRate: item.pulseRate == null ? null : Number(item.pulseRate), temperatureF: item.temperatureF ?? null,
         latitude: item.latitude ?? null, longitude: item.longitude ?? null, altitude: item.altitude ?? null, accuracy: item.accuracy ?? null,
-        notes: item.notes || null, otherHealthProblem: item.otherHealthProblem || null, visitPhotoUrl: item.visitPhotoUrl || null
+        notes: item.notes || null, otherHealthProblem: item.otherHealthProblem || null, visitPhotoUrl: item.visitPhotoUrl || null, needsFollowup: item.needsFollowup === true || item.needsFollowup === "true"
       };
       const saved = existing
         ? await prisma.citizenServiceRecord.update({ where: { id: existing.id }, data: { ...base, version: { increment: 1 }, deletedAt: item.deletedAt ? new Date(item.deletedAt) : undefined } })

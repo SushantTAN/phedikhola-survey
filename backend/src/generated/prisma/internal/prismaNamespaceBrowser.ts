@@ -255,6 +255,7 @@ export const CitizenServiceRecordScalarFieldEnum = {
   notes: 'notes',
   otherHealthProblem: 'otherHealthProblem',
   visitPhotoUrl: 'visitPhotoUrl',
+  needsFollowup: 'needsFollowup',
   status: 'status',
   version: 'version',
   createdAt: 'createdAt',

@@ -73,6 +73,7 @@ export type CitizenServiceRecordMinAggregateOutputType = {
   notes: string | null
   otherHealthProblem: string | null
   visitPhotoUrl: string | null
+  needsFollowup: boolean | null
   status: $Enums.RecordStatus | null
   version: number | null
   createdAt: Date | null
@@ -101,6 +102,7 @@ export type CitizenServiceRecordMaxAggregateOutputType = {
   notes: string | null
   otherHealthProblem: string | null
   visitPhotoUrl: string | null
+  needsFollowup: boolean | null
   status: $Enums.RecordStatus | null
   version: number | null
   createdAt: Date | null
@@ -129,6 +131,7 @@ export type CitizenServiceRecordCountAggregateOutputType = {
   notes: number
   otherHealthProblem: number
   visitPhotoUrl: number
+  needsFollowup: number
   status: number
   version: number
   createdAt: number
@@ -185,6 +188,7 @@ export type CitizenServiceRecordMinAggregateInputType = {
   notes?: true
   otherHealthProblem?: true
   visitPhotoUrl?: true
+  needsFollowup?: true
   status?: true
   version?: true
   createdAt?: true
@@ -213,6 +217,7 @@ export type CitizenServiceRecordMaxAggregateInputType = {
   notes?: true
   otherHealthProblem?: true
   visitPhotoUrl?: true
+  needsFollowup?: true
   status?: true
   version?: true
   createdAt?: true
@@ -241,6 +246,7 @@ export type CitizenServiceRecordCountAggregateInputType = {
   notes?: true
   otherHealthProblem?: true
   visitPhotoUrl?: true
+  needsFollowup?: true
   status?: true
   version?: true
   createdAt?: true
@@ -356,6 +362,7 @@ export type CitizenServiceRecordGroupByOutputType = {
   notes: string | null
   otherHealthProblem: string | null
   visitPhotoUrl: string | null
+  needsFollowup: boolean
   status: $Enums.RecordStatus
   version: number
   createdAt: Date
@@ -407,6 +414,7 @@ export type CitizenServiceRecordWhereInput = {
   notes?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
   otherHealthProblem?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
   visitPhotoUrl?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
+  needsFollowup?: Prisma.BoolFilter<"CitizenServiceRecord"> | boolean
   status?: Prisma.EnumRecordStatusFilter<"CitizenServiceRecord"> | $Enums.RecordStatus
   version?: Prisma.IntFilter<"CitizenServiceRecord"> | number
   createdAt?: Prisma.DateTimeFilter<"CitizenServiceRecord"> | Date | string
@@ -440,6 +448,7 @@ export type CitizenServiceRecordOrderByWithRelationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   otherHealthProblem?: Prisma.SortOrderInput | Prisma.SortOrder
   visitPhotoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  needsFollowup?: Prisma.SortOrder
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -476,6 +485,7 @@ export type CitizenServiceRecordWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
   otherHealthProblem?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
   visitPhotoUrl?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
+  needsFollowup?: Prisma.BoolFilter<"CitizenServiceRecord"> | boolean
   status?: Prisma.EnumRecordStatusFilter<"CitizenServiceRecord"> | $Enums.RecordStatus
   version?: Prisma.IntFilter<"CitizenServiceRecord"> | number
   createdAt?: Prisma.DateTimeFilter<"CitizenServiceRecord"> | Date | string
@@ -509,6 +519,7 @@ export type CitizenServiceRecordOrderByWithAggregationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   otherHealthProblem?: Prisma.SortOrderInput | Prisma.SortOrder
   visitPhotoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  needsFollowup?: Prisma.SortOrder
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -545,6 +556,7 @@ export type CitizenServiceRecordScalarWhereWithAggregatesInput = {
   notes?: Prisma.StringNullableWithAggregatesFilter<"CitizenServiceRecord"> | string | null
   otherHealthProblem?: Prisma.StringNullableWithAggregatesFilter<"CitizenServiceRecord"> | string | null
   visitPhotoUrl?: Prisma.StringNullableWithAggregatesFilter<"CitizenServiceRecord"> | string | null
+  needsFollowup?: Prisma.BoolWithAggregatesFilter<"CitizenServiceRecord"> | boolean
   status?: Prisma.EnumRecordStatusWithAggregatesFilter<"CitizenServiceRecord"> | $Enums.RecordStatus
   version?: Prisma.IntWithAggregatesFilter<"CitizenServiceRecord"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CitizenServiceRecord"> | Date | string
@@ -570,6 +582,7 @@ export type CitizenServiceRecordCreateInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -603,6 +616,7 @@ export type CitizenServiceRecordUncheckedCreateInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -630,6 +644,7 @@ export type CitizenServiceRecordUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -663,6 +678,7 @@ export type CitizenServiceRecordUncheckedUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -693,6 +709,7 @@ export type CitizenServiceRecordCreateManyInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -718,6 +735,7 @@ export type CitizenServiceRecordUpdateManyMutationInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -746,6 +764,7 @@ export type CitizenServiceRecordUncheckedUpdateManyInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -784,6 +803,7 @@ export type CitizenServiceRecordCountOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   otherHealthProblem?: Prisma.SortOrder
   visitPhotoUrl?: Prisma.SortOrder
+  needsFollowup?: Prisma.SortOrder
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -825,6 +845,7 @@ export type CitizenServiceRecordMaxOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   otherHealthProblem?: Prisma.SortOrder
   visitPhotoUrl?: Prisma.SortOrder
+  needsFollowup?: Prisma.SortOrder
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -853,6 +874,7 @@ export type CitizenServiceRecordMinOrderByAggregateInput = {
   notes?: Prisma.SortOrder
   otherHealthProblem?: Prisma.SortOrder
   visitPhotoUrl?: Prisma.SortOrder
+  needsFollowup?: Prisma.SortOrder
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1058,6 +1080,7 @@ export type CitizenServiceRecordCreateWithoutCreatedByInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1089,6 +1112,7 @@ export type CitizenServiceRecordUncheckedCreateWithoutCreatedByInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1148,6 +1172,7 @@ export type CitizenServiceRecordScalarWhereInput = {
   notes?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
   otherHealthProblem?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
   visitPhotoUrl?: Prisma.StringNullableFilter<"CitizenServiceRecord"> | string | null
+  needsFollowup?: Prisma.BoolFilter<"CitizenServiceRecord"> | boolean
   status?: Prisma.EnumRecordStatusFilter<"CitizenServiceRecord"> | $Enums.RecordStatus
   version?: Prisma.IntFilter<"CitizenServiceRecord"> | number
   createdAt?: Prisma.DateTimeFilter<"CitizenServiceRecord"> | Date | string
@@ -1173,6 +1198,7 @@ export type CitizenServiceRecordCreateWithoutCitizenInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1204,6 +1230,7 @@ export type CitizenServiceRecordUncheckedCreateWithoutCitizenInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1257,6 +1284,7 @@ export type CitizenServiceRecordCreateWithoutWardInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1288,6 +1316,7 @@ export type CitizenServiceRecordUncheckedCreateWithoutWardInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1341,6 +1370,7 @@ export type CitizenServiceRecordCreateWithoutConditionsInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1373,6 +1403,7 @@ export type CitizenServiceRecordUncheckedCreateWithoutConditionsInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1415,6 +1446,7 @@ export type CitizenServiceRecordUpdateWithoutConditionsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1447,6 +1479,7 @@ export type CitizenServiceRecordUncheckedUpdateWithoutConditionsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1473,6 +1506,7 @@ export type CitizenServiceRecordCreateWithoutMedicinesInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1505,6 +1539,7 @@ export type CitizenServiceRecordUncheckedCreateWithoutMedicinesInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1547,6 +1582,7 @@ export type CitizenServiceRecordUpdateWithoutMedicinesInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1579,6 +1615,7 @@ export type CitizenServiceRecordUncheckedUpdateWithoutMedicinesInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1607,6 +1644,7 @@ export type CitizenServiceRecordCreateManyCreatedByInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1632,6 +1670,7 @@ export type CitizenServiceRecordUpdateWithoutCreatedByInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1663,6 +1702,7 @@ export type CitizenServiceRecordUncheckedUpdateWithoutCreatedByInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1692,6 +1732,7 @@ export type CitizenServiceRecordUncheckedUpdateManyWithoutCreatedByInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1719,6 +1760,7 @@ export type CitizenServiceRecordCreateManyCitizenInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1744,6 +1786,7 @@ export type CitizenServiceRecordUpdateWithoutCitizenInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1775,6 +1818,7 @@ export type CitizenServiceRecordUncheckedUpdateWithoutCitizenInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1804,6 +1848,7 @@ export type CitizenServiceRecordUncheckedUpdateManyWithoutCitizenInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1831,6 +1876,7 @@ export type CitizenServiceRecordCreateManyWardInput = {
   notes?: string | null
   otherHealthProblem?: string | null
   visitPhotoUrl?: string | null
+  needsFollowup?: boolean
   status?: $Enums.RecordStatus
   version?: number
   createdAt?: Date | string
@@ -1856,6 +1902,7 @@ export type CitizenServiceRecordUpdateWithoutWardInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1887,6 +1934,7 @@ export type CitizenServiceRecordUncheckedUpdateWithoutWardInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1916,6 +1964,7 @@ export type CitizenServiceRecordUncheckedUpdateManyWithoutWardInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherHealthProblem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   visitPhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  needsFollowup?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1984,6 +2033,7 @@ export type CitizenServiceRecordSelect<ExtArgs extends runtime.Types.Extensions.
   notes?: boolean
   otherHealthProblem?: boolean
   visitPhotoUrl?: boolean
+  needsFollowup?: boolean
   status?: boolean
   version?: boolean
   createdAt?: boolean
@@ -2018,6 +2068,7 @@ export type CitizenServiceRecordSelectCreateManyAndReturn<ExtArgs extends runtim
   notes?: boolean
   otherHealthProblem?: boolean
   visitPhotoUrl?: boolean
+  needsFollowup?: boolean
   status?: boolean
   version?: boolean
   createdAt?: boolean
@@ -2049,6 +2100,7 @@ export type CitizenServiceRecordSelectUpdateManyAndReturn<ExtArgs extends runtim
   notes?: boolean
   otherHealthProblem?: boolean
   visitPhotoUrl?: boolean
+  needsFollowup?: boolean
   status?: boolean
   version?: boolean
   createdAt?: boolean
@@ -2080,6 +2132,7 @@ export type CitizenServiceRecordSelectScalar = {
   notes?: boolean
   otherHealthProblem?: boolean
   visitPhotoUrl?: boolean
+  needsFollowup?: boolean
   status?: boolean
   version?: boolean
   createdAt?: boolean
@@ -2087,7 +2140,7 @@ export type CitizenServiceRecordSelectScalar = {
   deletedAt?: boolean
 }
 
-export type CitizenServiceRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientUuid" | "citizenId" | "wardId" | "createdById" | "serviceType" | "serviceDate" | "nepaliYear" | "nepaliMonth" | "systolic" | "diastolic" | "pulseRate" | "temperatureF" | "latitude" | "longitude" | "altitude" | "accuracy" | "notes" | "otherHealthProblem" | "visitPhotoUrl" | "status" | "version" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["citizenServiceRecord"]>
+export type CitizenServiceRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientUuid" | "citizenId" | "wardId" | "createdById" | "serviceType" | "serviceDate" | "nepaliYear" | "nepaliMonth" | "systolic" | "diastolic" | "pulseRate" | "temperatureF" | "latitude" | "longitude" | "altitude" | "accuracy" | "notes" | "otherHealthProblem" | "visitPhotoUrl" | "needsFollowup" | "status" | "version" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["citizenServiceRecord"]>
 export type CitizenServiceRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   citizen?: boolean | Prisma.CitizenDefaultArgs<ExtArgs>
   ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
@@ -2137,6 +2190,7 @@ export type $CitizenServiceRecordPayload<ExtArgs extends runtime.Types.Extension
     notes: string | null
     otherHealthProblem: string | null
     visitPhotoUrl: string | null
+    needsFollowup: boolean
     status: $Enums.RecordStatus
     version: number
     createdAt: Date
@@ -2590,6 +2644,7 @@ export interface CitizenServiceRecordFieldRefs {
   readonly notes: Prisma.FieldRef<"CitizenServiceRecord", 'String'>
   readonly otherHealthProblem: Prisma.FieldRef<"CitizenServiceRecord", 'String'>
   readonly visitPhotoUrl: Prisma.FieldRef<"CitizenServiceRecord", 'String'>
+  readonly needsFollowup: Prisma.FieldRef<"CitizenServiceRecord", 'Boolean'>
   readonly status: Prisma.FieldRef<"CitizenServiceRecord", 'RecordStatus'>
   readonly version: Prisma.FieldRef<"CitizenServiceRecord", 'Int'>
   readonly createdAt: Prisma.FieldRef<"CitizenServiceRecord", 'DateTime'>
