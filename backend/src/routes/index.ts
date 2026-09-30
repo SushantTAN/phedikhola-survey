@@ -9,6 +9,7 @@ import { publicRouter } from "../modules/public/routes.js";
 import { staffRouter } from "../modules/staff/routes.js";
 import { dataRouter } from "../modules/data/routes.js";
 import { storageRouter } from "../modules/storage/routes.js";
+import { reportRouter } from "../modules/reports/routes.js";
 
 export const apiRouter = Router();
 apiRouter.use("/public", publicRouter);
@@ -21,3 +22,4 @@ apiRouter.use("/dashboard", dashboardRouter);
 apiRouter.use("/staff", staffRouter);
 apiRouter.use("/data", dataRouter);
 apiRouter.use("/storage", storageRouter);
+apiRouter.use("/reports", reportRouter);

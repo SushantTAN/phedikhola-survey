@@ -69,6 +69,7 @@ serviceRouter.post("/", asyncHandler(async (req, res) => {
       notes: req.body.notes || null,
       otherHealthProblem: req.body.otherHealthProblem || null,
       visitPhotoUrl: req.body.visitPhotoUrl || null,
+      needsFollowup: req.body.needsFollowup === true || req.body.needsFollowup === "true",
       conditions: { create: conditions.map(conditionId => ({ conditionId })) },
       medicines: { create: medicines.map((m: any) => ({
         medicineId: m.medicineId || null,
@@ -122,6 +123,7 @@ serviceRouter.patch("/:id", asyncHandler(async (req, res) => {
         notes: req.body.notes,
         otherHealthProblem: req.body.otherHealthProblem,
         visitPhotoUrl: req.body.visitPhotoUrl,
+        needsFollowup: req.body.needsFollowup == null ? undefined : req.body.needsFollowup === true || req.body.needsFollowup === "true",
         version: { increment: 1 }
       },
       include
