@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/card";
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
+import { LocationPicker } from "@/components/shared/location-picker";
 import { MedicinePicker } from "@/components/shared/medicine-picker";
 const months = [
   "Baisakh",
@@ -544,13 +545,15 @@ export function ServiceForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <Field label="Latitude">
-                <Input type="number" step="any" {...register("latitude")} />
-              </Field>
-              <Field label="Longitude">
-                <Input type="number" step="any" {...register("longitude")} />
-              </Field>
+            <LocationPicker
+              latitude={watch("latitude") == null ? "" : String(watch("latitude"))}
+              longitude={watch("longitude") == null ? "" : String(watch("longitude"))}
+              onChange={(lat, lng) => {
+                setValue("latitude", lat === "" ? null : Number(lat), { shouldDirty: true });
+                setValue("longitude", lng === "" ? null : Number(lng), { shouldDirty: true });
+              }}
+            />
+            <div className="grid gap-4 md:grid-cols-2">
               <Field label="Altitude (m)">
                 <Input type="number" step="any" {...register("altitude")} />
               </Field>
