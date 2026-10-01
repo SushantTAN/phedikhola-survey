@@ -23,6 +23,7 @@ export function MedicineForm({
   const router = useRouter();
   const queryClient = useQueryClient();
   const [units, setUnits] = useState<any[]>([]);
+  const [unitsLoading, setUnitsLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -41,7 +42,9 @@ export function MedicineForm({
     },
   });
   useEffect(() => {
-    api<any>("/master/medicine-units").then((r) => setUnits(r.data));
+    api<any>("/master/medicine-units")
+      .then((r) => setUnits(r.data))
+      .finally(() => setUnitsLoading(false));
   }, []);
   useEffect(() => {
     if (initialData)
@@ -99,7 +102,7 @@ export function MedicineForm({
               name="defaultUnitId"
               render={({ field }) => {
                 const choices=units.map(u=>({value:u.id as string,label:u.nameEn as string}));
-                return <FormSelect selected={selectChoice(field.value,choices,initialData?.defaultUnit?.nameEn)} options={choices} onChange={choice=>field.onChange(choice.value)} placeholder="Select unit"/>;
+                return <FormSelect selected={selectChoice(field.value,choices,initialData?.defaultUnit?.nameEn)} options={choices} onChange={choice=>field.onChange(choice.value)} placeholder="Select unit" loading={unitsLoading}/>;
               }}
             />
           </Field>

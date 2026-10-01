@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CitizenForm } from "@/components/forms/citizen-form";
 import { useRouter } from "next/navigation";
@@ -127,6 +127,32 @@ export function ServiceForm({
   });
   const [citizens, setCitizens] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
+  const [refLoading, setRefLoading] = useState(true);
+  const [staffLoading, setStaffLoading] = useState(true);
+  const [citizenLoading, setCitizenLoading] = useState(false);
+  const [citizenResults, setCitizenResults] = useState<any[] | null>(null);
+  const citizenSearchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  function searchCitizens(term: string) {
+    clearTimeout(citizenSearchTimer.current);
+    if (!term.trim()) {
+      setCitizenResults(null);
+      setCitizenLoading(false);
+      return;
+    }
+    setCitizenLoading(true);
+    citizenSearchTimer.current = setTimeout(() => {
+      api<any>(`/citizens?limit=50&q=${encodeURIComponent(term.trim())}`)
+        .then((r) => {
+          setCitizenResults(r.data);
+          setCitizens((current) => [
+            ...current,
+            ...r.data.filter((c: any) => !current.some((x) => x.id === c.id)),
+          ]);
+        })
+        .catch(() => setCitizenResults([]))
+        .finally(() => setCitizenLoading(false));
+    }, 300);
+  }
   const [createdCitizen, setCreatedCitizen] = useState<{
     id: string;
     fullName: string;
@@ -182,12 +208,13 @@ export function ServiceForm({
             !current.some((existing) => existing.id === citizen.id),
         ),
       ]);
-    });
+    }).finally(() => setRefLoading(false));
   }, []);
   useEffect(() => {
     api<any>("/staff")
       .then((r) => setStaff(r.data.filter((u: any) => u.isActive)))
-      .catch(() => setStaff([]));
+      .catch(() => setStaff([]))
+      .finally(() => setStaffLoading(false));
   }, []);
   useEffect(() => {
     if (!initialData) return;
@@ -320,6 +347,10 @@ export function ServiceForm({
                   value: c.id,
                   label: `${c.fullName} / ${c.publicId}`,
                 }));
+                const optionChoices = (citizenResults ?? citizens).map((c) => ({
+                  value: c.id,
+                  label: `${c.fullName} / ${c.publicId}`,
+                }));
                 const chosenId = createdCitizen?.id ?? field.value;
                 const fallback = createdCitizen
                   ? `${createdCitizen.fullName} / ${createdCitizen.publicId}`
@@ -330,7 +361,9 @@ export function ServiceForm({
                   <Field label="Citizen *">
                     <FormSelect
                       selected={selectChoice(chosenId, choices, fallback)}
-                      options={choices}
+                      options={optionChoices}
+                      loading={refLoading || citizenLoading}
+                      onSearchChange={searchCitizens}
                       placeholder="Select citizen"
                       onChange={(choice) => {
                         setCreatedCitizen(null);
@@ -354,6 +387,7 @@ export function ServiceForm({
               render={({ field }) => (
                 <SelectField
                   label="सेवा दिएको वडा / Service ward *"
+                  loading={refLoading}
                   value={field.value}
                   onValueChange={field.onChange}
                   options={reference.wards.map((w: any) => [
@@ -380,6 +414,7 @@ export function ServiceForm({
                 return (
                   <SelectField
                     label="Staff"
+                    loading={staffLoading}
                     value={field.value ?? ""}
                     onValueChange={field.onChange}
                     options={list.map((u) => [u.id, u.name])}
@@ -449,6 +484,7 @@ export function ServiceForm({
               value={conditionIds}
               onChange={setConditionIds}
               placeholder="Select health conditions"
+              loading={refLoading}
               options={reference.conditions.map((x: any) => ({
                 value: x.id,
                 label: `${x.nameNe || x.nameEn} / ${x.nameEn}`,
@@ -472,6 +508,7 @@ export function ServiceForm({
           <CardContent className="space-y-4">
             <MedicinePicker
               medicines={reference.medicines}
+              loading={refLoading}
               selectedIds={medicines.flatMap((m) => (m.medicineId ? [m.medicineId] : []))}
               onAdd={addMedicine}
               onAddOther={addOtherMedicine}
@@ -691,11 +728,13 @@ function SelectField({
   value,
   onValueChange,
   options,
+  loading,
 }: {
   label: string;
   value: string;
   onValueChange: (v: string) => void;
   options: any[];
+  loading?: boolean;
 }) {
   const choices = options.map(
     ([optionValue, optionLabel]: [string, string]) => ({
@@ -709,6 +748,7 @@ function SelectField({
         selected={selectChoice(value, choices)}
         options={choices}
         onChange={(choice) => onValueChange(choice.value)}
+        loading={loading}
       />
     </Field>
   );

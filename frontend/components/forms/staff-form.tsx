@@ -23,6 +23,8 @@ export function StaffForm({
   const queryClient = useQueryClient();
   const [wards, setWards] = useState<any[]>([]);
   const [healthPosts, setHealthPosts] = useState<any[]>([]);
+  const [wardsLoading, setWardsLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -43,12 +45,14 @@ export function StaffForm({
     },
   });
   useEffect(() => {
-    api<any>("/master/wards").then((r) =>
-      setWards(r.data.filter((w: any) => w.active)),
-    );
+    api<any>("/master/wards")
+      .then((r) => setWards(r.data.filter((w: any) => w.active)))
+      .finally(() => setWardsLoading(false));
   }, []);
   useEffect(() => {
-    api<any>("/health-posts?active=true").then((r) => setHealthPosts(r.data));
+    api<any>("/health-posts?active=true")
+      .then((r) => setHealthPosts(r.data))
+      .finally(() => setPostsLoading(false));
   }, []);
   useEffect(() => {
     if (initialData)
@@ -115,6 +119,7 @@ export function StaffForm({
                     options={choices}
                     onChange={(choice) => field.onChange(choice.value)}
                     placeholder="Select ward"
+                    loading={wardsLoading}
                   />
                 );
               }}
@@ -136,6 +141,7 @@ export function StaffForm({
                     options={choices}
                     onChange={(choice) => field.onChange(choice.value)}
                     placeholder={wardId ? "Select health post in ward" : "Select health post"}
+                    loading={postsLoading}
                   />
                 );
               }}

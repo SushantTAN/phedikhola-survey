@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Check, Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { DropdownEmpty, DropdownLoading } from "@/components/shared/dropdown-states";
 import { cn } from "@/lib/utils";
 
 export type PickerMedicine = { id: string; name: string; strength?: string | null; dosageForm?: string | null };
@@ -18,11 +19,13 @@ export function MedicinePicker({
   selectedIds,
   onAdd,
   onAddOther,
+  loading = false,
 }: {
   medicines: PickerMedicine[];
   selectedIds: string[];
   onAdd: (medicine: PickerMedicine) => void;
   onAddOther: (name: string) => void;
+  loading?: boolean;
 }) {
   const [search, setSearch] = useState("");
   const term = search.trim().toLowerCase();
@@ -49,6 +52,7 @@ export function MedicinePicker({
         />
       </div>
       <div className="max-h-56 overflow-auto p-1">
+        {loading && !medicines.length && <DropdownLoading label="Loading medicines…" />}
         {matches.map((m) => {
           const added = selectedIds.includes(m.id);
           return (
@@ -74,7 +78,7 @@ export function MedicinePicker({
             </button>
           );
         })}
-        {!matches.length && <p className="px-3 py-4 text-center text-sm text-slate-500">No medicine found for “{search.trim()}”.</p>}
+        {!loading && !matches.length && <DropdownEmpty searching={!!term} term={search.trim()} />}
         {term && (
           <button
             type="button"

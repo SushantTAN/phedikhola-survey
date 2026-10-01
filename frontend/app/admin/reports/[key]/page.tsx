@@ -117,6 +117,7 @@ export default function ReportPage() {
                     {f.type === "select" ? (
                       <FormSelect
                         placeholder="All"
+                        loading={options.isLoading}
                         selected={(options.data?.data[f.options ?? ""] ?? []).find((o) => o.value === draft[f.key]) ?? null}
                         options={[{ value: ALL, label: "All" }, ...(options.data?.data[f.options ?? ""] ?? [])]}
                         onChange={(c) => setFilter(f.key, c.value === ALL ? "" : c.value)}
