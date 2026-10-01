@@ -172,6 +172,7 @@ export function ServiceForm({
     handleSubmit,
     reset,
     setValue,
+    getValues,
     watch,
     formState: { isSubmitting },
   } = useForm<Values>({
@@ -218,6 +219,19 @@ export function ServiceForm({
       .catch(() => setStaff([]))
       .finally(() => setStaffLoading(false));
   }, []);
+  const selectedCitizenId = watch("citizenId");
+  useEffect(() => {
+    if (mode !== "create" || !selectedCitizenId) return;
+    let cancelled = false;
+    api<any>(`/citizens/${selectedCitizenId}`).then((response) => {
+      if (cancelled || getValues("wardId")) return;
+      const wards = response.data.wards ?? [];
+      if (wards.length === 1) {
+        setValue("wardId", wards[0].wardId, { shouldDirty: true, shouldValidate: true });
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [mode, selectedCitizenId, getValues, setValue]);
   useEffect(() => {
     if (!initialData) return;
     reset({
@@ -369,6 +383,7 @@ export function ServiceForm({
                       placeholder="Select citizen"
                       onChange={(choice) => {
                         setCreatedCitizen(null);
+                        if (choice.value !== field.value) setValue("wardId", "", { shouldDirty: true });
                         field.onChange(choice.value);
                       }}
                       action={{
@@ -404,15 +419,13 @@ export function ServiceForm({
               name="createdById"
               render={({ field }) => {
                 const wardId = watch("wardId");
-                const current = initialData?.createdBy;
                 const list = staff.filter(
                   (u) =>
                     !wardId ||
                     u.staffProfile?.assignedWardId === wardId ||
+                    u.staffProfile?.healthPost?.wardId === wardId ||
                     u.id === field.value,
                 );
-                if (current && !list.some((u) => u.id === current.id))
-                  list.push(current);
                 return (
                   <SelectField
                     label="Staff"
@@ -698,6 +711,7 @@ export function ServiceForm({
                     citizen,
                     ...current.filter((c) => c.id !== citizen.id),
                   ]);
+                  setValue("wardId", "", { shouldDirty: true });
                   setValue("citizenId", citizen.id, {
                     shouldDirty: true,
                     shouldTouch: true,

@@ -13,6 +13,8 @@ npm run prisma:seed
 npm run dev
 ```
 
+The seed creates active staff accounts using `<employee-code>@phedikhola.invalid` and `SEED_STAFF_PASSWORD` (default `TempPass123!`). Set real email addresses and passwords when issuing accounts.
+
 API base: `http://localhost:4000/api/v1`
 
 Main route groups:
