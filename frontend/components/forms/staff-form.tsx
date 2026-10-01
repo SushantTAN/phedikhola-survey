@@ -22,11 +22,13 @@ export function StaffForm({
   const router = useRouter();
   const queryClient = useQueryClient();
   const [wards, setWards] = useState<any[]>([]);
+  const [healthPosts, setHealthPosts] = useState<any[]>([]);
   const {
     register,
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { isSubmitting },
   } = useForm({
     defaultValues: {
@@ -35,6 +37,7 @@ export function StaffForm({
       phone: "",
       employeeCode: "",
       assignedWardId: "",
+      healthPostId: "",
       password: "TempPass123!",
       isActive: true,
     },
@@ -45,6 +48,9 @@ export function StaffForm({
     );
   }, []);
   useEffect(() => {
+    api<any>("/health-posts?active=true").then((r) => setHealthPosts(r.data));
+  }, []);
+  useEffect(() => {
     if (initialData)
       reset({
         name: initialData.name || "",
@@ -52,12 +58,13 @@ export function StaffForm({
         phone: initialData.phone || "",
         employeeCode: initialData.staffProfile?.employeeCode || "",
         assignedWardId: initialData.staffProfile?.assignedWardId || "",
+        healthPostId: initialData.staffProfile?.healthPostId || "",
         password: "",
         isActive: initialData.isActive ?? true,
       });
   }, [initialData, reset]);
   async function submit(v: any) {
-    const payload = { ...v, assignedWardId: v.assignedWardId || null };
+    const payload = { ...v, assignedWardId: v.assignedWardId || null, healthPostId: v.healthPostId || null };
     const r = await api<any>(mode === "edit" ? `/staff/${id}` : "/staff", {
       method: mode === "edit" ? "PATCH" : "POST",
       body: JSON.stringify(payload),
@@ -108,6 +115,27 @@ export function StaffForm({
                     options={choices}
                     onChange={(choice) => field.onChange(choice.value)}
                     placeholder="Select ward"
+                  />
+                );
+              }}
+            />
+          </Field>
+          <Field label="Health post">
+            <Controller
+              control={control}
+              name="healthPostId"
+              render={({ field }) => {
+                const wardId = watch("assignedWardId");
+                const choices = healthPosts
+                  .filter((h) => !wardId || h.wardId === wardId || h.id === field.value)
+                  .map((h) => ({ value: h.id as string, label: `${h.name} (${h.ward?.nameEn ?? ""})` }));
+                const current = initialData?.staffProfile?.healthPost;
+                return (
+                  <FormSelect
+                    selected={selectChoice(field.value, choices, current?.name)}
+                    options={choices}
+                    onChange={(choice) => field.onChange(choice.value)}
+                    placeholder={wardId ? "Select health post in ward" : "Select health post"}
                   />
                 );
               }}

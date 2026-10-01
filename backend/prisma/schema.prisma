@@ -61,10 +61,12 @@ model StaffProfile {
   userId              String @unique
   employeeCode        String? @unique
   assignedWardId      String?
+  healthPostId        String?
   citizenEntryCount   Int @default(0)
   serviceEntryCount   Int @default(0)
   user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
   assignedWard        Ward? @relation(fields: [assignedWardId], references: [id], onDelete: SetNull)
+  healthPost          HealthPost? @relation(fields: [healthPostId], references: [id], onDelete: SetNull)
 }
 
 model Citizen {
@@ -145,6 +147,7 @@ model Ward {
   services  CitizenServiceRecord[]
   staff     StaffProfile[]
   citizens  CitizenWardAssignment[]
+  healthPosts HealthPost[]
 }
 
 model HealthCondition {
@@ -316,4 +319,20 @@ model SystemSetting {
   key       String @id
   valueJson Json
   updatedAt DateTime @updatedAt
+}
+
+model HealthPost {
+  id        String @id @default(uuid())
+  name      String
+  wardId    String
+  latitude  Decimal? @db.Decimal(10,7)
+  longitude Decimal? @db.Decimal(10,7)
+  active    Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ward      Ward @relation(fields: [wardId], references: [id], onDelete: Restrict)
+  staff     StaffProfile[]
+
+  @@index([wardId])
+  @@index([name])
 }

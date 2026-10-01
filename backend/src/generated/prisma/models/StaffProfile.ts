@@ -41,6 +41,7 @@ export type StaffProfileMinAggregateOutputType = {
   userId: string | null
   employeeCode: string | null
   assignedWardId: string | null
+  healthPostId: string | null
   citizenEntryCount: number | null
   serviceEntryCount: number | null
 }
@@ -50,6 +51,7 @@ export type StaffProfileMaxAggregateOutputType = {
   userId: string | null
   employeeCode: string | null
   assignedWardId: string | null
+  healthPostId: string | null
   citizenEntryCount: number | null
   serviceEntryCount: number | null
 }
@@ -59,6 +61,7 @@ export type StaffProfileCountAggregateOutputType = {
   userId: number
   employeeCode: number
   assignedWardId: number
+  healthPostId: number
   citizenEntryCount: number
   serviceEntryCount: number
   _all: number
@@ -80,6 +83,7 @@ export type StaffProfileMinAggregateInputType = {
   userId?: true
   employeeCode?: true
   assignedWardId?: true
+  healthPostId?: true
   citizenEntryCount?: true
   serviceEntryCount?: true
 }
@@ -89,6 +93,7 @@ export type StaffProfileMaxAggregateInputType = {
   userId?: true
   employeeCode?: true
   assignedWardId?: true
+  healthPostId?: true
   citizenEntryCount?: true
   serviceEntryCount?: true
 }
@@ -98,6 +103,7 @@ export type StaffProfileCountAggregateInputType = {
   userId?: true
   employeeCode?: true
   assignedWardId?: true
+  healthPostId?: true
   citizenEntryCount?: true
   serviceEntryCount?: true
   _all?: true
@@ -194,6 +200,7 @@ export type StaffProfileGroupByOutputType = {
   userId: string
   employeeCode: string | null
   assignedWardId: string | null
+  healthPostId: string | null
   citizenEntryCount: number
   serviceEntryCount: number
   _count: StaffProfileCountAggregateOutputType | null
@@ -226,10 +233,12 @@ export type StaffProfileWhereInput = {
   userId?: Prisma.StringFilter<"StaffProfile"> | string
   employeeCode?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
   assignedWardId?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
+  healthPostId?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
   citizenEntryCount?: Prisma.IntFilter<"StaffProfile"> | number
   serviceEntryCount?: Prisma.IntFilter<"StaffProfile"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   assignedWard?: Prisma.XOR<Prisma.WardNullableScalarRelationFilter, Prisma.WardWhereInput> | null
+  healthPost?: Prisma.XOR<Prisma.HealthPostNullableScalarRelationFilter, Prisma.HealthPostWhereInput> | null
 }
 
 export type StaffProfileOrderByWithRelationInput = {
@@ -237,10 +246,12 @@ export type StaffProfileOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   employeeCode?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedWardId?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthPostId?: Prisma.SortOrderInput | Prisma.SortOrder
   citizenEntryCount?: Prisma.SortOrder
   serviceEntryCount?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   assignedWard?: Prisma.WardOrderByWithRelationInput
+  healthPost?: Prisma.HealthPostOrderByWithRelationInput
 }
 
 export type StaffProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -251,10 +262,12 @@ export type StaffProfileWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.StaffProfileWhereInput[]
   NOT?: Prisma.StaffProfileWhereInput | Prisma.StaffProfileWhereInput[]
   assignedWardId?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
+  healthPostId?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
   citizenEntryCount?: Prisma.IntFilter<"StaffProfile"> | number
   serviceEntryCount?: Prisma.IntFilter<"StaffProfile"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   assignedWard?: Prisma.XOR<Prisma.WardNullableScalarRelationFilter, Prisma.WardWhereInput> | null
+  healthPost?: Prisma.XOR<Prisma.HealthPostNullableScalarRelationFilter, Prisma.HealthPostWhereInput> | null
 }, "id" | "userId" | "employeeCode">
 
 export type StaffProfileOrderByWithAggregationInput = {
@@ -262,6 +275,7 @@ export type StaffProfileOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   employeeCode?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedWardId?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthPostId?: Prisma.SortOrderInput | Prisma.SortOrder
   citizenEntryCount?: Prisma.SortOrder
   serviceEntryCount?: Prisma.SortOrder
   _count?: Prisma.StaffProfileCountOrderByAggregateInput
@@ -279,6 +293,7 @@ export type StaffProfileScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"StaffProfile"> | string
   employeeCode?: Prisma.StringNullableWithAggregatesFilter<"StaffProfile"> | string | null
   assignedWardId?: Prisma.StringNullableWithAggregatesFilter<"StaffProfile"> | string | null
+  healthPostId?: Prisma.StringNullableWithAggregatesFilter<"StaffProfile"> | string | null
   citizenEntryCount?: Prisma.IntWithAggregatesFilter<"StaffProfile"> | number
   serviceEntryCount?: Prisma.IntWithAggregatesFilter<"StaffProfile"> | number
 }
@@ -290,6 +305,7 @@ export type StaffProfileCreateInput = {
   serviceEntryCount?: number
   user: Prisma.UserCreateNestedOneWithoutStaffProfileInput
   assignedWard?: Prisma.WardCreateNestedOneWithoutStaffInput
+  healthPost?: Prisma.HealthPostCreateNestedOneWithoutStaffInput
 }
 
 export type StaffProfileUncheckedCreateInput = {
@@ -297,6 +313,7 @@ export type StaffProfileUncheckedCreateInput = {
   userId: string
   employeeCode?: string | null
   assignedWardId?: string | null
+  healthPostId?: string | null
   citizenEntryCount?: number
   serviceEntryCount?: number
 }
@@ -308,6 +325,7 @@ export type StaffProfileUpdateInput = {
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneRequiredWithoutStaffProfileNestedInput
   assignedWard?: Prisma.WardUpdateOneWithoutStaffNestedInput
+  healthPost?: Prisma.HealthPostUpdateOneWithoutStaffNestedInput
 }
 
 export type StaffProfileUncheckedUpdateInput = {
@@ -315,6 +333,7 @@ export type StaffProfileUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedWardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthPostId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -324,6 +343,7 @@ export type StaffProfileCreateManyInput = {
   userId: string
   employeeCode?: string | null
   assignedWardId?: string | null
+  healthPostId?: string | null
   citizenEntryCount?: number
   serviceEntryCount?: number
 }
@@ -340,6 +360,7 @@ export type StaffProfileUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedWardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthPostId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -354,6 +375,7 @@ export type StaffProfileCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   employeeCode?: Prisma.SortOrder
   assignedWardId?: Prisma.SortOrder
+  healthPostId?: Prisma.SortOrder
   citizenEntryCount?: Prisma.SortOrder
   serviceEntryCount?: Prisma.SortOrder
 }
@@ -368,6 +390,7 @@ export type StaffProfileMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   employeeCode?: Prisma.SortOrder
   assignedWardId?: Prisma.SortOrder
+  healthPostId?: Prisma.SortOrder
   citizenEntryCount?: Prisma.SortOrder
   serviceEntryCount?: Prisma.SortOrder
 }
@@ -377,6 +400,7 @@ export type StaffProfileMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   employeeCode?: Prisma.SortOrder
   assignedWardId?: Prisma.SortOrder
+  healthPostId?: Prisma.SortOrder
   citizenEntryCount?: Prisma.SortOrder
   serviceEntryCount?: Prisma.SortOrder
 }
@@ -478,18 +502,62 @@ export type StaffProfileUncheckedUpdateManyWithoutAssignedWardNestedInput = {
   deleteMany?: Prisma.StaffProfileScalarWhereInput | Prisma.StaffProfileScalarWhereInput[]
 }
 
+export type StaffProfileCreateNestedManyWithoutHealthPostInput = {
+  create?: Prisma.XOR<Prisma.StaffProfileCreateWithoutHealthPostInput, Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput> | Prisma.StaffProfileCreateWithoutHealthPostInput[] | Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput[]
+  connectOrCreate?: Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput | Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput[]
+  createMany?: Prisma.StaffProfileCreateManyHealthPostInputEnvelope
+  connect?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+}
+
+export type StaffProfileUncheckedCreateNestedManyWithoutHealthPostInput = {
+  create?: Prisma.XOR<Prisma.StaffProfileCreateWithoutHealthPostInput, Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput> | Prisma.StaffProfileCreateWithoutHealthPostInput[] | Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput[]
+  connectOrCreate?: Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput | Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput[]
+  createMany?: Prisma.StaffProfileCreateManyHealthPostInputEnvelope
+  connect?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+}
+
+export type StaffProfileUpdateManyWithoutHealthPostNestedInput = {
+  create?: Prisma.XOR<Prisma.StaffProfileCreateWithoutHealthPostInput, Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput> | Prisma.StaffProfileCreateWithoutHealthPostInput[] | Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput[]
+  connectOrCreate?: Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput | Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput[]
+  upsert?: Prisma.StaffProfileUpsertWithWhereUniqueWithoutHealthPostInput | Prisma.StaffProfileUpsertWithWhereUniqueWithoutHealthPostInput[]
+  createMany?: Prisma.StaffProfileCreateManyHealthPostInputEnvelope
+  set?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  disconnect?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  delete?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  connect?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  update?: Prisma.StaffProfileUpdateWithWhereUniqueWithoutHealthPostInput | Prisma.StaffProfileUpdateWithWhereUniqueWithoutHealthPostInput[]
+  updateMany?: Prisma.StaffProfileUpdateManyWithWhereWithoutHealthPostInput | Prisma.StaffProfileUpdateManyWithWhereWithoutHealthPostInput[]
+  deleteMany?: Prisma.StaffProfileScalarWhereInput | Prisma.StaffProfileScalarWhereInput[]
+}
+
+export type StaffProfileUncheckedUpdateManyWithoutHealthPostNestedInput = {
+  create?: Prisma.XOR<Prisma.StaffProfileCreateWithoutHealthPostInput, Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput> | Prisma.StaffProfileCreateWithoutHealthPostInput[] | Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput[]
+  connectOrCreate?: Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput | Prisma.StaffProfileCreateOrConnectWithoutHealthPostInput[]
+  upsert?: Prisma.StaffProfileUpsertWithWhereUniqueWithoutHealthPostInput | Prisma.StaffProfileUpsertWithWhereUniqueWithoutHealthPostInput[]
+  createMany?: Prisma.StaffProfileCreateManyHealthPostInputEnvelope
+  set?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  disconnect?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  delete?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  connect?: Prisma.StaffProfileWhereUniqueInput | Prisma.StaffProfileWhereUniqueInput[]
+  update?: Prisma.StaffProfileUpdateWithWhereUniqueWithoutHealthPostInput | Prisma.StaffProfileUpdateWithWhereUniqueWithoutHealthPostInput[]
+  updateMany?: Prisma.StaffProfileUpdateManyWithWhereWithoutHealthPostInput | Prisma.StaffProfileUpdateManyWithWhereWithoutHealthPostInput[]
+  deleteMany?: Prisma.StaffProfileScalarWhereInput | Prisma.StaffProfileScalarWhereInput[]
+}
+
 export type StaffProfileCreateWithoutUserInput = {
   id?: string
   employeeCode?: string | null
   citizenEntryCount?: number
   serviceEntryCount?: number
   assignedWard?: Prisma.WardCreateNestedOneWithoutStaffInput
+  healthPost?: Prisma.HealthPostCreateNestedOneWithoutStaffInput
 }
 
 export type StaffProfileUncheckedCreateWithoutUserInput = {
   id?: string
   employeeCode?: string | null
   assignedWardId?: string | null
+  healthPostId?: string | null
   citizenEntryCount?: number
   serviceEntryCount?: number
 }
@@ -516,12 +584,14 @@ export type StaffProfileUpdateWithoutUserInput = {
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   assignedWard?: Prisma.WardUpdateOneWithoutStaffNestedInput
+  healthPost?: Prisma.HealthPostUpdateOneWithoutStaffNestedInput
 }
 
 export type StaffProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedWardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthPostId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -532,12 +602,14 @@ export type StaffProfileCreateWithoutAssignedWardInput = {
   citizenEntryCount?: number
   serviceEntryCount?: number
   user: Prisma.UserCreateNestedOneWithoutStaffProfileInput
+  healthPost?: Prisma.HealthPostCreateNestedOneWithoutStaffInput
 }
 
 export type StaffProfileUncheckedCreateWithoutAssignedWardInput = {
   id?: string
   userId: string
   employeeCode?: string | null
+  healthPostId?: string | null
   citizenEntryCount?: number
   serviceEntryCount?: number
 }
@@ -576,14 +648,60 @@ export type StaffProfileScalarWhereInput = {
   userId?: Prisma.StringFilter<"StaffProfile"> | string
   employeeCode?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
   assignedWardId?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
+  healthPostId?: Prisma.StringNullableFilter<"StaffProfile"> | string | null
   citizenEntryCount?: Prisma.IntFilter<"StaffProfile"> | number
   serviceEntryCount?: Prisma.IntFilter<"StaffProfile"> | number
+}
+
+export type StaffProfileCreateWithoutHealthPostInput = {
+  id?: string
+  employeeCode?: string | null
+  citizenEntryCount?: number
+  serviceEntryCount?: number
+  user: Prisma.UserCreateNestedOneWithoutStaffProfileInput
+  assignedWard?: Prisma.WardCreateNestedOneWithoutStaffInput
+}
+
+export type StaffProfileUncheckedCreateWithoutHealthPostInput = {
+  id?: string
+  userId: string
+  employeeCode?: string | null
+  assignedWardId?: string | null
+  citizenEntryCount?: number
+  serviceEntryCount?: number
+}
+
+export type StaffProfileCreateOrConnectWithoutHealthPostInput = {
+  where: Prisma.StaffProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.StaffProfileCreateWithoutHealthPostInput, Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput>
+}
+
+export type StaffProfileCreateManyHealthPostInputEnvelope = {
+  data: Prisma.StaffProfileCreateManyHealthPostInput | Prisma.StaffProfileCreateManyHealthPostInput[]
+  skipDuplicates?: boolean
+}
+
+export type StaffProfileUpsertWithWhereUniqueWithoutHealthPostInput = {
+  where: Prisma.StaffProfileWhereUniqueInput
+  update: Prisma.XOR<Prisma.StaffProfileUpdateWithoutHealthPostInput, Prisma.StaffProfileUncheckedUpdateWithoutHealthPostInput>
+  create: Prisma.XOR<Prisma.StaffProfileCreateWithoutHealthPostInput, Prisma.StaffProfileUncheckedCreateWithoutHealthPostInput>
+}
+
+export type StaffProfileUpdateWithWhereUniqueWithoutHealthPostInput = {
+  where: Prisma.StaffProfileWhereUniqueInput
+  data: Prisma.XOR<Prisma.StaffProfileUpdateWithoutHealthPostInput, Prisma.StaffProfileUncheckedUpdateWithoutHealthPostInput>
+}
+
+export type StaffProfileUpdateManyWithWhereWithoutHealthPostInput = {
+  where: Prisma.StaffProfileScalarWhereInput
+  data: Prisma.XOR<Prisma.StaffProfileUpdateManyMutationInput, Prisma.StaffProfileUncheckedUpdateManyWithoutHealthPostInput>
 }
 
 export type StaffProfileCreateManyAssignedWardInput = {
   id?: string
   userId: string
   employeeCode?: string | null
+  healthPostId?: string | null
   citizenEntryCount?: number
   serviceEntryCount?: number
 }
@@ -594,12 +712,14 @@ export type StaffProfileUpdateWithoutAssignedWardInput = {
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneRequiredWithoutStaffProfileNestedInput
+  healthPost?: Prisma.HealthPostUpdateOneWithoutStaffNestedInput
 }
 
 export type StaffProfileUncheckedUpdateWithoutAssignedWardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthPostId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -608,6 +728,43 @@ export type StaffProfileUncheckedUpdateManyWithoutAssignedWardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthPostId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type StaffProfileCreateManyHealthPostInput = {
+  id?: string
+  userId: string
+  employeeCode?: string | null
+  assignedWardId?: string | null
+  citizenEntryCount?: number
+  serviceEntryCount?: number
+}
+
+export type StaffProfileUpdateWithoutHealthPostInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  user?: Prisma.UserUpdateOneRequiredWithoutStaffProfileNestedInput
+  assignedWard?: Prisma.WardUpdateOneWithoutStaffNestedInput
+}
+
+export type StaffProfileUncheckedUpdateWithoutHealthPostInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedWardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type StaffProfileUncheckedUpdateManyWithoutHealthPostInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedWardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   citizenEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
   serviceEntryCount?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -619,10 +776,12 @@ export type StaffProfileSelect<ExtArgs extends runtime.Types.Extensions.Internal
   userId?: boolean
   employeeCode?: boolean
   assignedWardId?: boolean
+  healthPostId?: boolean
   citizenEntryCount?: boolean
   serviceEntryCount?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedWard?: boolean | Prisma.StaffProfile$assignedWardArgs<ExtArgs>
+  healthPost?: boolean | Prisma.StaffProfile$healthPostArgs<ExtArgs>
 }, ExtArgs["result"]["staffProfile"]>
 
 export type StaffProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -630,10 +789,12 @@ export type StaffProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   userId?: boolean
   employeeCode?: boolean
   assignedWardId?: boolean
+  healthPostId?: boolean
   citizenEntryCount?: boolean
   serviceEntryCount?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedWard?: boolean | Prisma.StaffProfile$assignedWardArgs<ExtArgs>
+  healthPost?: boolean | Prisma.StaffProfile$healthPostArgs<ExtArgs>
 }, ExtArgs["result"]["staffProfile"]>
 
 export type StaffProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -641,10 +802,12 @@ export type StaffProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   userId?: boolean
   employeeCode?: boolean
   assignedWardId?: boolean
+  healthPostId?: boolean
   citizenEntryCount?: boolean
   serviceEntryCount?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedWard?: boolean | Prisma.StaffProfile$assignedWardArgs<ExtArgs>
+  healthPost?: boolean | Prisma.StaffProfile$healthPostArgs<ExtArgs>
 }, ExtArgs["result"]["staffProfile"]>
 
 export type StaffProfileSelectScalar = {
@@ -652,22 +815,26 @@ export type StaffProfileSelectScalar = {
   userId?: boolean
   employeeCode?: boolean
   assignedWardId?: boolean
+  healthPostId?: boolean
   citizenEntryCount?: boolean
   serviceEntryCount?: boolean
 }
 
-export type StaffProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "employeeCode" | "assignedWardId" | "citizenEntryCount" | "serviceEntryCount", ExtArgs["result"]["staffProfile"]>
+export type StaffProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "employeeCode" | "assignedWardId" | "healthPostId" | "citizenEntryCount" | "serviceEntryCount", ExtArgs["result"]["staffProfile"]>
 export type StaffProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedWard?: boolean | Prisma.StaffProfile$assignedWardArgs<ExtArgs>
+  healthPost?: boolean | Prisma.StaffProfile$healthPostArgs<ExtArgs>
 }
 export type StaffProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedWard?: boolean | Prisma.StaffProfile$assignedWardArgs<ExtArgs>
+  healthPost?: boolean | Prisma.StaffProfile$healthPostArgs<ExtArgs>
 }
 export type StaffProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedWard?: boolean | Prisma.StaffProfile$assignedWardArgs<ExtArgs>
+  healthPost?: boolean | Prisma.StaffProfile$healthPostArgs<ExtArgs>
 }
 
 export type $StaffProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -675,12 +842,14 @@ export type $StaffProfilePayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     assignedWard: Prisma.$WardPayload<ExtArgs> | null
+    healthPost: Prisma.$HealthPostPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
     employeeCode: string | null
     assignedWardId: string | null
+    healthPostId: string | null
     citizenEntryCount: number
     serviceEntryCount: number
   }, ExtArgs["result"]["staffProfile"]>
@@ -1079,6 +1248,7 @@ export interface Prisma__StaffProfileClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assignedWard<T extends Prisma.StaffProfile$assignedWardArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StaffProfile$assignedWardArgs<ExtArgs>>): Prisma.Prisma__WardClient<runtime.Types.Result.GetResult<Prisma.$WardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  healthPost<T extends Prisma.StaffProfile$healthPostArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StaffProfile$healthPostArgs<ExtArgs>>): Prisma.Prisma__HealthPostClient<runtime.Types.Result.GetResult<Prisma.$HealthPostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1112,6 +1282,7 @@ export interface StaffProfileFieldRefs {
   readonly userId: Prisma.FieldRef<"StaffProfile", 'String'>
   readonly employeeCode: Prisma.FieldRef<"StaffProfile", 'String'>
   readonly assignedWardId: Prisma.FieldRef<"StaffProfile", 'String'>
+  readonly healthPostId: Prisma.FieldRef<"StaffProfile", 'String'>
   readonly citizenEntryCount: Prisma.FieldRef<"StaffProfile", 'Int'>
   readonly serviceEntryCount: Prisma.FieldRef<"StaffProfile", 'Int'>
 }
@@ -1531,6 +1702,25 @@ export type StaffProfile$assignedWardArgs<ExtArgs extends runtime.Types.Extensio
    */
   include?: Prisma.WardInclude<ExtArgs> | null
   where?: Prisma.WardWhereInput
+}
+
+/**
+ * StaffProfile.healthPost
+ */
+export type StaffProfile$healthPostArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HealthPost
+   */
+  select?: Prisma.HealthPostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HealthPost
+   */
+  omit?: Prisma.HealthPostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HealthPostInclude<ExtArgs> | null
+  where?: Prisma.HealthPostWhereInput
 }
 
 /**
