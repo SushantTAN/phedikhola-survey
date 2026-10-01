@@ -25,6 +25,7 @@ export function HealthPostForm({
   const queryClient = useQueryClient();
   const [wards, setWards] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [wardsLoading, setWardsLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -36,7 +37,9 @@ export function HealthPostForm({
   } = useForm({ defaultValues: { name: "", wardId: "", latitude: "", longitude: "" } });
 
   useEffect(() => {
-    api<any>("/master/wards").then((r) => setWards(r.data.filter((w: any) => w.active)));
+    api<any>("/master/wards")
+      .then((r) => setWards(r.data.filter((w: any) => w.active)))
+      .finally(() => setWardsLoading(false));
   }, []);
   useEffect(() => {
     if (initialData)
@@ -95,6 +98,7 @@ export function HealthPostForm({
                     options={choices}
                     onChange={(c) => field.onChange(c.value)}
                     placeholder="Select ward"
+                    loading={wardsLoading}
                   />
                 )}
               />

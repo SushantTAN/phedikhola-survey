@@ -130,8 +130,11 @@ export function CitizenForm({
     resolver: yupResolver(schema) as any,
     defaultValues: empty,
   });
+  const [refLoading, setRefLoading] = useState(true);
   useEffect(() => {
-    api<any>("/master/reference-data").then((r) => setReference(r.data));
+    api<any>("/master/reference-data")
+      .then((r) => setReference(r.data))
+      .finally(() => setRefLoading(false));
   }, []);
   useEffect(() => {
     if (!initialData) return;
@@ -264,6 +267,7 @@ export function CitizenForm({
             render={({ field }) => (
               <SelectField
                 label="Citizen category"
+                loading={refLoading}
                 value={field.value || ""}
                 onValueChange={field.onChange}
                 placeholder="Select category"
@@ -283,6 +287,7 @@ export function CitizenForm({
                   value={field.value || []}
                   onChange={field.onChange}
                   placeholder="Select one or more wards"
+                  loading={refLoading}
                   options={reference.wards.map((w: any) => ({
                     value: w.id,
                     label: `${w.nameNe} / ${w.nameEn}${w.locationNameNe ? ` · ${w.locationNameNe}` : ""}`,
@@ -466,12 +471,14 @@ function SelectField({
   onValueChange,
   options,
   placeholder = "Select",
+  loading,
 }: {
   label: string;
   value: string;
   onValueChange: (v: string) => void;
   options: any[];
   placeholder?: string;
+  loading?: boolean;
 }) {
   const choices = options.map(
     ([optionValue, optionLabel]: [string, string]) => ({
@@ -486,6 +493,7 @@ function SelectField({
         options={choices}
         onChange={(choice) => onValueChange(choice.value)}
         placeholder={placeholder}
+        loading={loading}
       />
     </Field>
   );
