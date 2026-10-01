@@ -2069,6 +2069,9 @@ export const CitizenScalarFieldEnum = {
   approximateAge: 'approximateAge',
   gender: 'gender',
   phone: 'phone',
+  address: 'address',
+  latitude: 'latitude',
+  longitude: 'longitude',
   casteGroupCode: 'casteGroupCode',
   casteOther: 'casteOther',
   maritalStatusCode: 'maritalStatusCode',
@@ -2464,20 +2467,6 @@ export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 
 
 /**
- * Reference to a field of type 'RecordStatus'
- */
-export type EnumRecordStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordStatus'>
-    
-
-
-/**
- * Reference to a field of type 'RecordStatus[]'
- */
-export type ListEnumRecordStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'Decimal'
  */
 export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -2488,6 +2477,20 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RecordStatus'
+ */
+export type EnumRecordStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RecordStatus[]'
+ */
+export type ListEnumRecordStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordStatus[]'>
     
 
 

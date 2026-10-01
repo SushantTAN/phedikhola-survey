@@ -1026,14 +1026,6 @@ export type CitizenServiceRecordUncheckedUpdateManyWithoutWardNestedInput = {
   deleteMany?: Prisma.CitizenServiceRecordScalarWhereInput | Prisma.CitizenServiceRecordScalarWhereInput[]
 }
 
-export type NullableDecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
 export type CitizenServiceRecordCreateNestedOneWithoutConditionsInput = {
   create?: Prisma.XOR<Prisma.CitizenServiceRecordCreateWithoutConditionsInput, Prisma.CitizenServiceRecordUncheckedCreateWithoutConditionsInput>
   connectOrCreate?: Prisma.CitizenServiceRecordCreateOrConnectWithoutConditionsInput

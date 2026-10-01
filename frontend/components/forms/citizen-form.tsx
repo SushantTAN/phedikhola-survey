@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/card";
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
+import { LocationPicker } from "@/components/shared/location-picker";
 
 const schema = yup.object({
   fullName: yup.string().trim().required("Full name is required"),
@@ -33,6 +34,9 @@ const schema = yup.object({
     .max(130),
   gender: yup.string().oneOf(["FEMALE", "MALE", "OTHER"]).required(),
   phone: yup.string().nullable(),
+  address: yup.string().nullable(),
+  latitude: yup.string().nullable().test("latitude-range", "Latitude must be between -90 and 90", (value) => !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 90)),
+  longitude: yup.string().nullable().test("longitude-range", "Longitude must be between -180 and 180", (value) => !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 180)),
   categoryId: yup.string().nullable(),
   wardIds: yup.array(yup.string().required()).default([]),
   toleId: yup.string().nullable(),
@@ -45,6 +49,9 @@ const schema = yup.object({
   householdForeignEmployment: yup.boolean().nullable(),
   profilePhotoUrl: yup.string().nullable(),
   version: yup.number().optional(),
+}).test("complete-location", "Provide both latitude and longitude, or leave both empty", function (values) {
+  if (!!values?.latitude !== !!values?.longitude) return this.createError({ path: "latitude" });
+  return true;
 });
 export type CitizenFormValues = yup.InferType<typeof schema>;
 const caste = [
@@ -82,6 +89,9 @@ const empty: CitizenFormValues = {
   approximateAge: null,
   gender: "OTHER",
   phone: "",
+  address: "",
+  latitude: "",
+  longitude: "",
   categoryId: "",
   wardIds: [],
   toleId: "",
@@ -151,6 +161,9 @@ export function CitizenForm({
       approximateAge: initialData.approximateAge ?? null,
       gender: initialData.gender ?? "OTHER",
       phone: initialData.phone ?? "",
+      address: initialData.address ?? "",
+      latitude: initialData.latitude == null ? "" : String(Number(initialData.latitude)),
+      longitude: initialData.longitude == null ? "" : String(Number(initialData.longitude)),
       categoryId:
         initialData.categories?.[0]?.categoryId ??
         initialData.categories?.[0]?.category?.id ??
@@ -196,6 +209,9 @@ export function CitizenForm({
         ...values,
         categoryId: values.categoryId || null,
         toleId: values.toleId || null,
+        address: values.address?.trim() || null,
+        latitude: values.latitude ? Number(values.latitude) : null,
+        longitude: values.longitude ? Number(values.longitude) : null,
         profilePhotoUrl,
         householdForeignEmployment: values.householdForeignEmployment,
       };
@@ -274,6 +290,9 @@ export function CitizenForm({
           <Field label="फोन नं. / Phone">
             <Input {...register("phone")} placeholder="98XXXXXXXX" />
           </Field>
+          <Field label="Address">
+            <Input {...register("address")} placeholder="Street or local address" />
+          </Field>
           <Controller
             control={control}
             name="categoryId"
@@ -323,6 +342,23 @@ export function CitizenForm({
               />
             )}
           />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Location</CardTitle>
+          <CardDescription>Optional citizen location. Click the map or enter both coordinates.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LocationPicker
+            latitude={watch("latitude") || ""}
+            longitude={watch("longitude") || ""}
+            onChange={(latitude, longitude) => {
+              setValue("latitude", latitude, { shouldDirty: true, shouldValidate: true });
+              setValue("longitude", longitude, { shouldDirty: true, shouldValidate: true });
+            }}
+          />
+          {(errors.latitude || errors.longitude) && <p className="mt-2 text-xs text-red-600">{errors.latitude?.message || errors.longitude?.message}</p>}
         </CardContent>
       </Card>
       <Card>

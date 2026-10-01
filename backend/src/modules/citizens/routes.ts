@@ -20,6 +20,23 @@ async function validateTole(toleId: string | null, wardIds: string[]) {
   if (!wardIds.includes(tole.wardId)) throw new HttpError(400, "TOLE_WARD_MISMATCH", "The selected tole must belong to an assigned ward");
 }
 
+function coordinate(value: unknown, name: string, limit: number) {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  const number = Number(value);
+  if (!Number.isFinite(number) || Math.abs(number) > limit) throw new HttpError(400, "INVALID_COORDINATE", `Invalid ${name}`);
+  return number;
+}
+
+function location(body: any) {
+  const latitude = coordinate(body.latitude, "latitude", 90);
+  const longitude = coordinate(body.longitude, "longitude", 180);
+  if ((latitude === undefined) !== (longitude === undefined) || (latitude === null) !== (longitude === null)) {
+    throw new HttpError(400, "INCOMPLETE_LOCATION", "Latitude and longitude must be provided together");
+  }
+  return { latitude, longitude };
+}
+
 function makePublicId(clientUuid: string) {
   return `PHE-${new Date().getFullYear()}-${clientUuid.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
 }
@@ -92,6 +109,8 @@ citizenRouter.post("/", asyncHandler(async (req, res) => {
       approximateAge: req.body.approximateAge == null || req.body.approximateAge === "" ? null : Number(req.body.approximateAge),
       gender: req.body.gender ?? "OTHER",
       phone: req.body.phone || null,
+      address: req.body.address ? String(req.body.address).trim() : null,
+      ...location(req.body),
       casteGroupCode: req.body.casteGroupCode || null,
       casteOther: req.body.casteOther || null,
       maritalStatusCode: req.body.maritalStatusCode || null,
@@ -138,6 +157,8 @@ citizenRouter.patch("/:id", asyncHandler(async (req, res) => {
         approximateAge: req.body.approximateAge === "" ? null : req.body.approximateAge,
         gender: req.body.gender,
         phone: req.body.phone,
+        address: req.body.address === undefined ? undefined : String(req.body.address ?? "").trim() || null,
+        ...location(req.body),
         casteGroupCode: req.body.casteGroupCode,
         casteOther: req.body.casteOther,
         maritalStatusCode: req.body.maritalStatusCode,
