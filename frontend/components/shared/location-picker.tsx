@@ -1,4 +1,4 @@
-"use client";
+"use client";import {Skeleton} from "@/components/ui/skeleton";
 
 import dynamic from "next/dynamic";
 import { Crosshair, X } from "lucide-react";
@@ -10,7 +10,7 @@ import type { LatLng } from "@/components/shared/location-map";
 // Leaflet touches `window`, so it must only load in the browser.
 export const LocationMap = dynamic(() => import("@/components/shared/location-map"), {
   ssr: false,
-  loading: () => <div className="grid h-80 place-items-center rounded-xl bg-slate-100 text-sm text-slate-500">Loading map…</div>,
+  loading: () => <Skeleton className="h-80 w-full rounded-xl" />,
 });
 
 const toNum = (v: string) => (v.trim() === "" || Number.isNaN(Number(v)) ? null : Number(v));

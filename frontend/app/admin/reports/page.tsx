@@ -1,4 +1,4 @@
-"use client";
+"use client";import {ReportCardsSkeleton} from "@/components/shared/skeletons";
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ export default function ReportsPage() {
   return (
     <>
       <PageHeader title="Reports" description="Choose a report to filter, analyse with charts, and export. Reports are grouped by topic." />
-      {isLoading && <p>Loading reports…</p>}
+      {isLoading && <ReportCardsSkeleton />}
       {error && <p className="text-red-600">{(error as Error).message}</p>}
       <div className="space-y-8">
         {data?.data.map((g) => (
