@@ -246,6 +246,7 @@ export type HealthPostWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"HealthPost"> | Date | string
   ward?: Prisma.XOR<Prisma.WardScalarRelationFilter, Prisma.WardWhereInput>
   staff?: Prisma.StaffProfileListRelationFilter
+  toles?: Prisma.ToleListRelationFilter
 }
 
 export type HealthPostOrderByWithRelationInput = {
@@ -259,6 +260,7 @@ export type HealthPostOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   ward?: Prisma.WardOrderByWithRelationInput
   staff?: Prisma.StaffProfileOrderByRelationAggregateInput
+  toles?: Prisma.ToleOrderByRelationAggregateInput
 }
 
 export type HealthPostWhereUniqueInput = Prisma.AtLeast<{
@@ -275,6 +277,7 @@ export type HealthPostWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"HealthPost"> | Date | string
   ward?: Prisma.XOR<Prisma.WardScalarRelationFilter, Prisma.WardWhereInput>
   staff?: Prisma.StaffProfileListRelationFilter
+  toles?: Prisma.ToleListRelationFilter
 }, "id">
 
 export type HealthPostOrderByWithAggregationInput = {
@@ -317,6 +320,7 @@ export type HealthPostCreateInput = {
   updatedAt?: Date | string
   ward: Prisma.WardCreateNestedOneWithoutHealthPostsInput
   staff?: Prisma.StaffProfileCreateNestedManyWithoutHealthPostInput
+  toles?: Prisma.ToleCreateNestedManyWithoutHealthPostInput
 }
 
 export type HealthPostUncheckedCreateInput = {
@@ -329,6 +333,7 @@ export type HealthPostUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   staff?: Prisma.StaffProfileUncheckedCreateNestedManyWithoutHealthPostInput
+  toles?: Prisma.ToleUncheckedCreateNestedManyWithoutHealthPostInput
 }
 
 export type HealthPostUpdateInput = {
@@ -341,6 +346,7 @@ export type HealthPostUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ward?: Prisma.WardUpdateOneRequiredWithoutHealthPostsNestedInput
   staff?: Prisma.StaffProfileUpdateManyWithoutHealthPostNestedInput
+  toles?: Prisma.ToleUpdateManyWithoutHealthPostNestedInput
 }
 
 export type HealthPostUncheckedUpdateInput = {
@@ -353,6 +359,7 @@ export type HealthPostUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   staff?: Prisma.StaffProfileUncheckedUpdateManyWithoutHealthPostNestedInput
+  toles?: Prisma.ToleUncheckedUpdateManyWithoutHealthPostNestedInput
 }
 
 export type HealthPostCreateManyInput = {
@@ -400,6 +407,11 @@ export type HealthPostListRelationFilter = {
 
 export type HealthPostOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type HealthPostScalarRelationFilter = {
+  is?: Prisma.HealthPostWhereInput
+  isNot?: Prisma.HealthPostWhereInput
 }
 
 export type HealthPostCountOrderByAggregateInput = {
@@ -503,6 +515,20 @@ export type HealthPostUncheckedUpdateManyWithoutWardNestedInput = {
   deleteMany?: Prisma.HealthPostScalarWhereInput | Prisma.HealthPostScalarWhereInput[]
 }
 
+export type HealthPostCreateNestedOneWithoutTolesInput = {
+  create?: Prisma.XOR<Prisma.HealthPostCreateWithoutTolesInput, Prisma.HealthPostUncheckedCreateWithoutTolesInput>
+  connectOrCreate?: Prisma.HealthPostCreateOrConnectWithoutTolesInput
+  connect?: Prisma.HealthPostWhereUniqueInput
+}
+
+export type HealthPostUpdateOneRequiredWithoutTolesNestedInput = {
+  create?: Prisma.XOR<Prisma.HealthPostCreateWithoutTolesInput, Prisma.HealthPostUncheckedCreateWithoutTolesInput>
+  connectOrCreate?: Prisma.HealthPostCreateOrConnectWithoutTolesInput
+  upsert?: Prisma.HealthPostUpsertWithoutTolesInput
+  connect?: Prisma.HealthPostWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HealthPostUpdateToOneWithWhereWithoutTolesInput, Prisma.HealthPostUpdateWithoutTolesInput>, Prisma.HealthPostUncheckedUpdateWithoutTolesInput>
+}
+
 export type HealthPostCreateWithoutStaffInput = {
   id?: string
   name: string
@@ -512,6 +538,7 @@ export type HealthPostCreateWithoutStaffInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   ward: Prisma.WardCreateNestedOneWithoutHealthPostsInput
+  toles?: Prisma.ToleCreateNestedManyWithoutHealthPostInput
 }
 
 export type HealthPostUncheckedCreateWithoutStaffInput = {
@@ -523,6 +550,7 @@ export type HealthPostUncheckedCreateWithoutStaffInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  toles?: Prisma.ToleUncheckedCreateNestedManyWithoutHealthPostInput
 }
 
 export type HealthPostCreateOrConnectWithoutStaffInput = {
@@ -550,6 +578,7 @@ export type HealthPostUpdateWithoutStaffInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ward?: Prisma.WardUpdateOneRequiredWithoutHealthPostsNestedInput
+  toles?: Prisma.ToleUpdateManyWithoutHealthPostNestedInput
 }
 
 export type HealthPostUncheckedUpdateWithoutStaffInput = {
@@ -561,6 +590,7 @@ export type HealthPostUncheckedUpdateWithoutStaffInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  toles?: Prisma.ToleUncheckedUpdateManyWithoutHealthPostNestedInput
 }
 
 export type HealthPostCreateWithoutWardInput = {
@@ -572,6 +602,7 @@ export type HealthPostCreateWithoutWardInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   staff?: Prisma.StaffProfileCreateNestedManyWithoutHealthPostInput
+  toles?: Prisma.ToleCreateNestedManyWithoutHealthPostInput
 }
 
 export type HealthPostUncheckedCreateWithoutWardInput = {
@@ -583,6 +614,7 @@ export type HealthPostUncheckedCreateWithoutWardInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   staff?: Prisma.StaffProfileUncheckedCreateNestedManyWithoutHealthPostInput
+  toles?: Prisma.ToleUncheckedCreateNestedManyWithoutHealthPostInput
 }
 
 export type HealthPostCreateOrConnectWithoutWardInput = {
@@ -625,6 +657,70 @@ export type HealthPostScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"HealthPost"> | Date | string
 }
 
+export type HealthPostCreateWithoutTolesInput = {
+  id?: string
+  name: string
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ward: Prisma.WardCreateNestedOneWithoutHealthPostsInput
+  staff?: Prisma.StaffProfileCreateNestedManyWithoutHealthPostInput
+}
+
+export type HealthPostUncheckedCreateWithoutTolesInput = {
+  id?: string
+  name: string
+  wardId: string
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  staff?: Prisma.StaffProfileUncheckedCreateNestedManyWithoutHealthPostInput
+}
+
+export type HealthPostCreateOrConnectWithoutTolesInput = {
+  where: Prisma.HealthPostWhereUniqueInput
+  create: Prisma.XOR<Prisma.HealthPostCreateWithoutTolesInput, Prisma.HealthPostUncheckedCreateWithoutTolesInput>
+}
+
+export type HealthPostUpsertWithoutTolesInput = {
+  update: Prisma.XOR<Prisma.HealthPostUpdateWithoutTolesInput, Prisma.HealthPostUncheckedUpdateWithoutTolesInput>
+  create: Prisma.XOR<Prisma.HealthPostCreateWithoutTolesInput, Prisma.HealthPostUncheckedCreateWithoutTolesInput>
+  where?: Prisma.HealthPostWhereInput
+}
+
+export type HealthPostUpdateToOneWithWhereWithoutTolesInput = {
+  where?: Prisma.HealthPostWhereInput
+  data: Prisma.XOR<Prisma.HealthPostUpdateWithoutTolesInput, Prisma.HealthPostUncheckedUpdateWithoutTolesInput>
+}
+
+export type HealthPostUpdateWithoutTolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ward?: Prisma.WardUpdateOneRequiredWithoutHealthPostsNestedInput
+  staff?: Prisma.StaffProfileUpdateManyWithoutHealthPostNestedInput
+}
+
+export type HealthPostUncheckedUpdateWithoutTolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staff?: Prisma.StaffProfileUncheckedUpdateManyWithoutHealthPostNestedInput
+}
+
 export type HealthPostCreateManyWardInput = {
   id?: string
   name: string
@@ -644,6 +740,7 @@ export type HealthPostUpdateWithoutWardInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   staff?: Prisma.StaffProfileUpdateManyWithoutHealthPostNestedInput
+  toles?: Prisma.ToleUpdateManyWithoutHealthPostNestedInput
 }
 
 export type HealthPostUncheckedUpdateWithoutWardInput = {
@@ -655,6 +752,7 @@ export type HealthPostUncheckedUpdateWithoutWardInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   staff?: Prisma.StaffProfileUncheckedUpdateManyWithoutHealthPostNestedInput
+  toles?: Prisma.ToleUncheckedUpdateManyWithoutHealthPostNestedInput
 }
 
 export type HealthPostUncheckedUpdateManyWithoutWardInput = {
@@ -674,10 +772,12 @@ export type HealthPostUncheckedUpdateManyWithoutWardInput = {
 
 export type HealthPostCountOutputType = {
   staff: number
+  toles: number
 }
 
 export type HealthPostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   staff?: boolean | HealthPostCountOutputTypeCountStaffArgs
+  toles?: boolean | HealthPostCountOutputTypeCountTolesArgs
 }
 
 /**
@@ -697,6 +797,13 @@ export type HealthPostCountOutputTypeCountStaffArgs<ExtArgs extends runtime.Type
   where?: Prisma.StaffProfileWhereInput
 }
 
+/**
+ * HealthPostCountOutputType without action
+ */
+export type HealthPostCountOutputTypeCountTolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ToleWhereInput
+}
+
 
 export type HealthPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -709,6 +816,7 @@ export type HealthPostSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
   staff?: boolean | Prisma.HealthPost$staffArgs<ExtArgs>
+  toles?: boolean | Prisma.HealthPost$tolesArgs<ExtArgs>
   _count?: boolean | Prisma.HealthPostCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["healthPost"]>
 
@@ -751,6 +859,7 @@ export type HealthPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type HealthPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
   staff?: boolean | Prisma.HealthPost$staffArgs<ExtArgs>
+  toles?: boolean | Prisma.HealthPost$tolesArgs<ExtArgs>
   _count?: boolean | Prisma.HealthPostCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type HealthPostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -765,6 +874,7 @@ export type $HealthPostPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     ward: Prisma.$WardPayload<ExtArgs>
     staff: Prisma.$StaffProfilePayload<ExtArgs>[]
+    toles: Prisma.$TolePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1171,6 +1281,7 @@ export interface Prisma__HealthPostClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   ward<T extends Prisma.WardDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WardDefaultArgs<ExtArgs>>): Prisma.Prisma__WardClient<runtime.Types.Result.GetResult<Prisma.$WardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   staff<T extends Prisma.HealthPost$staffArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HealthPost$staffArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  toles<T extends Prisma.HealthPost$tolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HealthPost$tolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1630,6 +1741,30 @@ export type HealthPost$staffArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.StaffProfileScalarFieldEnum | Prisma.StaffProfileScalarFieldEnum[]
+}
+
+/**
+ * HealthPost.toles
+ */
+export type HealthPost$tolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tole
+   */
+  select?: Prisma.ToleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tole
+   */
+  omit?: Prisma.ToleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ToleInclude<ExtArgs> | null
+  where?: Prisma.ToleWhereInput
+  orderBy?: Prisma.ToleOrderByWithRelationInput | Prisma.ToleOrderByWithRelationInput[]
+  cursor?: Prisma.ToleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ToleScalarFieldEnum | Prisma.ToleScalarFieldEnum[]
 }
 
 /**

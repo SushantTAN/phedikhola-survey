@@ -54,6 +54,9 @@ healthPostRouter.post("/", requireRole("ADMIN"), asyncHandler(async (req, res) =
 }));
 
 healthPostRouter.patch("/:id", requireRole("ADMIN"), asyncHandler(async (req, res) => {
+  const current = await prisma.healthPost.findUnique({ where: { id: String(req.params.id) }, select: { wardId: true, _count: { select: { toles: true } } } });
+  if (!current) throw new HttpError(404, "HEALTH_POST_NOT_FOUND", "Health post not found");
+  if (req.body.wardId && req.body.wardId !== current.wardId && current._count.toles) throw new HttpError(400, "HEALTH_POST_HAS_TOLES", "Move its toles before changing the health post ward");
   const name = req.body.name === undefined ? undefined : String(req.body.name).trim();
   if (name === "") throw new HttpError(400, "HEALTH_POST_FIELDS_REQUIRED", "Name is required");
   const item = await prisma.healthPost.update({

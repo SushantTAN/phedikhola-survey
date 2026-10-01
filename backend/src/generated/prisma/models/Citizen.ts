@@ -56,6 +56,7 @@ export type CitizenMinAggregateOutputType = {
   status: $Enums.RecordStatus | null
   version: number | null
   createdById: string | null
+  toleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -81,6 +82,7 @@ export type CitizenMaxAggregateOutputType = {
   status: $Enums.RecordStatus | null
   version: number | null
   createdById: string | null
+  toleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -106,6 +108,7 @@ export type CitizenCountAggregateOutputType = {
   status: number
   version: number
   createdById: number
+  toleId: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -143,6 +146,7 @@ export type CitizenMinAggregateInputType = {
   status?: true
   version?: true
   createdById?: true
+  toleId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -168,6 +172,7 @@ export type CitizenMaxAggregateInputType = {
   status?: true
   version?: true
   createdById?: true
+  toleId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -193,6 +198,7 @@ export type CitizenCountAggregateInputType = {
   status?: true
   version?: true
   createdById?: true
+  toleId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -305,6 +311,7 @@ export type CitizenGroupByOutputType = {
   status: $Enums.RecordStatus
   version: number
   createdById: string | null
+  toleId: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -353,10 +360,12 @@ export type CitizenWhereInput = {
   status?: Prisma.EnumRecordStatusFilter<"Citizen"> | $Enums.RecordStatus
   version?: Prisma.IntFilter<"Citizen"> | number
   createdById?: Prisma.StringNullableFilter<"Citizen"> | string | null
+  toleId?: Prisma.StringNullableFilter<"Citizen"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Citizen"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Citizen"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Citizen"> | Date | string | null
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  tole?: Prisma.XOR<Prisma.ToleNullableScalarRelationFilter, Prisma.ToleWhereInput> | null
   categories?: Prisma.CitizenCategoryAssignmentListRelationFilter
   wards?: Prisma.CitizenWardAssignmentListRelationFilter
   serviceRecords?: Prisma.CitizenServiceRecordListRelationFilter
@@ -382,10 +391,12 @@ export type CitizenOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  toleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdBy?: Prisma.UserOrderByWithRelationInput
+  tole?: Prisma.ToleOrderByWithRelationInput
   categories?: Prisma.CitizenCategoryAssignmentOrderByRelationAggregateInput
   wards?: Prisma.CitizenWardAssignmentOrderByRelationAggregateInput
   serviceRecords?: Prisma.CitizenServiceRecordOrderByRelationAggregateInput
@@ -414,10 +425,12 @@ export type CitizenWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumRecordStatusFilter<"Citizen"> | $Enums.RecordStatus
   version?: Prisma.IntFilter<"Citizen"> | number
   createdById?: Prisma.StringNullableFilter<"Citizen"> | string | null
+  toleId?: Prisma.StringNullableFilter<"Citizen"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Citizen"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Citizen"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Citizen"> | Date | string | null
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  tole?: Prisma.XOR<Prisma.ToleNullableScalarRelationFilter, Prisma.ToleWhereInput> | null
   categories?: Prisma.CitizenCategoryAssignmentListRelationFilter
   wards?: Prisma.CitizenWardAssignmentListRelationFilter
   serviceRecords?: Prisma.CitizenServiceRecordListRelationFilter
@@ -443,6 +456,7 @@ export type CitizenOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  toleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -476,6 +490,7 @@ export type CitizenScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumRecordStatusWithAggregatesFilter<"Citizen"> | $Enums.RecordStatus
   version?: Prisma.IntWithAggregatesFilter<"Citizen"> | number
   createdById?: Prisma.StringNullableWithAggregatesFilter<"Citizen"> | string | null
+  toleId?: Prisma.StringNullableWithAggregatesFilter<"Citizen"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Citizen"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Citizen"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Citizen"> | Date | string | null
@@ -504,6 +519,7 @@ export type CitizenCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedCitizensInput
+  tole?: Prisma.ToleCreateNestedOneWithoutCitizensInput
   categories?: Prisma.CitizenCategoryAssignmentCreateNestedManyWithoutCitizenInput
   wards?: Prisma.CitizenWardAssignmentCreateNestedManyWithoutCitizenInput
   serviceRecords?: Prisma.CitizenServiceRecordCreateNestedManyWithoutCitizenInput
@@ -529,6 +545,7 @@ export type CitizenUncheckedCreateInput = {
   status?: $Enums.RecordStatus
   version?: number
   createdById?: string | null
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -560,6 +577,7 @@ export type CitizenUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdBy?: Prisma.UserUpdateOneWithoutCreatedCitizensNestedInput
+  tole?: Prisma.ToleUpdateOneWithoutCitizensNestedInput
   categories?: Prisma.CitizenCategoryAssignmentUpdateManyWithoutCitizenNestedInput
   wards?: Prisma.CitizenWardAssignmentUpdateManyWithoutCitizenNestedInput
   serviceRecords?: Prisma.CitizenServiceRecordUpdateManyWithoutCitizenNestedInput
@@ -585,6 +603,7 @@ export type CitizenUncheckedUpdateInput = {
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -613,6 +632,7 @@ export type CitizenCreateManyInput = {
   status?: $Enums.RecordStatus
   version?: number
   createdById?: string | null
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -662,6 +682,7 @@ export type CitizenUncheckedUpdateManyInput = {
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -697,6 +718,7 @@ export type CitizenCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
+  toleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -727,6 +749,7 @@ export type CitizenMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
+  toleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -752,6 +775,7 @@ export type CitizenMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   version?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
+  toleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -857,6 +881,48 @@ export type CitizenUpdateOneRequiredWithoutWardsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CitizenUpdateToOneWithWhereWithoutWardsInput, Prisma.CitizenUpdateWithoutWardsInput>, Prisma.CitizenUncheckedUpdateWithoutWardsInput>
 }
 
+export type CitizenCreateNestedManyWithoutToleInput = {
+  create?: Prisma.XOR<Prisma.CitizenCreateWithoutToleInput, Prisma.CitizenUncheckedCreateWithoutToleInput> | Prisma.CitizenCreateWithoutToleInput[] | Prisma.CitizenUncheckedCreateWithoutToleInput[]
+  connectOrCreate?: Prisma.CitizenCreateOrConnectWithoutToleInput | Prisma.CitizenCreateOrConnectWithoutToleInput[]
+  createMany?: Prisma.CitizenCreateManyToleInputEnvelope
+  connect?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+}
+
+export type CitizenUncheckedCreateNestedManyWithoutToleInput = {
+  create?: Prisma.XOR<Prisma.CitizenCreateWithoutToleInput, Prisma.CitizenUncheckedCreateWithoutToleInput> | Prisma.CitizenCreateWithoutToleInput[] | Prisma.CitizenUncheckedCreateWithoutToleInput[]
+  connectOrCreate?: Prisma.CitizenCreateOrConnectWithoutToleInput | Prisma.CitizenCreateOrConnectWithoutToleInput[]
+  createMany?: Prisma.CitizenCreateManyToleInputEnvelope
+  connect?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+}
+
+export type CitizenUpdateManyWithoutToleNestedInput = {
+  create?: Prisma.XOR<Prisma.CitizenCreateWithoutToleInput, Prisma.CitizenUncheckedCreateWithoutToleInput> | Prisma.CitizenCreateWithoutToleInput[] | Prisma.CitizenUncheckedCreateWithoutToleInput[]
+  connectOrCreate?: Prisma.CitizenCreateOrConnectWithoutToleInput | Prisma.CitizenCreateOrConnectWithoutToleInput[]
+  upsert?: Prisma.CitizenUpsertWithWhereUniqueWithoutToleInput | Prisma.CitizenUpsertWithWhereUniqueWithoutToleInput[]
+  createMany?: Prisma.CitizenCreateManyToleInputEnvelope
+  set?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  disconnect?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  delete?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  connect?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  update?: Prisma.CitizenUpdateWithWhereUniqueWithoutToleInput | Prisma.CitizenUpdateWithWhereUniqueWithoutToleInput[]
+  updateMany?: Prisma.CitizenUpdateManyWithWhereWithoutToleInput | Prisma.CitizenUpdateManyWithWhereWithoutToleInput[]
+  deleteMany?: Prisma.CitizenScalarWhereInput | Prisma.CitizenScalarWhereInput[]
+}
+
+export type CitizenUncheckedUpdateManyWithoutToleNestedInput = {
+  create?: Prisma.XOR<Prisma.CitizenCreateWithoutToleInput, Prisma.CitizenUncheckedCreateWithoutToleInput> | Prisma.CitizenCreateWithoutToleInput[] | Prisma.CitizenUncheckedCreateWithoutToleInput[]
+  connectOrCreate?: Prisma.CitizenCreateOrConnectWithoutToleInput | Prisma.CitizenCreateOrConnectWithoutToleInput[]
+  upsert?: Prisma.CitizenUpsertWithWhereUniqueWithoutToleInput | Prisma.CitizenUpsertWithWhereUniqueWithoutToleInput[]
+  createMany?: Prisma.CitizenCreateManyToleInputEnvelope
+  set?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  disconnect?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  delete?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  connect?: Prisma.CitizenWhereUniqueInput | Prisma.CitizenWhereUniqueInput[]
+  update?: Prisma.CitizenUpdateWithWhereUniqueWithoutToleInput | Prisma.CitizenUpdateWithWhereUniqueWithoutToleInput[]
+  updateMany?: Prisma.CitizenUpdateManyWithWhereWithoutToleInput | Prisma.CitizenUpdateManyWithWhereWithoutToleInput[]
+  deleteMany?: Prisma.CitizenScalarWhereInput | Prisma.CitizenScalarWhereInput[]
+}
+
 export type CitizenCreateNestedOneWithoutServiceRecordsInput = {
   create?: Prisma.XOR<Prisma.CitizenCreateWithoutServiceRecordsInput, Prisma.CitizenUncheckedCreateWithoutServiceRecordsInput>
   connectOrCreate?: Prisma.CitizenCreateOrConnectWithoutServiceRecordsInput
@@ -893,6 +959,7 @@ export type CitizenCreateWithoutCreatedByInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  tole?: Prisma.ToleCreateNestedOneWithoutCitizensInput
   categories?: Prisma.CitizenCategoryAssignmentCreateNestedManyWithoutCitizenInput
   wards?: Prisma.CitizenWardAssignmentCreateNestedManyWithoutCitizenInput
   serviceRecords?: Prisma.CitizenServiceRecordCreateNestedManyWithoutCitizenInput
@@ -917,6 +984,7 @@ export type CitizenUncheckedCreateWithoutCreatedByInput = {
   profilePhotoUrl?: string | null
   status?: $Enums.RecordStatus
   version?: number
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -974,6 +1042,7 @@ export type CitizenScalarWhereInput = {
   status?: Prisma.EnumRecordStatusFilter<"Citizen"> | $Enums.RecordStatus
   version?: Prisma.IntFilter<"Citizen"> | number
   createdById?: Prisma.StringNullableFilter<"Citizen"> | string | null
+  toleId?: Prisma.StringNullableFilter<"Citizen"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Citizen"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Citizen"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Citizen"> | Date | string | null
@@ -1002,6 +1071,7 @@ export type CitizenCreateWithoutCategoriesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedCitizensInput
+  tole?: Prisma.ToleCreateNestedOneWithoutCitizensInput
   wards?: Prisma.CitizenWardAssignmentCreateNestedManyWithoutCitizenInput
   serviceRecords?: Prisma.CitizenServiceRecordCreateNestedManyWithoutCitizenInput
 }
@@ -1026,6 +1096,7 @@ export type CitizenUncheckedCreateWithoutCategoriesInput = {
   status?: $Enums.RecordStatus
   version?: number
   createdById?: string | null
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1072,6 +1143,7 @@ export type CitizenUpdateWithoutCategoriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdBy?: Prisma.UserUpdateOneWithoutCreatedCitizensNestedInput
+  tole?: Prisma.ToleUpdateOneWithoutCitizensNestedInput
   wards?: Prisma.CitizenWardAssignmentUpdateManyWithoutCitizenNestedInput
   serviceRecords?: Prisma.CitizenServiceRecordUpdateManyWithoutCitizenNestedInput
 }
@@ -1096,6 +1168,7 @@ export type CitizenUncheckedUpdateWithoutCategoriesInput = {
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1126,6 +1199,7 @@ export type CitizenCreateWithoutWardsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedCitizensInput
+  tole?: Prisma.ToleCreateNestedOneWithoutCitizensInput
   categories?: Prisma.CitizenCategoryAssignmentCreateNestedManyWithoutCitizenInput
   serviceRecords?: Prisma.CitizenServiceRecordCreateNestedManyWithoutCitizenInput
 }
@@ -1150,6 +1224,7 @@ export type CitizenUncheckedCreateWithoutWardsInput = {
   status?: $Enums.RecordStatus
   version?: number
   createdById?: string | null
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1196,6 +1271,7 @@ export type CitizenUpdateWithoutWardsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdBy?: Prisma.UserUpdateOneWithoutCreatedCitizensNestedInput
+  tole?: Prisma.ToleUpdateOneWithoutCitizensNestedInput
   categories?: Prisma.CitizenCategoryAssignmentUpdateManyWithoutCitizenNestedInput
   serviceRecords?: Prisma.CitizenServiceRecordUpdateManyWithoutCitizenNestedInput
 }
@@ -1220,11 +1296,94 @@ export type CitizenUncheckedUpdateWithoutWardsInput = {
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   categories?: Prisma.CitizenCategoryAssignmentUncheckedUpdateManyWithoutCitizenNestedInput
   serviceRecords?: Prisma.CitizenServiceRecordUncheckedUpdateManyWithoutCitizenNestedInput
+}
+
+export type CitizenCreateWithoutToleInput = {
+  id?: string
+  clientUuid: string
+  publicId: string
+  fullName: string
+  dateOfBirth?: Date | string | null
+  approximateAge?: number | null
+  gender: $Enums.Gender
+  phone?: string | null
+  casteGroupCode?: string | null
+  casteOther?: string | null
+  maritalStatusCode?: string | null
+  occupationCode?: string | null
+  occupationOther?: string | null
+  livingStatusCode?: string | null
+  householdForeignEmployment?: boolean | null
+  profilePhotoUrl?: string | null
+  status?: $Enums.RecordStatus
+  version?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedCitizensInput
+  categories?: Prisma.CitizenCategoryAssignmentCreateNestedManyWithoutCitizenInput
+  wards?: Prisma.CitizenWardAssignmentCreateNestedManyWithoutCitizenInput
+  serviceRecords?: Prisma.CitizenServiceRecordCreateNestedManyWithoutCitizenInput
+}
+
+export type CitizenUncheckedCreateWithoutToleInput = {
+  id?: string
+  clientUuid: string
+  publicId: string
+  fullName: string
+  dateOfBirth?: Date | string | null
+  approximateAge?: number | null
+  gender: $Enums.Gender
+  phone?: string | null
+  casteGroupCode?: string | null
+  casteOther?: string | null
+  maritalStatusCode?: string | null
+  occupationCode?: string | null
+  occupationOther?: string | null
+  livingStatusCode?: string | null
+  householdForeignEmployment?: boolean | null
+  profilePhotoUrl?: string | null
+  status?: $Enums.RecordStatus
+  version?: number
+  createdById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  categories?: Prisma.CitizenCategoryAssignmentUncheckedCreateNestedManyWithoutCitizenInput
+  wards?: Prisma.CitizenWardAssignmentUncheckedCreateNestedManyWithoutCitizenInput
+  serviceRecords?: Prisma.CitizenServiceRecordUncheckedCreateNestedManyWithoutCitizenInput
+}
+
+export type CitizenCreateOrConnectWithoutToleInput = {
+  where: Prisma.CitizenWhereUniqueInput
+  create: Prisma.XOR<Prisma.CitizenCreateWithoutToleInput, Prisma.CitizenUncheckedCreateWithoutToleInput>
+}
+
+export type CitizenCreateManyToleInputEnvelope = {
+  data: Prisma.CitizenCreateManyToleInput | Prisma.CitizenCreateManyToleInput[]
+  skipDuplicates?: boolean
+}
+
+export type CitizenUpsertWithWhereUniqueWithoutToleInput = {
+  where: Prisma.CitizenWhereUniqueInput
+  update: Prisma.XOR<Prisma.CitizenUpdateWithoutToleInput, Prisma.CitizenUncheckedUpdateWithoutToleInput>
+  create: Prisma.XOR<Prisma.CitizenCreateWithoutToleInput, Prisma.CitizenUncheckedCreateWithoutToleInput>
+}
+
+export type CitizenUpdateWithWhereUniqueWithoutToleInput = {
+  where: Prisma.CitizenWhereUniqueInput
+  data: Prisma.XOR<Prisma.CitizenUpdateWithoutToleInput, Prisma.CitizenUncheckedUpdateWithoutToleInput>
+}
+
+export type CitizenUpdateManyWithWhereWithoutToleInput = {
+  where: Prisma.CitizenScalarWhereInput
+  data: Prisma.XOR<Prisma.CitizenUpdateManyMutationInput, Prisma.CitizenUncheckedUpdateManyWithoutToleInput>
 }
 
 export type CitizenCreateWithoutServiceRecordsInput = {
@@ -1250,6 +1409,7 @@ export type CitizenCreateWithoutServiceRecordsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedCitizensInput
+  tole?: Prisma.ToleCreateNestedOneWithoutCitizensInput
   categories?: Prisma.CitizenCategoryAssignmentCreateNestedManyWithoutCitizenInput
   wards?: Prisma.CitizenWardAssignmentCreateNestedManyWithoutCitizenInput
 }
@@ -1274,6 +1434,7 @@ export type CitizenUncheckedCreateWithoutServiceRecordsInput = {
   status?: $Enums.RecordStatus
   version?: number
   createdById?: string | null
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1320,6 +1481,7 @@ export type CitizenUpdateWithoutServiceRecordsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdBy?: Prisma.UserUpdateOneWithoutCreatedCitizensNestedInput
+  tole?: Prisma.ToleUpdateOneWithoutCitizensNestedInput
   categories?: Prisma.CitizenCategoryAssignmentUpdateManyWithoutCitizenNestedInput
   wards?: Prisma.CitizenWardAssignmentUpdateManyWithoutCitizenNestedInput
 }
@@ -1344,6 +1506,7 @@ export type CitizenUncheckedUpdateWithoutServiceRecordsInput = {
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1370,6 +1533,7 @@ export type CitizenCreateManyCreatedByInput = {
   profilePhotoUrl?: string | null
   status?: $Enums.RecordStatus
   version?: number
+  toleId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1397,6 +1561,7 @@ export type CitizenUpdateWithoutCreatedByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tole?: Prisma.ToleUpdateOneWithoutCitizensNestedInput
   categories?: Prisma.CitizenCategoryAssignmentUpdateManyWithoutCitizenNestedInput
   wards?: Prisma.CitizenWardAssignmentUpdateManyWithoutCitizenNestedInput
   serviceRecords?: Prisma.CitizenServiceRecordUpdateManyWithoutCitizenNestedInput
@@ -1421,6 +1586,7 @@ export type CitizenUncheckedUpdateWithoutCreatedByInput = {
   profilePhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1448,6 +1614,113 @@ export type CitizenUncheckedUpdateManyWithoutCreatedByInput = {
   profilePhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  toleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type CitizenCreateManyToleInput = {
+  id?: string
+  clientUuid: string
+  publicId: string
+  fullName: string
+  dateOfBirth?: Date | string | null
+  approximateAge?: number | null
+  gender: $Enums.Gender
+  phone?: string | null
+  casteGroupCode?: string | null
+  casteOther?: string | null
+  maritalStatusCode?: string | null
+  occupationCode?: string | null
+  occupationOther?: string | null
+  livingStatusCode?: string | null
+  householdForeignEmployment?: boolean | null
+  profilePhotoUrl?: string | null
+  status?: $Enums.RecordStatus
+  version?: number
+  createdById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type CitizenUpdateWithoutToleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUuid?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  casteOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maritalStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  livingStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  householdForeignEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profilePhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedCitizensNestedInput
+  categories?: Prisma.CitizenCategoryAssignmentUpdateManyWithoutCitizenNestedInput
+  wards?: Prisma.CitizenWardAssignmentUpdateManyWithoutCitizenNestedInput
+  serviceRecords?: Prisma.CitizenServiceRecordUpdateManyWithoutCitizenNestedInput
+}
+
+export type CitizenUncheckedUpdateWithoutToleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUuid?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  casteOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maritalStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  livingStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  householdForeignEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profilePhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  categories?: Prisma.CitizenCategoryAssignmentUncheckedUpdateManyWithoutCitizenNestedInput
+  wards?: Prisma.CitizenWardAssignmentUncheckedUpdateManyWithoutCitizenNestedInput
+  serviceRecords?: Prisma.CitizenServiceRecordUncheckedUpdateManyWithoutCitizenNestedInput
+}
+
+export type CitizenUncheckedUpdateManyWithoutToleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUuid?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  casteOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maritalStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  livingStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  householdForeignEmployment?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profilePhotoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRecordStatusFieldUpdateOperationsInput | $Enums.RecordStatus
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1522,10 +1795,12 @@ export type CitizenSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   status?: boolean
   version?: boolean
   createdById?: boolean
+  toleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
+  tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
   categories?: boolean | Prisma.Citizen$categoriesArgs<ExtArgs>
   wards?: boolean | Prisma.Citizen$wardsArgs<ExtArgs>
   serviceRecords?: boolean | Prisma.Citizen$serviceRecordsArgs<ExtArgs>
@@ -1552,10 +1827,12 @@ export type CitizenSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   version?: boolean
   createdById?: boolean
+  toleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
+  tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
 }, ExtArgs["result"]["citizen"]>
 
 export type CitizenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1578,10 +1855,12 @@ export type CitizenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   version?: boolean
   createdById?: boolean
+  toleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
+  tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
 }, ExtArgs["result"]["citizen"]>
 
 export type CitizenSelectScalar = {
@@ -1604,14 +1883,16 @@ export type CitizenSelectScalar = {
   status?: boolean
   version?: boolean
   createdById?: boolean
+  toleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type CitizenOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientUuid" | "publicId" | "fullName" | "dateOfBirth" | "approximateAge" | "gender" | "phone" | "casteGroupCode" | "casteOther" | "maritalStatusCode" | "occupationCode" | "occupationOther" | "livingStatusCode" | "householdForeignEmployment" | "profilePhotoUrl" | "status" | "version" | "createdById" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["citizen"]>
+export type CitizenOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientUuid" | "publicId" | "fullName" | "dateOfBirth" | "approximateAge" | "gender" | "phone" | "casteGroupCode" | "casteOther" | "maritalStatusCode" | "occupationCode" | "occupationOther" | "livingStatusCode" | "householdForeignEmployment" | "profilePhotoUrl" | "status" | "version" | "createdById" | "toleId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["citizen"]>
 export type CitizenInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
+  tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
   categories?: boolean | Prisma.Citizen$categoriesArgs<ExtArgs>
   wards?: boolean | Prisma.Citizen$wardsArgs<ExtArgs>
   serviceRecords?: boolean | Prisma.Citizen$serviceRecordsArgs<ExtArgs>
@@ -1619,15 +1900,18 @@ export type CitizenInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 export type CitizenIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
+  tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
 }
 export type CitizenIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
+  tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
 }
 
 export type $CitizenPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Citizen"
   objects: {
     createdBy: Prisma.$UserPayload<ExtArgs> | null
+    tole: Prisma.$TolePayload<ExtArgs> | null
     categories: Prisma.$CitizenCategoryAssignmentPayload<ExtArgs>[]
     wards: Prisma.$CitizenWardAssignmentPayload<ExtArgs>[]
     serviceRecords: Prisma.$CitizenServiceRecordPayload<ExtArgs>[]
@@ -1652,6 +1936,7 @@ export type $CitizenPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     status: $Enums.RecordStatus
     version: number
     createdById: string | null
+    toleId: string | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -2050,6 +2335,7 @@ readonly fields: CitizenFieldRefs;
 export interface Prisma__CitizenClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   createdBy<T extends Prisma.Citizen$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Citizen$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tole<T extends Prisma.Citizen$toleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Citizen$toleArgs<ExtArgs>>): Prisma.Prisma__ToleClient<runtime.Types.Result.GetResult<Prisma.$TolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   categories<T extends Prisma.Citizen$categoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Citizen$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CitizenCategoryAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wards<T extends Prisma.Citizen$wardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Citizen$wardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CitizenWardAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   serviceRecords<T extends Prisma.Citizen$serviceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Citizen$serviceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CitizenServiceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2101,6 +2387,7 @@ export interface CitizenFieldRefs {
   readonly status: Prisma.FieldRef<"Citizen", 'RecordStatus'>
   readonly version: Prisma.FieldRef<"Citizen", 'Int'>
   readonly createdById: Prisma.FieldRef<"Citizen", 'String'>
+  readonly toleId: Prisma.FieldRef<"Citizen", 'String'>
   readonly createdAt: Prisma.FieldRef<"Citizen", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Citizen", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Citizen", 'DateTime'>
@@ -2521,6 +2808,25 @@ export type Citizen$createdByArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * Citizen.tole
+ */
+export type Citizen$toleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tole
+   */
+  select?: Prisma.ToleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tole
+   */
+  omit?: Prisma.ToleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ToleInclude<ExtArgs> | null
+  where?: Prisma.ToleWhereInput
 }
 
 /**

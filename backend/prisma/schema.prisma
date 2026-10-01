@@ -89,10 +89,12 @@ model Citizen {
   status                     RecordStatus @default(ACTIVE)
   version                    Int @default(1)
   createdById                String?
+  toleId                     String?
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
   deletedAt                  DateTime?
   createdBy                  User? @relation("CitizenCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  tole                       Tole? @relation(fields: [toleId], references: [id], onDelete: SetNull)
   categories                 CitizenCategoryAssignment[]
   wards                      CitizenWardAssignment[]
   serviceRecords             CitizenServiceRecord[]
@@ -100,6 +102,7 @@ model Citizen {
   @@index([fullName])
   @@index([phone])
   @@index([status, updatedAt])
+  @@index([toleId])
 }
 
 model CitizenCategory {
@@ -148,6 +151,24 @@ model Ward {
   staff     StaffProfile[]
   citizens  CitizenWardAssignment[]
   healthPosts HealthPost[]
+  toles     Tole[]
+}
+
+model Tole {
+  id           String @id @default(uuid())
+  name         String
+  wardId       String
+  healthPostId String
+  active       Boolean @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  ward         Ward @relation(fields: [wardId], references: [id], onDelete: Restrict)
+  healthPost   HealthPost @relation(fields: [healthPostId], references: [id], onDelete: Restrict)
+  citizens     Citizen[]
+
+  @@unique([wardId, name])
+  @@index([healthPostId])
+  @@index([name])
 }
 
 model HealthCondition {
@@ -332,6 +353,7 @@ model HealthPost {
   updatedAt DateTime @updatedAt
   ward      Ward @relation(fields: [wardId], references: [id], onDelete: Restrict)
   staff     StaffProfile[]
+  toles     Tole[]
 
   @@index([wardId])
   @@index([name])

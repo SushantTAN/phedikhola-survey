@@ -53,6 +53,11 @@ export type CitizenWardAssignment = Prisma.CitizenWardAssignmentModel
  */
 export type Ward = Prisma.WardModel
 /**
+ * Model Tole
+ * 
+ */
+export type Tole = Prisma.ToleModel
+/**
  * Model HealthCondition
  * 
  */

@@ -9,8 +9,16 @@ citizenRouter.use(requireAuth);
 
 const citizenInclude = {
   categories: { include: { category: true } },
-  wards: { include: { ward: true } }
+  wards: { include: { ward: true } },
+  tole: { include: { ward: true, healthPost: true } }
 } as const;
+
+async function validateTole(toleId: string | null, wardIds: string[]) {
+  if (!toleId) return;
+  const tole = await prisma.tole.findFirst({ where: { id: toleId, active: true, ward: { active: true }, healthPost: { active: true } } });
+  if (!tole) throw new HttpError(400, "INVALID_TOLE", "Select an active tole");
+  if (!wardIds.includes(tole.wardId)) throw new HttpError(400, "TOLE_WARD_MISMATCH", "The selected tole must belong to an assigned ward");
+}
 
 function makePublicId(clientUuid: string) {
   return `PHE-${new Date().getFullYear()}-${clientUuid.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
@@ -23,7 +31,7 @@ function selectedCategoryIds(body: any): string[] | null {
 }
 
 function selectedWardIds(body: any): string[] | null {
-  if (Array.isArray(body.wardIds)) return [...new Set(body.wardIds.map(String))];
+  if (Array.isArray(body.wardIds)) return [...new Set<string>(body.wardIds.map(String))];
   return null;
 }
 
@@ -72,6 +80,8 @@ citizenRouter.post("/", asyncHandler(async (req, res) => {
   if (!fullName) throw new HttpError(400, "FULL_NAME_REQUIRED", "Full name is required");
   const categoryIds = selectedCategoryIds(req.body) ?? [];
   const wardIds = selectedWardIds(req.body) ?? [];
+  const toleId = req.body.toleId ? String(req.body.toleId) : null;
+  await validateTole(toleId, wardIds);
   const clientUuid = String(req.body.clientUuid ?? randomUUID());
   const citizen = await prisma.citizen.create({
     data: {
@@ -91,6 +101,7 @@ citizenRouter.post("/", asyncHandler(async (req, res) => {
       householdForeignEmployment: typeof req.body.householdForeignEmployment === "boolean" ? req.body.householdForeignEmployment : null,
       profilePhotoUrl: req.body.profilePhotoUrl || null,
       createdById: req.user!.sub,
+      toleId,
       categories: { create: categoryIds.map(categoryId => ({ categoryId })) },
       wards: { create: wardIds.map(wardId => ({ wardId })) }
     },
@@ -105,6 +116,11 @@ citizenRouter.patch("/:id", asyncHandler(async (req, res) => {
   if (req.body.version && Number(req.body.version) !== current.version) throw new HttpError(409, "SYNC_CONFLICT", "Citizen was updated elsewhere");
   const categoryIds = selectedCategoryIds(req.body);
   const wardIds = selectedWardIds(req.body);
+  const toleId = req.body.toleId === undefined ? current.toleId : req.body.toleId ? String(req.body.toleId) : null;
+  if (req.body.toleId !== undefined || wardIds) {
+    const assignedWardIds = wardIds ?? (await prisma.citizenWardAssignment.findMany({ where: { citizenId: current.id }, select: { wardId: true } })).map(x => x.wardId);
+    await validateTole(toleId, assignedWardIds);
+  }
   const citizen = await prisma.$transaction(async tx => {
     if (categoryIds) {
       await tx.citizenCategoryAssignment.deleteMany({ where: { citizenId: current.id } });
@@ -130,6 +146,7 @@ citizenRouter.patch("/:id", asyncHandler(async (req, res) => {
         livingStatusCode: req.body.livingStatusCode,
         householdForeignEmployment: req.body.householdForeignEmployment,
         profilePhotoUrl: req.body.profilePhotoUrl,
+        toleId: req.body.toleId === undefined ? undefined : toleId,
         version: { increment: 1 }
       },
       include: citizenInclude

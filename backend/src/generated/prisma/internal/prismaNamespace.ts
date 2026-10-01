@@ -404,6 +404,7 @@ export const ModelName = {
   CitizenCategoryAssignment: 'CitizenCategoryAssignment',
   CitizenWardAssignment: 'CitizenWardAssignment',
   Ward: 'Ward',
+  Tole: 'Tole',
   HealthCondition: 'HealthCondition',
   MedicineUnit: 'MedicineUnit',
   Medicine: 'Medicine',
@@ -432,7 +433,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "staffProfile" | "citizen" | "citizenCategory" | "citizenCategoryAssignment" | "citizenWardAssignment" | "ward" | "healthCondition" | "medicineUnit" | "medicine" | "citizenServiceRecord" | "serviceHealthCondition" | "serviceMedicine" | "refreshToken" | "passwordResetOtp" | "syncLog" | "auditLog" | "appVersion" | "systemSetting" | "healthPost"
+    modelProps: "user" | "staffProfile" | "citizen" | "citizenCategory" | "citizenCategoryAssignment" | "citizenWardAssignment" | "ward" | "tole" | "healthCondition" | "medicineUnit" | "medicine" | "citizenServiceRecord" | "serviceHealthCondition" | "serviceMedicine" | "refreshToken" | "passwordResetOtp" | "syncLog" | "auditLog" | "appVersion" | "systemSetting" | "healthPost"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -951,6 +952,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.WardCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.WardCountAggregateOutputType> | number
+        }
+      }
+    }
+    Tole: {
+      payload: Prisma.$TolePayload<ExtArgs>
+      fields: Prisma.ToleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ToleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ToleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>
+        }
+        findFirst: {
+          args: Prisma.ToleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ToleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>
+        }
+        findMany: {
+          args: Prisma.ToleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>[]
+        }
+        create: {
+          args: Prisma.ToleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>
+        }
+        createMany: {
+          args: Prisma.ToleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ToleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>[]
+        }
+        delete: {
+          args: Prisma.ToleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>
+        }
+        update: {
+          args: Prisma.ToleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>
+        }
+        deleteMany: {
+          args: Prisma.ToleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ToleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ToleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>[]
+        }
+        upsert: {
+          args: Prisma.ToleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TolePayload>
+        }
+        aggregate: {
+          args: Prisma.ToleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTole>
+        }
+        groupBy: {
+          args: Prisma.ToleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ToleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ToleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ToleCountAggregateOutputType> | number
         }
       }
     }
@@ -2005,6 +2080,7 @@ export const CitizenScalarFieldEnum = {
   status: 'status',
   version: 'version',
   createdById: 'createdById',
+  toleId: 'toleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -2057,6 +2133,19 @@ export const WardScalarFieldEnum = {
 } as const
 
 export type WardScalarFieldEnum = (typeof WardScalarFieldEnum)[keyof typeof WardScalarFieldEnum]
+
+
+export const ToleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  wardId: 'wardId',
+  healthPostId: 'healthPostId',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ToleScalarFieldEnum = (typeof ToleScalarFieldEnum)[keyof typeof ToleScalarFieldEnum]
 
 
 export const HealthConditionScalarFieldEnum = {
@@ -2601,6 +2690,7 @@ export type GlobalOmitConfig = {
   citizenCategoryAssignment?: Prisma.CitizenCategoryAssignmentOmit
   citizenWardAssignment?: Prisma.CitizenWardAssignmentOmit
   ward?: Prisma.WardOmit
+  tole?: Prisma.ToleOmit
   healthCondition?: Prisma.HealthConditionOmit
   medicineUnit?: Prisma.MedicineUnitOmit
   medicine?: Prisma.MedicineOmit

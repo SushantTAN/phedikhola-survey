@@ -35,6 +35,7 @@ const schema = yup.object({
   phone: yup.string().nullable(),
   categoryId: yup.string().nullable(),
   wardIds: yup.array(yup.string().required()).default([]),
+  toleId: yup.string().nullable(),
   casteGroupCode: yup.string().nullable(),
   casteOther: yup.string().nullable(),
   maritalStatusCode: yup.string().nullable(),
@@ -83,6 +84,7 @@ const empty: CitizenFormValues = {
   phone: "",
   categoryId: "",
   wardIds: [],
+  toleId: "",
   casteGroupCode: "",
   casteOther: "",
   maritalStatusCode: "",
@@ -114,6 +116,7 @@ export function CitizenForm({
   const queryClient = useQueryClient();
   const [reference, setReference] = useState<any>({
     wards: [],
+    toles: [],
     categories: [],
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -124,6 +127,7 @@ export function CitizenForm({
     control,
     handleSubmit,
     reset,
+    setValue,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<CitizenFormValues>({
@@ -152,6 +156,7 @@ export function CitizenForm({
         initialData.categories?.[0]?.category?.id ??
         "",
       wardIds: initialData.wards?.map((x: any) => x.wardId ?? x.ward?.id) ?? [],
+      toleId: initialData.toleId ?? "",
       casteGroupCode: initialData.casteGroupCode ?? "",
       casteOther: initialData.casteOther ?? "",
       maritalStatusCode: initialData.maritalStatusCode ?? "",
@@ -168,6 +173,13 @@ export function CitizenForm({
   }, [initialData, reset]);
   const casteValue = watch("casteGroupCode"),
     occupationValue = watch("occupationCode");
+  const selectedWardIds = watch("wardIds") || [];
+  const selectedToleId = watch("toleId");
+  useEffect(() => {
+    if (selectedToleId && reference.toles.length && !reference.toles.some((t: any) => t.id === selectedToleId && selectedWardIds.includes(t.wardId))) {
+      setValue("toleId", "");
+    }
+  }, [selectedWardIds, selectedToleId, reference.toles, setValue]);
   async function submit(values: CitizenFormValues) {
     setServerError("");
     try {
@@ -183,6 +195,7 @@ export function CitizenForm({
       const payload = {
         ...values,
         categoryId: values.categoryId || null,
+        toleId: values.toleId || null,
         profilePhotoUrl,
         householdForeignEmployment: values.householdForeignEmployment,
       };
@@ -294,6 +307,20 @@ export function CitizenForm({
                   }))}
                 />
               </Field>
+            )}
+          />
+          <Controller
+            control={control}
+            name="toleId"
+            render={({ field }) => (
+              <SelectField
+                label="Tole"
+                loading={refLoading}
+                value={field.value || ""}
+                onValueChange={(value) => field.onChange(value === "__none" ? "" : value)}
+                placeholder={selectedWardIds.length ? "Select tole" : "Select a ward first"}
+                options={[["__none", "No tole"], ...reference.toles.filter((t: any) => selectedWardIds.includes(t.wardId)).map((t: any) => [t.id, `${t.name} · ${t.ward.nameEn}`])]}
+              />
             )}
           />
         </CardContent>

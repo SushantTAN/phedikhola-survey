@@ -58,6 +58,7 @@ export const ModelName = {
   CitizenCategoryAssignment: 'CitizenCategoryAssignment',
   CitizenWardAssignment: 'CitizenWardAssignment',
   Ward: 'Ward',
+  Tole: 'Tole',
   HealthCondition: 'HealthCondition',
   MedicineUnit: 'MedicineUnit',
   Medicine: 'Medicine',
@@ -139,6 +140,7 @@ export const CitizenScalarFieldEnum = {
   status: 'status',
   version: 'version',
   createdById: 'createdById',
+  toleId: 'toleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -191,6 +193,19 @@ export const WardScalarFieldEnum = {
 } as const
 
 export type WardScalarFieldEnum = (typeof WardScalarFieldEnum)[keyof typeof WardScalarFieldEnum]
+
+
+export const ToleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  wardId: 'wardId',
+  healthPostId: 'healthPostId',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ToleScalarFieldEnum = (typeof ToleScalarFieldEnum)[keyof typeof ToleScalarFieldEnum]
 
 
 export const HealthConditionScalarFieldEnum = {

@@ -7,15 +7,16 @@ export const masterRouter = Router();
 masterRouter.use(requireAuth);
 
 masterRouter.get("/reference-data", asyncHandler(async (_req, res) => {
-  const [wards, categories, conditions, medicines, units, appVersion] = await Promise.all([
+  const [wards, toles, categories, conditions, medicines, units, appVersion] = await Promise.all([
     prisma.ward.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } }),
+    prisma.tole.findMany({ where: { active: true, ward: { active: true }, healthPost: { active: true } }, include: { ward: true, healthPost: true }, orderBy: { name: "asc" } }),
     prisma.citizenCategory.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } }),
     prisma.healthCondition.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } }),
     prisma.medicine.findMany({ where: { active: true }, include: { defaultUnit: true }, orderBy: { name: "asc" } }),
     prisma.medicineUnit.findMany({ where: { active: true }, orderBy: { nameEn: "asc" } }),
     prisma.appVersion.findFirst({ where: { platform: "ANDROID" } })
   ]);
-  res.json({ success: true, data: { wards, categories, conditions, medicines, units, appVersion, serverTime: new Date().toISOString() } });
+  res.json({ success: true, data: { wards, toles, categories, conditions, medicines, units, appVersion, serverTime: new Date().toISOString() } });
 }));
 
 masterRouter.get("/medicines", asyncHandler(async (req, res) => {
