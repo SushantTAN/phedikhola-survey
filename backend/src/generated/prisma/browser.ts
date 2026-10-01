@@ -112,3 +112,8 @@ export type AppVersion = Prisma.AppVersionModel
  * 
  */
 export type SystemSetting = Prisma.SystemSettingModel
+/**
+ * Model HealthPost
+ * 
+ */
+export type HealthPost = Prisma.HealthPostModel

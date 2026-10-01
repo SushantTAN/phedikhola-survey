@@ -69,7 +69,8 @@ export const ModelName = {
   SyncLog: 'SyncLog',
   AuditLog: 'AuditLog',
   AppVersion: 'AppVersion',
-  SystemSetting: 'SystemSetting'
+  SystemSetting: 'SystemSetting',
+  HealthPost: 'HealthPost'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -110,6 +111,7 @@ export const StaffProfileScalarFieldEnum = {
   userId: 'userId',
   employeeCode: 'employeeCode',
   assignedWardId: 'assignedWardId',
+  healthPostId: 'healthPostId',
   citizenEntryCount: 'citizenEntryCount',
   serviceEntryCount: 'serviceEntryCount'
 } as const
@@ -359,6 +361,20 @@ export const SystemSettingScalarFieldEnum = {
 } as const
 
 export type SystemSettingScalarFieldEnum = (typeof SystemSettingScalarFieldEnum)[keyof typeof SystemSettingScalarFieldEnum]
+
+
+export const HealthPostScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  wardId: 'wardId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HealthPostScalarFieldEnum = (typeof HealthPostScalarFieldEnum)[keyof typeof HealthPostScalarFieldEnum]
 
 
 export const SortOrder = {

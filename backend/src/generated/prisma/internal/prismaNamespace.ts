@@ -415,7 +415,8 @@ export const ModelName = {
   SyncLog: 'SyncLog',
   AuditLog: 'AuditLog',
   AppVersion: 'AppVersion',
-  SystemSetting: 'SystemSetting'
+  SystemSetting: 'SystemSetting',
+  HealthPost: 'HealthPost'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -431,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "staffProfile" | "citizen" | "citizenCategory" | "citizenCategoryAssignment" | "citizenWardAssignment" | "ward" | "healthCondition" | "medicineUnit" | "medicine" | "citizenServiceRecord" | "serviceHealthCondition" | "serviceMedicine" | "refreshToken" | "passwordResetOtp" | "syncLog" | "auditLog" | "appVersion" | "systemSetting"
+    modelProps: "user" | "staffProfile" | "citizen" | "citizenCategory" | "citizenCategoryAssignment" | "citizenWardAssignment" | "ward" | "healthCondition" | "medicineUnit" | "medicine" | "citizenServiceRecord" | "serviceHealthCondition" | "serviceMedicine" | "refreshToken" | "passwordResetOtp" | "syncLog" | "auditLog" | "appVersion" | "systemSetting" | "healthPost"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1841,6 +1842,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    HealthPost: {
+      payload: Prisma.$HealthPostPayload<ExtArgs>
+      fields: Prisma.HealthPostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HealthPostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HealthPostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>
+        }
+        findFirst: {
+          args: Prisma.HealthPostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HealthPostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>
+        }
+        findMany: {
+          args: Prisma.HealthPostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>[]
+        }
+        create: {
+          args: Prisma.HealthPostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>
+        }
+        createMany: {
+          args: Prisma.HealthPostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HealthPostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>[]
+        }
+        delete: {
+          args: Prisma.HealthPostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>
+        }
+        update: {
+          args: Prisma.HealthPostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>
+        }
+        deleteMany: {
+          args: Prisma.HealthPostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HealthPostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HealthPostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>[]
+        }
+        upsert: {
+          args: Prisma.HealthPostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthPostPayload>
+        }
+        aggregate: {
+          args: Prisma.HealthPostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHealthPost>
+        }
+        groupBy: {
+          args: Prisma.HealthPostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HealthPostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HealthPostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HealthPostCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1902,6 +1977,7 @@ export const StaffProfileScalarFieldEnum = {
   userId: 'userId',
   employeeCode: 'employeeCode',
   assignedWardId: 'assignedWardId',
+  healthPostId: 'healthPostId',
   citizenEntryCount: 'citizenEntryCount',
   serviceEntryCount: 'serviceEntryCount'
 } as const
@@ -2151,6 +2227,20 @@ export const SystemSettingScalarFieldEnum = {
 } as const
 
 export type SystemSettingScalarFieldEnum = (typeof SystemSettingScalarFieldEnum)[keyof typeof SystemSettingScalarFieldEnum]
+
+
+export const HealthPostScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  wardId: 'wardId',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HealthPostScalarFieldEnum = (typeof HealthPostScalarFieldEnum)[keyof typeof HealthPostScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2523,6 +2613,7 @@ export type GlobalOmitConfig = {
   auditLog?: Prisma.AuditLogOmit
   appVersion?: Prisma.AppVersionOmit
   systemSetting?: Prisma.SystemSettingOmit
+  healthPost?: Prisma.HealthPostOmit
 }
 
 /* Types for Logging */
