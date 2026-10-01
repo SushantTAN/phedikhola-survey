@@ -35,6 +35,8 @@ import {
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
 import { LocationPicker } from "@/components/shared/location-picker";
+import { BloodPressureStatus } from "@/components/shared/bp-status";
+import { TemperatureStatus } from "@/components/shared/temperature-status";
 import { MedicinePicker } from "@/components/shared/medicine-picker";
 const months = [
   "Baisakh",
@@ -463,6 +465,7 @@ export function ServiceForm({
                   <Input type="number" placeholder="e.g. 80" {...register("diastolic")} />
                 </Field>
               </div>
+              <BloodPressureStatus systolic={watch("systolic")} diastolic={watch("diastolic")} />
             </div>
             <Field label="Pulse rate / minute">
               <Input type="number" {...register("pulseRate")} />
@@ -470,6 +473,7 @@ export function ServiceForm({
             <Field label="Temperature °F">
               <Input type="number" step="0.1" {...register("temperatureF")} />
             </Field>
+            <TemperatureStatus value={watch("temperatureF")} className="sm:col-span-2" />
           </CardContent>
         </Card>
         <Card>
