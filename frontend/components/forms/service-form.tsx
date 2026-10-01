@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/card";
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
+import { MedicinePicker } from "@/components/shared/medicine-picker";
 const months = [
   "Baisakh",
   "Jestha",
@@ -51,6 +52,7 @@ const months = [
 const schema = yup.object({
   citizenId: yup.string().required("Citizen is required"),
   wardId: yup.string().required("Ward is required"),
+  createdById: yup.string().nullable(),
   serviceDate: yup.string().required(),
   nepaliYear: yup
     .number()
@@ -123,6 +125,7 @@ export function ServiceForm({
     units: [],
   });
   const [citizens, setCitizens] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
   const [createdCitizen, setCreatedCitizen] = useState<{
     id: string;
     fullName: string;
@@ -131,8 +134,6 @@ export function ServiceForm({
   const [citizenDialogOpen, setCitizenDialogOpen] = useState(false);
   const [conditionIds, setConditionIds] = useState<string[]>([]);
   const [medicines, setMedicines] = useState<Med[]>([]);
-  const [newMedicine, setNewMedicine] = useState("");
-  const [otherName, setOtherName] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [preview, setPreview] = useState(initialData?.visitPhotoUrl || "");
   const [error, setError] = useState("");
@@ -142,12 +143,14 @@ export function ServiceForm({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { isSubmitting },
   } = useForm<Values>({
     resolver: yupResolver(schema) as any,
     defaultValues: {
       citizenId: defaultCitizenId || "",
       wardId: "",
+      createdById: "",
       serviceDate: new Date().toISOString().slice(0, 10),
       nepaliYear: null,
       nepaliMonth: "",
@@ -181,10 +184,16 @@ export function ServiceForm({
     });
   }, []);
   useEffect(() => {
+    api<any>("/staff")
+      .then((r) => setStaff(r.data.filter((u: any) => u.isActive)))
+      .catch(() => setStaff([]));
+  }, []);
+  useEffect(() => {
     if (!initialData) return;
     reset({
       citizenId: initialData.citizenId,
       wardId: initialData.wardId,
+      createdById: initialData.createdById ?? "",
       serviceDate: String(initialData.serviceDate).slice(0, 10),
       nepaliYear: initialData.nepaliYear ?? null,
       nepaliMonth: initialData.nepaliMonth ?? "",
@@ -223,34 +232,26 @@ export function ServiceForm({
     );
     setPreview(initialData.visitPhotoUrl ?? "");
   }, [initialData, reset]);
-  function addMedicine() {
-    if (newMedicine === "OTHER") {
-      if (!otherName.trim()) return;
-      setMedicines((v) => [
-        ...v,
-        {
-          otherMedicineName: otherName.trim(),
-          label: otherName.trim(),
-          quantity: "1",
-          unit: "unit",
-        },
-      ]);
-      setOtherName("");
-      setNewMedicine("");
-      return;
-    }
-    const m = reference.medicines.find((x: any) => x.id === newMedicine);
-    if (!m || medicines.some((x) => x.medicineId === m.id)) return;
+  function addMedicine(m: any) {
+    setMedicines((v) =>
+      v.some((x) => x.medicineId === m.id)
+        ? v
+        : [
+            ...v,
+            {
+              medicineId: m.id,
+              label: `${m.name}${m.strength ? ` ${m.strength}` : ""}`,
+              quantity: "1",
+              unit: m.defaultUnit?.nameEn || "unit",
+            },
+          ],
+    );
+  }
+  function addOtherMedicine(name: string) {
     setMedicines((v) => [
       ...v,
-      {
-        medicineId: m.id,
-        label: `${m.name}${m.strength ? ` ${m.strength}` : ""}`,
-        quantity: "1",
-        unit: m.defaultUnit?.nameEn || "unit",
-      },
+      { otherMedicineName: name, label: name, quantity: "1", unit: "unit" },
     ]);
-    setNewMedicine("");
   }
   async function submit(values: Values) {
     setError("");
@@ -361,6 +362,30 @@ export function ServiceForm({
                 />
               )}
             />
+            <Controller
+              control={control}
+              name="createdById"
+              render={({ field }) => {
+                const wardId = watch("wardId");
+                const current = initialData?.createdBy;
+                const list = staff.filter(
+                  (u) =>
+                    !wardId ||
+                    u.staffProfile?.assignedWardId === wardId ||
+                    u.id === field.value,
+                );
+                if (current && !list.some((u) => u.id === current.id))
+                  list.push(current);
+                return (
+                  <SelectField
+                    label="Staff"
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    options={list.map((u) => [u.id, u.name])}
+                  />
+                );
+              }}
+            />
             <Field label="Service date *">
               <Input type="date" {...register("serviceDate")} />
             </Field>
@@ -440,49 +465,28 @@ export function ServiceForm({
           <CardHeader>
             <CardTitle>Medicines provided</CardTitle>
             <CardDescription>
-              Add every medicine and the quantity provided.
+              Search for a medicine and click it to add. Then set the quantity given.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-              <FormSelect
-                selected={selectChoice(newMedicine, [
-                  ...reference.medicines.map((m: any) => ({
-                    value: m.id,
-                    label: `${m.name} ${m.strength || ""}`.trim(),
-                  })),
-                  { value: "OTHER", label: "Other medicine" },
-                ])}
-                options={[
-                  ...reference.medicines.map((m: any) => ({
-                    value: m.id,
-                    label: `${m.name} ${m.strength || ""}`.trim(),
-                  })),
-                  { value: "OTHER", label: "Other medicine" },
-                ]}
-                onChange={(choice) => setNewMedicine(choice.value)}
-                placeholder="Select medicine"
-              />
-              {newMedicine === "OTHER" ? (
-                <Input
-                  placeholder="Other medicine name"
-                  value={otherName}
-                  onChange={(e) => setOtherName(e.target.value)}
-                />
-              ) : (
-                <div />
-              )}
-              <Button type="button" variant="outline" onClick={addMedicine}>
-                <Plus />
-                Add
-              </Button>
-            </div>
+            <MedicinePicker
+              medicines={reference.medicines}
+              selectedIds={medicines.flatMap((m) => (m.medicineId ? [m.medicineId] : []))}
+              onAdd={addMedicine}
+              onAddOther={addOtherMedicine}
+            />
             {medicines.length ? (
               <div className="divide-y rounded-xl border border-slate-200">
+                <div className="hidden gap-3 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:grid sm:grid-cols-[1fr_120px_150px_36px]">
+                  <span>Medicine given</span>
+                  <span>Quantity</span>
+                  <span>Unit</span>
+                  <span />
+                </div>
                 {medicines.map((m, i) => (
                   <div
                     key={`${m.medicineId || m.otherMedicineName}-${i}`}
-                    className="grid gap-3 p-3 sm:grid-cols-[1fr_120px_150px_auto] sm:items-center"
+                    className="grid gap-3 p-3 sm:grid-cols-[1fr_120px_150px_36px] sm:items-center"
                   >
                     <div className="font-medium text-slate-800">{m.label}</div>
                     <Input
@@ -523,7 +527,7 @@ export function ServiceForm({
               </div>
             ) : (
               <div className="rounded-xl border border-dashed p-6 text-center text-sm text-slate-500">
-                No medicines added.
+                No medicines added yet. Search above and click a medicine to add it.
               </div>
             )}
           </CardContent>
