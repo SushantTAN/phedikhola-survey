@@ -8,7 +8,7 @@ export const serviceRouter = Router();
 serviceRouter.use(requireAuth);
 
 const include = {
-  citizen: { select: { id: true, publicId: true, fullName: true, phone: true } },
+  citizen: { select: { id: true, publicId: true, fullName: true, phone: true, profilePhotoUrl: true } },
   ward: true,
   createdBy: { select: { id: true, name: true } },
   conditions: { include: { condition: true } },
@@ -53,7 +53,7 @@ serviceRouter.post("/", asyncHandler(async (req, res) => {
       clientUuid: String(req.body.clientUuid ?? randomUUID()),
       citizenId: String(req.body.citizenId),
       wardId: String(req.body.wardId),
-      createdById: req.user!.sub,
+      createdById: req.body.createdById ? String(req.body.createdById) : req.user!.sub,
       serviceType: req.body.serviceType || "SENIOR_CITIZEN_HEALTH",
       serviceDate: req.body.serviceDate ? new Date(req.body.serviceDate) : new Date(),
       nepaliYear: req.body.nepaliYear == null || req.body.nepaliYear === "" ? null : Number(req.body.nepaliYear),
@@ -109,6 +109,7 @@ serviceRouter.patch("/:id", asyncHandler(async (req, res) => {
       data: {
         citizenId: req.body.citizenId,
         wardId: req.body.wardId,
+        createdById: req.body.createdById ? String(req.body.createdById) : undefined,
         serviceDate: req.body.serviceDate ? new Date(req.body.serviceDate) : undefined,
         nepaliYear: req.body.nepaliYear === "" ? null : req.body.nepaliYear,
         nepaliMonth: req.body.nepaliMonth,

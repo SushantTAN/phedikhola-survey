@@ -1,4 +1,4 @@
-﻿"use client";
+﻿"use client";import {AdminShellSkeleton} from "@/components/shared/skeletons";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -49,7 +49,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [mobileOpen]);
 
-  if (!ready) return <div className="grid min-h-screen place-items-center bg-slate-50"><div className="rounded-2xl border bg-white px-6 py-4 text-sm text-slate-500 shadow-sm">Checking administrator session…</div></div>;
+  if (!ready) return <AdminShellSkeleton />;
   if (path === "/admin/login") return <>{children}</>;
 
   const navigation = (mobile: boolean) => (

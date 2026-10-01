@@ -1,4 +1,4 @@
-"use client";
+"use client";import {DetailSkeleton} from "@/components/shared/skeletons";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ export default function Page() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useQuery({ queryKey: ["health-post", id], queryFn: () => api<any>(`/health-posts/${id}`) });
   const h = data?.data;
-  if (isLoading) return <p>Loading…</p>;
+  if (isLoading) return <DetailSkeleton/>;
   if (error || !h) return <p>Health post not found.</p>;
   const point = h.latitude != null && h.longitude != null ? { lat: Number(h.latitude), lng: Number(h.longitude) } : null;
   return (

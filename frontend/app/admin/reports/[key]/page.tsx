@@ -1,4 +1,4 @@
-"use client";
+"use client";import {ReportSkeleton} from "@/components/shared/skeletons";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -141,7 +141,7 @@ export default function ReportPage() {
       )}
 
       {report.error && <p className="mb-4 text-red-600">{(report.error as Error).message}</p>}
-      {report.isLoading && <p className="text-slate-500">Loading report…</p>}
+      {report.isLoading && <ReportSkeleton />}
 
       {d && (
         <div className={report.isFetching ? "opacity-70 transition-opacity" : "transition-opacity"}>

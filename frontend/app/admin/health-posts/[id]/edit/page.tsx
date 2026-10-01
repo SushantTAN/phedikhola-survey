@@ -1,4 +1,4 @@
-"use client";
+"use client";import {FormSkeleton} from "@/components/shared/skeletons";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/shared/page-header";
 export default function Page() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useQuery({ queryKey: ["health-post", id], queryFn: () => api<any>(`/health-posts/${id}`) });
-  if (isLoading) return <p>Loading…</p>;
+  if (isLoading) return <FormSkeleton/>;
   return (
     <>
       <PageHeader title="Edit health post" description={data?.data?.name} />

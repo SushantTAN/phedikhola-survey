@@ -44,7 +44,7 @@ citizenRouter.get("/", asyncHandler(async (req, res) => {
     ...(categoryId ? { categories: { some: { categoryId } } } : {})
   };
   const [items, total] = await Promise.all([
-    prisma.citizen.findMany({ where, include: citizenInclude, orderBy: { updatedAt: "desc" }, skip: (page - 1) * limit, take: limit }),
+    prisma.citizen.findMany({ where, include: citizenInclude, omit: { profilePhotoUrl: true }, orderBy: { updatedAt: "desc" }, skip: (page - 1) * limit, take: limit }),
     prisma.citizen.count({ where })
   ]);
   res.json({ success: true, data: items, meta: { page, limit, total, pages: Math.ceil(total / limit) } });

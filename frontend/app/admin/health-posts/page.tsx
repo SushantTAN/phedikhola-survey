@@ -1,4 +1,4 @@
-"use client";
+"use client";import {TableSkeletonRows} from "@/components/shared/skeletons";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -46,7 +46,7 @@ export default function HealthPostsPage() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow><TableCell colSpan={6} className="py-12 text-center text-slate-500">Loading…</TableCell></TableRow>
+              <TableSkeletonRows cols={6} />
             ) : data?.data.length ? data.data.map((h: any) => (
               <TableRow key={h.id} className="cursor-pointer" onClick={() => router.push(`/admin/health-posts/${h.id}`)}>
                 <TableCell className="font-semibold">{h.name}</TableCell>
