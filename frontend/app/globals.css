@@ -1,4 +1,43 @@
 @import "tailwindcss";
-:root{color-scheme:light;--font-sans:"Manrope",ui-sans-serif,system-ui,sans-serif;--font-devanagari:"Noto Sans Devanagari",var(--font-sans)}
-*{box-sizing:border-box}html{background:#f8fafc}body{margin:0;background:#f8fafc;color:#0f172a;font-family:var(--font-sans);font-feature-settings:"cv11","ss01"}button,input,textarea{font:inherit}.nepali{font-family:var(--font-devanagari)}::selection{background:#a7f3d0;color:#064e3b}
-@media print{.no-print{display:none!important}body{background:white}.print-card{border:0!important;box-shadow:none!important}}
+:root {
+  color-scheme: light;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-devanagari: "Noto Sans Devanagari", var(--font-sans);
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  background: #f8fafc;
+}
+body {
+  margin: 0;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+}
+button,
+input,
+textarea {
+  font: inherit;
+}
+.nepali {
+  font-family: var(--font-devanagari);
+}
+::selection {
+  background: #a7f3d0;
+  color: #064e3b;
+}
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  .print-card {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}

@@ -1,1 +1,13 @@
-import {StaffForm} from "@/components/forms/staff-form";import {PageHeader} from "@/components/shared/page-header";export default function Page(){return <><PageHeader title="Add staff" description="Create a mobile data-collector account."/><StaffForm/></>}
+import { StaffForm } from "@/components/forms/staff-form";
+import { PageHeader } from "@/components/shared/page-header";
+export default function Page() {
+  return (
+    <>
+      <PageHeader
+        title="Add staff"
+        description="Create a mobile data-collector account."
+      />
+      <StaffForm />
+    </>
+  );
+}

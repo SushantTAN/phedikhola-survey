@@ -1,9 +1,287 @@
-import {api} from "../api/client";import {getDb,getMeta,replaceReference,setMeta,type LocalCitizen,type LocalService} from "../db";import {uploadLocalImage} from "./storage";
-function citizenPayload(c:LocalCitizen){const cats=JSON.parse(c.category_ids||"[]");return {clientUuid:c.client_uuid,publicId:c.public_id,fullName:c.full_name,dateOfBirth:c.date_of_birth,approximateAge:c.approximate_age,gender:c.gender,phone:c.phone,casteGroupCode:c.caste_group_code,casteOther:c.caste_other,maritalStatusCode:c.marital_status_code,occupationCode:c.occupation_code,occupationOther:c.occupation_other,livingStatusCode:c.living_status_code,householdForeignEmployment:c.household_foreign_employment==null?null:Boolean(c.household_foreign_employment),categoryId:cats[0]??null,wardIds:JSON.parse(c.ward_ids||"[]"),profilePhotoUrl:null,version:c.version,deletedAt:c.deleted_at}}
-function servicePayload(s:LocalService){return {clientUuid:s.client_uuid,citizenClientUuid:s.citizen_client_uuid,wardId:s.ward_id,serviceDate:s.service_date,nepaliYear:s.nepali_year,nepaliMonth:s.nepali_month,systolic:s.systolic,diastolic:s.diastolic,pulseRate:s.pulse_rate,temperatureF:s.temperature_f,latitude:s.latitude,longitude:s.longitude,altitude:s.altitude,accuracy:s.accuracy,notes:s.notes,otherHealthProblem:s.other_health_problem,conditionIds:JSON.parse(s.condition_ids||"[]"),medicines:JSON.parse(s.medicines||"[]"),version:s.version,deletedAt:s.deleted_at}}
-export async function syncNow(deviceId="android-device"){const db=await getDb();const citizens=await db.getAllAsync<LocalCitizen>("SELECT * FROM citizens WHERE sync_status IN ('pending','failed') ORDER BY created_at");const services=await db.getAllAsync<LocalService>("SELECT * FROM service_records WHERE sync_status IN ('pending','failed') ORDER BY created_at");await db.runAsync("UPDATE citizens SET sync_status='syncing' WHERE sync_status IN ('pending','failed')");await db.runAsync("UPDATE service_records SET sync_status='syncing' WHERE sync_status IN ('pending','failed')");try{const pushed=await api<any>("/sync/push",{method:"POST",body:JSON.stringify({deviceId,citizens:citizens.map(citizenPayload),serviceRecords:services.map(servicePayload)})});for(const r of pushed.data.citizens??[])await db.runAsync("UPDATE citizens SET server_id=COALESCE(?,server_id),public_id=COALESCE(?,public_id),version=COALESCE(?,version),sync_status=?,sync_error=? WHERE client_uuid=?",r.serverId??null,r.publicId??null,r.version??null,r.status,r.error??null,r.clientUuid);for(const r of pushed.data.serviceRecords??[])await db.runAsync("UPDATE service_records SET server_id=COALESCE(?,server_id),version=COALESCE(?,version),sync_status=?,sync_error=? WHERE client_uuid=?",r.serverId??null,r.version??null,r.status,r.error??null,r.clientUuid);
-const photoCitizens=await db.getAllAsync<LocalCitizen>("SELECT * FROM citizens WHERE sync_status='synced' AND profile_photo_uri IS NOT NULL AND profile_photo_uploaded=0 AND server_id IS NOT NULL");for(const c of photoCitizens){try{const url=await uploadLocalImage(c.profile_photo_uri!,"citizen",c.server_id!);const updated=await api<any>(`/citizens/${c.server_id}`,{method:"PATCH",body:JSON.stringify({profilePhotoUrl:url,version:c.version})});await db.runAsync("UPDATE citizens SET profile_photo_uploaded=1,version=?,sync_error=NULL WHERE client_uuid=?",updated.data.version,c.client_uuid)}catch(e){await db.runAsync("UPDATE citizens SET sync_error=? WHERE client_uuid=?",e instanceof Error?e.message:"Photo upload failed",c.client_uuid)}}
-const photoServices=await db.getAllAsync<LocalService>("SELECT * FROM service_records WHERE sync_status='synced' AND visit_photo_uri IS NOT NULL AND visit_photo_uploaded=0 AND server_id IS NOT NULL");for(const s of photoServices){try{const url=await uploadLocalImage(s.visit_photo_uri!,"service",s.server_id!);const updated=await api<any>(`/services/${s.server_id}`,{method:"PATCH",body:JSON.stringify({visitPhotoUrl:url,version:s.version})});await db.runAsync("UPDATE service_records SET visit_photo_uploaded=1,version=?,sync_error=NULL WHERE client_uuid=?",updated.data.version,s.client_uuid)}catch(e){await db.runAsync("UPDATE service_records SET sync_error=? WHERE client_uuid=?",e instanceof Error?e.message:"Photo upload failed",s.client_uuid)}}
-const since=await getMeta("last_sync_at");const pulled=await api<any>(`/sync/pull?since=${encodeURIComponent(since??"1970-01-01T00:00:00.000Z")}`);const ref=pulled.data.referenceData;await replaceReference("ward",ref.wards??[],x=>({id:x.id,code:x.code,labelEn:x.nameEn,labelNe:x.nameNe}));await replaceReference("category",ref.categories??[],x=>({id:x.id,code:x.code,labelEn:x.nameEn,labelNe:x.nameNe}));await replaceReference("condition",ref.conditions??[],x=>({id:x.id,code:x.code,labelEn:x.nameEn,labelNe:x.nameNe}));await replaceReference("medicine",ref.medicines??[],x=>({id:x.id,code:x.code,labelEn:[x.name,x.strength].filter(Boolean).join(" "),labelNe:x.name}));await replaceReference("unit",ref.units??[],x=>({id:x.id,code:x.code,labelEn:x.nameEn,labelNe:x.nameNe}));if(ref.appVersion)await setMeta("app_version",JSON.stringify(ref.appVersion));
-for(const c of pulled.data.citizens??[]){await db.runAsync(`INSERT INTO citizens(client_uuid,server_id,public_id,full_name,date_of_birth,approximate_age,gender,phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_ids,profile_photo_uri,profile_photo_uploaded,version,sync_status,sync_error,deleted_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'synced',NULL,?,?,?) ON CONFLICT(client_uuid) DO UPDATE SET server_id=excluded.server_id,public_id=excluded.public_id,full_name=excluded.full_name,date_of_birth=excluded.date_of_birth,approximate_age=excluded.approximate_age,gender=excluded.gender,phone=excluded.phone,caste_group_code=excluded.caste_group_code,caste_other=excluded.caste_other,marital_status_code=excluded.marital_status_code,occupation_code=excluded.occupation_code,occupation_other=excluded.occupation_other,living_status_code=excluded.living_status_code,household_foreign_employment=excluded.household_foreign_employment,category_ids=excluded.category_ids,ward_ids=excluded.ward_ids,profile_photo_uri=CASE WHEN citizens.profile_photo_uploaded=0 THEN citizens.profile_photo_uri ELSE excluded.profile_photo_uri END,version=excluded.version,sync_status='synced',deleted_at=excluded.deleted_at,updated_at=excluded.updated_at`,c.clientUuid,c.id,c.publicId,c.fullName,c.dateOfBirth??null,c.approximateAge??null,c.gender,c.phone??null,c.casteGroupCode??null,c.casteOther??null,c.maritalStatusCode??null,c.occupationCode??null,c.occupationOther??null,c.livingStatusCode??null,c.householdForeignEmployment==null?null:(c.householdForeignEmployment?1:0),JSON.stringify((c.categories??[]).map((x:any)=>x.categoryId).slice(0,1)),JSON.stringify((c.wards??[]).map((x:any)=>x.wardId)),c.profilePhotoUrl??null,c.profilePhotoUrl?1:0,c.version,c.deletedAt??null,c.createdAt,c.updatedAt)}
-for(const s of pulled.data.serviceRecords??[]){const parent=await db.getFirstAsync<{client_uuid:string}>("SELECT client_uuid FROM citizens WHERE server_id=?",s.citizenId);if(!parent)continue;await db.runAsync(`INSERT INTO service_records(client_uuid,server_id,citizen_client_uuid,ward_id,service_date,nepali_year,nepali_month,systolic,diastolic,pulse_rate,temperature_f,latitude,longitude,altitude,accuracy,notes,other_health_problem,condition_ids,medicines,visit_photo_uri,visit_photo_uploaded,version,sync_status,sync_error,deleted_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'synced',NULL,?,?,?) ON CONFLICT(client_uuid) DO UPDATE SET server_id=excluded.server_id,citizen_client_uuid=excluded.citizen_client_uuid,ward_id=excluded.ward_id,service_date=excluded.service_date,nepali_year=excluded.nepali_year,nepali_month=excluded.nepali_month,systolic=excluded.systolic,diastolic=excluded.diastolic,pulse_rate=excluded.pulse_rate,temperature_f=excluded.temperature_f,latitude=excluded.latitude,longitude=excluded.longitude,altitude=excluded.altitude,accuracy=excluded.accuracy,notes=excluded.notes,other_health_problem=excluded.other_health_problem,condition_ids=excluded.condition_ids,medicines=excluded.medicines,visit_photo_uri=CASE WHEN service_records.visit_photo_uploaded=0 THEN service_records.visit_photo_uri ELSE excluded.visit_photo_uri END,version=excluded.version,sync_status='synced',deleted_at=excluded.deleted_at,updated_at=excluded.updated_at`,s.clientUuid,s.id,parent.client_uuid,s.wardId,s.serviceDate,s.nepaliYear??null,s.nepaliMonth??null,s.systolic??null,s.diastolic??null,s.pulseRate??null,s.temperatureF??null,s.latitude??null,s.longitude??null,s.altitude??null,s.accuracy??null,s.notes??null,s.otherHealthProblem??null,JSON.stringify((s.conditions??[]).map((x:any)=>x.conditionId)),JSON.stringify((s.medicines??[]).map((m:any)=>({medicineId:m.medicineId,quantity:Number(m.quantity),unit:m.unit,otherMedicineName:m.otherMedicineName}))),s.visitPhotoUrl??null,s.visitPhotoUrl?1:0,s.version,s.deletedAt??null,s.createdAt,s.updatedAt)}await setMeta("last_sync_at",pulled.data.serverTime??new Date().toISOString());return{pushed:pushed.data,pulled:pulled.data}}catch(e){await db.runAsync("UPDATE citizens SET sync_status='failed',sync_error=? WHERE sync_status='syncing'",e instanceof Error?e.message:"Sync failed");await db.runAsync("UPDATE service_records SET sync_status='failed',sync_error=? WHERE sync_status='syncing'",e instanceof Error?e.message:"Sync failed");throw e}}
+import { api } from "../api/client";
+import {
+  getDb,
+  getMeta,
+  replaceReference,
+  setMeta,
+  type LocalCitizen,
+  type LocalService,
+} from "../db";
+import { uploadLocalImage } from "./storage";
+function citizenPayload(c: LocalCitizen) {
+  const cats = JSON.parse(c.category_ids || "[]");
+  return {
+    clientUuid: c.client_uuid,
+    publicId: c.public_id,
+    fullName: c.full_name,
+    dateOfBirth: c.date_of_birth,
+    approximateAge: c.approximate_age,
+    gender: c.gender,
+    phone: c.phone,
+    casteGroupCode: c.caste_group_code,
+    casteOther: c.caste_other,
+    maritalStatusCode: c.marital_status_code,
+    occupationCode: c.occupation_code,
+    occupationOther: c.occupation_other,
+    livingStatusCode: c.living_status_code,
+    householdForeignEmployment:
+      c.household_foreign_employment == null
+        ? null
+        : Boolean(c.household_foreign_employment),
+    categoryId: cats[0] ?? null,
+    wardIds: JSON.parse(c.ward_ids || "[]"),
+    profilePhotoUrl: null,
+    version: c.version,
+    deletedAt: c.deleted_at,
+  };
+}
+function servicePayload(s: LocalService) {
+  return {
+    clientUuid: s.client_uuid,
+    citizenClientUuid: s.citizen_client_uuid,
+    wardId: s.ward_id,
+    serviceDate: s.service_date,
+    nepaliYear: s.nepali_year,
+    nepaliMonth: s.nepali_month,
+    systolic: s.systolic,
+    diastolic: s.diastolic,
+    pulseRate: s.pulse_rate,
+    temperatureF: s.temperature_f,
+    latitude: s.latitude,
+    longitude: s.longitude,
+    altitude: s.altitude,
+    accuracy: s.accuracy,
+    notes: s.notes,
+    otherHealthProblem: s.other_health_problem,
+    conditionIds: JSON.parse(s.condition_ids || "[]"),
+    medicines: JSON.parse(s.medicines || "[]"),
+    version: s.version,
+    deletedAt: s.deleted_at,
+  };
+}
+export async function syncNow(deviceId = "android-device") {
+  const db = await getDb();
+  const citizens = await db.getAllAsync<LocalCitizen>(
+    "SELECT * FROM citizens WHERE sync_status IN ('pending','failed') ORDER BY created_at",
+  );
+  const services = await db.getAllAsync<LocalService>(
+    "SELECT * FROM service_records WHERE sync_status IN ('pending','failed') ORDER BY created_at",
+  );
+  await db.runAsync(
+    "UPDATE citizens SET sync_status='syncing' WHERE sync_status IN ('pending','failed')",
+  );
+  await db.runAsync(
+    "UPDATE service_records SET sync_status='syncing' WHERE sync_status IN ('pending','failed')",
+  );
+  try {
+    const pushed = await api<any>("/sync/push", {
+      method: "POST",
+      body: JSON.stringify({
+        deviceId,
+        citizens: citizens.map(citizenPayload),
+        serviceRecords: services.map(servicePayload),
+      }),
+    });
+    for (const r of pushed.data.citizens ?? [])
+      await db.runAsync(
+        "UPDATE citizens SET server_id=COALESCE(?,server_id),public_id=COALESCE(?,public_id),version=COALESCE(?,version),sync_status=?,sync_error=? WHERE client_uuid=?",
+        r.serverId ?? null,
+        r.publicId ?? null,
+        r.version ?? null,
+        r.status,
+        r.error ?? null,
+        r.clientUuid,
+      );
+    for (const r of pushed.data.serviceRecords ?? [])
+      await db.runAsync(
+        "UPDATE service_records SET server_id=COALESCE(?,server_id),version=COALESCE(?,version),sync_status=?,sync_error=? WHERE client_uuid=?",
+        r.serverId ?? null,
+        r.version ?? null,
+        r.status,
+        r.error ?? null,
+        r.clientUuid,
+      );
+    const photoCitizens = await db.getAllAsync<LocalCitizen>(
+      "SELECT * FROM citizens WHERE sync_status='synced' AND profile_photo_uri IS NOT NULL AND profile_photo_uploaded=0 AND server_id IS NOT NULL",
+    );
+    for (const c of photoCitizens) {
+      try {
+        const url = await uploadLocalImage(
+          c.profile_photo_uri!,
+          "citizen",
+          c.server_id!,
+        );
+        const updated = await api<any>(`/citizens/${c.server_id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ profilePhotoUrl: url, version: c.version }),
+        });
+        await db.runAsync(
+          "UPDATE citizens SET profile_photo_uploaded=1,version=?,sync_error=NULL WHERE client_uuid=?",
+          updated.data.version,
+          c.client_uuid,
+        );
+      } catch (e) {
+        await db.runAsync(
+          "UPDATE citizens SET sync_error=? WHERE client_uuid=?",
+          e instanceof Error ? e.message : "Photo upload failed",
+          c.client_uuid,
+        );
+      }
+    }
+    const photoServices = await db.getAllAsync<LocalService>(
+      "SELECT * FROM service_records WHERE sync_status='synced' AND visit_photo_uri IS NOT NULL AND visit_photo_uploaded=0 AND server_id IS NOT NULL",
+    );
+    for (const s of photoServices) {
+      try {
+        const url = await uploadLocalImage(
+          s.visit_photo_uri!,
+          "service",
+          s.server_id!,
+        );
+        const updated = await api<any>(`/services/${s.server_id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ visitPhotoUrl: url, version: s.version }),
+        });
+        await db.runAsync(
+          "UPDATE service_records SET visit_photo_uploaded=1,version=?,sync_error=NULL WHERE client_uuid=?",
+          updated.data.version,
+          s.client_uuid,
+        );
+      } catch (e) {
+        await db.runAsync(
+          "UPDATE service_records SET sync_error=? WHERE client_uuid=?",
+          e instanceof Error ? e.message : "Photo upload failed",
+          s.client_uuid,
+        );
+      }
+    }
+    const since = await getMeta("last_sync_at");
+    const pulled = await api<any>(
+      `/sync/pull?since=${encodeURIComponent(since ?? "1970-01-01T00:00:00.000Z")}`,
+    );
+    const ref = pulled.data.referenceData;
+    await replaceReference("ward", ref.wards ?? [], (x) => ({
+      id: x.id,
+      code: x.code,
+      labelEn: x.nameEn,
+      labelNe: x.nameNe,
+    }));
+    await replaceReference("category", ref.categories ?? [], (x) => ({
+      id: x.id,
+      code: x.code,
+      labelEn: x.nameEn,
+      labelNe: x.nameNe,
+    }));
+    await replaceReference("condition", ref.conditions ?? [], (x) => ({
+      id: x.id,
+      code: x.code,
+      labelEn: x.nameEn,
+      labelNe: x.nameNe,
+    }));
+    await replaceReference("medicine", ref.medicines ?? [], (x) => ({
+      id: x.id,
+      code: x.code,
+      labelEn: [x.name, x.strength].filter(Boolean).join(" "),
+      labelNe: x.name,
+    }));
+    await replaceReference("unit", ref.units ?? [], (x) => ({
+      id: x.id,
+      code: x.code,
+      labelEn: x.nameEn,
+      labelNe: x.nameNe,
+    }));
+    if (ref.appVersion)
+      await setMeta("app_version", JSON.stringify(ref.appVersion));
+    for (const c of pulled.data.citizens ?? []) {
+      await db.runAsync(
+        `INSERT INTO citizens(client_uuid,server_id,public_id,full_name,date_of_birth,approximate_age,gender,phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_ids,profile_photo_uri,profile_photo_uploaded,version,sync_status,sync_error,deleted_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'synced',NULL,?,?,?) ON CONFLICT(client_uuid) DO UPDATE SET server_id=excluded.server_id,public_id=excluded.public_id,full_name=excluded.full_name,date_of_birth=excluded.date_of_birth,approximate_age=excluded.approximate_age,gender=excluded.gender,phone=excluded.phone,caste_group_code=excluded.caste_group_code,caste_other=excluded.caste_other,marital_status_code=excluded.marital_status_code,occupation_code=excluded.occupation_code,occupation_other=excluded.occupation_other,living_status_code=excluded.living_status_code,household_foreign_employment=excluded.household_foreign_employment,category_ids=excluded.category_ids,ward_ids=excluded.ward_ids,profile_photo_uri=CASE WHEN citizens.profile_photo_uploaded=0 THEN citizens.profile_photo_uri ELSE excluded.profile_photo_uri END,version=excluded.version,sync_status='synced',deleted_at=excluded.deleted_at,updated_at=excluded.updated_at`,
+        c.clientUuid,
+        c.id,
+        c.publicId,
+        c.fullName,
+        c.dateOfBirth ?? null,
+        c.approximateAge ?? null,
+        c.gender,
+        c.phone ?? null,
+        c.casteGroupCode ?? null,
+        c.casteOther ?? null,
+        c.maritalStatusCode ?? null,
+        c.occupationCode ?? null,
+        c.occupationOther ?? null,
+        c.livingStatusCode ?? null,
+        c.householdForeignEmployment == null
+          ? null
+          : c.householdForeignEmployment
+            ? 1
+            : 0,
+        JSON.stringify(
+          (c.categories ?? []).map((x: any) => x.categoryId).slice(0, 1),
+        ),
+        JSON.stringify((c.wards ?? []).map((x: any) => x.wardId)),
+        c.profilePhotoUrl ?? null,
+        c.profilePhotoUrl ? 1 : 0,
+        c.version,
+        c.deletedAt ?? null,
+        c.createdAt,
+        c.updatedAt,
+      );
+    }
+    for (const s of pulled.data.serviceRecords ?? []) {
+      const parent = await db.getFirstAsync<{ client_uuid: string }>(
+        "SELECT client_uuid FROM citizens WHERE server_id=?",
+        s.citizenId,
+      );
+      if (!parent) continue;
+      await db.runAsync(
+        `INSERT INTO service_records(client_uuid,server_id,citizen_client_uuid,ward_id,service_date,nepali_year,nepali_month,systolic,diastolic,pulse_rate,temperature_f,latitude,longitude,altitude,accuracy,notes,other_health_problem,condition_ids,medicines,visit_photo_uri,visit_photo_uploaded,version,sync_status,sync_error,deleted_at,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'synced',NULL,?,?,?) ON CONFLICT(client_uuid) DO UPDATE SET server_id=excluded.server_id,citizen_client_uuid=excluded.citizen_client_uuid,ward_id=excluded.ward_id,service_date=excluded.service_date,nepali_year=excluded.nepali_year,nepali_month=excluded.nepali_month,systolic=excluded.systolic,diastolic=excluded.diastolic,pulse_rate=excluded.pulse_rate,temperature_f=excluded.temperature_f,latitude=excluded.latitude,longitude=excluded.longitude,altitude=excluded.altitude,accuracy=excluded.accuracy,notes=excluded.notes,other_health_problem=excluded.other_health_problem,condition_ids=excluded.condition_ids,medicines=excluded.medicines,visit_photo_uri=CASE WHEN service_records.visit_photo_uploaded=0 THEN service_records.visit_photo_uri ELSE excluded.visit_photo_uri END,version=excluded.version,sync_status='synced',deleted_at=excluded.deleted_at,updated_at=excluded.updated_at`,
+        s.clientUuid,
+        s.id,
+        parent.client_uuid,
+        s.wardId,
+        s.serviceDate,
+        s.nepaliYear ?? null,
+        s.nepaliMonth ?? null,
+        s.systolic ?? null,
+        s.diastolic ?? null,
+        s.pulseRate ?? null,
+        s.temperatureF ?? null,
+        s.latitude ?? null,
+        s.longitude ?? null,
+        s.altitude ?? null,
+        s.accuracy ?? null,
+        s.notes ?? null,
+        s.otherHealthProblem ?? null,
+        JSON.stringify((s.conditions ?? []).map((x: any) => x.conditionId)),
+        JSON.stringify(
+          (s.medicines ?? []).map((m: any) => ({
+            medicineId: m.medicineId,
+            quantity: Number(m.quantity),
+            unit: m.unit,
+            otherMedicineName: m.otherMedicineName,
+          })),
+        ),
+        s.visitPhotoUrl ?? null,
+        s.visitPhotoUrl ? 1 : 0,
+        s.version,
+        s.deletedAt ?? null,
+        s.createdAt,
+        s.updatedAt,
+      );
+    }
+    await setMeta(
+      "last_sync_at",
+      pulled.data.serverTime ?? new Date().toISOString(),
+    );
+    return { pushed: pushed.data, pulled: pulled.data };
+  } catch (e) {
+    await db.runAsync(
+      "UPDATE citizens SET sync_status='failed',sync_error=? WHERE sync_status='syncing'",
+      e instanceof Error ? e.message : "Sync failed",
+    );
+    await db.runAsync(
+      "UPDATE service_records SET sync_status='failed',sync_error=? WHERE sync_status='syncing'",
+      e instanceof Error ? e.message : "Sync failed",
+    );
+    throw e;
+  }
+}

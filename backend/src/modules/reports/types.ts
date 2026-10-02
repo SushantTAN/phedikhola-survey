@@ -13,10 +13,27 @@ export type ReportFilters = {
 };
 
 export type FilterKey = keyof ReportFilters;
-export type FilterOptionsSource = "wards" | "categories" | "conditions" | "medicines" | "staff" | "gender" | "ageGroup" | "followup";
-export type FilterDef = { key: FilterKey; label: string; type: "date" | "select" | "text"; options?: FilterOptionsSource };
+export type FilterOptionsSource =
+  | "wards"
+  | "categories"
+  | "conditions"
+  | "medicines"
+  | "staff"
+  | "gender"
+  | "ageGroup"
+  | "followup";
+export type FilterDef = {
+  key: FilterKey;
+  label: string;
+  type: "date" | "select" | "text";
+  options?: FilterOptionsSource;
+};
 
-export type Column = { key: string; label: string; type?: "text" | "number" | "date" | "boolean" };
+export type Column = {
+  key: string;
+  label: string;
+  type?: "text" | "number" | "date" | "boolean";
+};
 export type Row = Record<string, string | number | boolean | null>;
 
 export type ChartSpec = {

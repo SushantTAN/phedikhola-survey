@@ -6,13 +6,21 @@ const range = (n: number) => Array.from({ length: n }, (_, i) => i);
 const widths = ["w-3/4", "w-1/2", "w-2/3", "w-5/6", "w-1/3"];
 
 /** Placeholder rows to drop inside a <TableBody> while a list loads. */
-export function TableSkeletonRows({ cols, rows = 8 }: { cols: number; rows?: number }) {
+export function TableSkeletonRows({
+  cols,
+  rows = 8,
+}: {
+  cols: number;
+  rows?: number;
+}) {
   return (
     <>
       {range(rows).map((r) => (
         <TableRow key={r} className="hover:bg-transparent">
           {range(cols).map((c) => (
-            <TableCell key={c}><Skeleton className={`h-4 ${widths[(r + c) % widths.length]}`} /></TableCell>
+            <TableCell key={c}>
+              <Skeleton className={`h-4 ${widths[(r + c) % widths.length]}`} />
+            </TableCell>
           ))}
         </TableRow>
       ))}
@@ -50,8 +58,12 @@ export function DetailSkeleton() {
       <div className="grid gap-6 lg:grid-cols-2">
         {range(2).map((i) => (
           <Card key={i}>
-            <CardHeader><Skeleton className="h-6 w-40" /></CardHeader>
-            <CardContent><FieldsSkeleton count={6} cols="sm:grid-cols-2" /></CardContent>
+            <CardHeader>
+              <Skeleton className="h-6 w-40" />
+            </CardHeader>
+            <CardContent>
+              <FieldsSkeleton count={6} cols="sm:grid-cols-2" />
+            </CardContent>
           </Card>
         ))}
       </div>
@@ -65,7 +77,9 @@ export function FormSkeleton() {
     <div role="status" aria-label="Loading">
       <PageHeaderSkeleton />
       <Card>
-        <CardHeader><Skeleton className="h-6 w-48" /></CardHeader>
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+        </CardHeader>
         <CardContent>
           <div className="grid gap-5 md:grid-cols-2">
             {range(6).map((i) => (
@@ -107,10 +121,18 @@ export function StatCardsSkeleton({ count = 4 }: { count?: number }) {
 export function ChartSkeleton() {
   return (
     <Card>
-      <CardHeader><Skeleton className="h-6 w-44" /></CardHeader>
+      <CardHeader>
+        <Skeleton className="h-6 w-44" />
+      </CardHeader>
       <CardContent>
         <div className="flex h-72 items-end gap-3 px-2">
-          {[40, 70, 55, 85, 35, 60, 75].map((h, i) => <Skeleton key={i} className="flex-1 rounded-b-none" style={{ height: `${h}%` }} />)}
+          {[40, 70, 55, 85, 35, 60, 75].map((h, i) => (
+            <Skeleton
+              key={i}
+              className="flex-1 rounded-b-none"
+              style={{ height: `${h}%` }}
+            />
+          ))}
         </div>
       </CardContent>
     </Card>
@@ -122,7 +144,9 @@ export function DashboardSkeleton() {
     <div role="status" aria-label="Loading dashboard">
       <StatCardsSkeleton />
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
-        {range(3).map((i) => <ChartSkeleton key={i} />)}
+        {range(3).map((i) => (
+          <ChartSkeleton key={i} />
+        ))}
       </div>
     </div>
   );
@@ -156,7 +180,9 @@ export function ReportCardsSkeleton() {
 export function ReportSkeleton() {
   return (
     <div role="status" aria-label="Loading report">
-      <div className="mb-6"><StatCardsSkeleton count={3} /></div>
+      <div className="mb-6">
+        <StatCardsSkeleton count={3} />
+      </div>
       <div className="mb-6 grid gap-6 xl:grid-cols-2">
         <ChartSkeleton />
         <ChartSkeleton />
@@ -164,7 +190,9 @@ export function ReportSkeleton() {
       <Card className="p-4">
         <div className="space-y-3">
           <Skeleton className="h-8 w-full" />
-          {range(8).map((i) => <Skeleton key={i} className="h-5 w-full" />)}
+          {range(8).map((i) => (
+            <Skeleton key={i} className="h-5 w-full" />
+          ))}
         </div>
       </Card>
     </div>
@@ -174,14 +202,27 @@ export function ReportSkeleton() {
 /** Full-screen skeleton of the admin layout while the session is checked. */
 export function AdminShellSkeleton() {
   return (
-    <div className="min-h-screen bg-slate-50 md:grid md:grid-cols-[270px_1fr]" role="status" aria-label="Loading">
+    <div
+      className="min-h-screen bg-slate-50 md:grid md:grid-cols-[270px_1fr]"
+      role="status"
+      aria-label="Loading"
+    >
       <aside className="hidden border-r border-slate-800 bg-slate-950 p-4 md:block">
         <Skeleton className="mb-8 h-10 w-40 bg-slate-800" />
-        <div className="space-y-2">{range(8).map((i) => <Skeleton key={i} className="h-10 w-full bg-slate-800" />)}</div>
+        <div className="space-y-2">
+          {range(8).map((i) => (
+            <Skeleton key={i} className="h-10 w-full bg-slate-800" />
+          ))}
+        </div>
       </aside>
       <main>
-        <div className="flex h-16 items-center border-b border-slate-200 bg-white px-8"><Skeleton className="h-5 w-56" /></div>
-        <div className="p-5 md:p-8 xl:p-10"><PageHeaderSkeleton /><StatCardsSkeleton /></div>
+        <div className="flex h-16 items-center border-b border-slate-200 bg-white px-8">
+          <Skeleton className="h-5 w-56" />
+        </div>
+        <div className="p-5 md:p-8 xl:p-10">
+          <PageHeaderSkeleton />
+          <StatCardsSkeleton />
+        </div>
       </main>
     </div>
   );
@@ -189,15 +230,26 @@ export function AdminShellSkeleton() {
 
 export function PublicCitizenSkeleton() {
   return (
-    <main className="mx-auto max-w-3xl space-y-4 p-6" role="status" aria-label="Loading citizen information">
+    <main
+      className="mx-auto max-w-3xl space-y-4 p-6"
+      role="status"
+      aria-label="Loading citizen information"
+    >
       <Skeleton className="h-8 w-56" />
       <Card>
         <CardContent className="flex items-center gap-4 p-6">
           <Skeleton className="h-20 w-20 rounded-2xl" />
-          <div className="flex-1 space-y-2"><Skeleton className="h-5 w-1/2" /><Skeleton className="h-4 w-1/3" /></div>
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-1/2" />
+            <Skeleton className="h-4 w-1/3" />
+          </div>
         </CardContent>
       </Card>
-      <Card><CardContent className="p-6"><FieldsSkeleton count={6} cols="sm:grid-cols-2" /></CardContent></Card>
+      <Card>
+        <CardContent className="p-6">
+          <FieldsSkeleton count={6} cols="sm:grid-cols-2" />
+        </CardContent>
+      </Card>
     </main>
   );
 }

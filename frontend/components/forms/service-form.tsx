@@ -37,6 +37,8 @@ import { FormSelect, selectChoice } from "@/components/shared/form-select";
 import { LocationPicker } from "@/components/shared/location-picker";
 import { BloodPressureStatus } from "@/components/shared/bp-status";
 import { TemperatureStatus } from "@/components/shared/temperature-status";
+import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
+import { useNepaliDateUtils } from "nepali-bs-calendar-react";
 import { MedicinePicker } from "@/components/shared/medicine-picker";
 const months = [
   "Baisakh",
@@ -128,12 +130,31 @@ export function ServiceForm({
     units: [],
   });
   const [citizens, setCitizens] = useState<any[]>([]);
+  const nepaliUtils = useNepaliDateUtils();
+  // Service date is stored in English (AD); the Nepali year/month fields are filled in from it.
+  function adToBsParts(ad: string) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ad);
+    if (!m) return null;
+    try {
+      const bs = nepaliUtils.adToBs(
+        new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])),
+      );
+      return nepaliUtils.bsStringToAd(nepaliUtils.formatBSDate(bs)) ===
+        `${m[1]}-${m[2]}-${m[3]}`
+        ? bs
+        : null;
+    } catch {
+      return null;
+    }
+  }
   const [staff, setStaff] = useState<any[]>([]);
   const [refLoading, setRefLoading] = useState(true);
   const [staffLoading, setStaffLoading] = useState(true);
   const [citizenLoading, setCitizenLoading] = useState(false);
   const [citizenResults, setCitizenResults] = useState<any[] | null>(null);
-  const citizenSearchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const citizenSearchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   function searchCitizens(term: string) {
     clearTimeout(citizenSearchTimer.current);
     if (!term.trim()) {
@@ -202,16 +223,18 @@ export function ServiceForm({
     Promise.all([
       api<any>("/master/reference-data"),
       api<any>("/citizens?limit=100"),
-    ]).then(([r, c]) => {
-      setReference(r.data);
-      setCitizens((current) => [
-        ...current,
-        ...c.data.filter(
-          (citizen: any) =>
-            !current.some((existing) => existing.id === citizen.id),
-        ),
-      ]);
-    }).finally(() => setRefLoading(false));
+    ])
+      .then(([r, c]) => {
+        setReference(r.data);
+        setCitizens((current) => [
+          ...current,
+          ...c.data.filter(
+            (citizen: any) =>
+              !current.some((existing) => existing.id === citizen.id),
+          ),
+        ]);
+      })
+      .finally(() => setRefLoading(false));
   }, []);
   useEffect(() => {
     api<any>("/staff")
@@ -223,14 +246,21 @@ export function ServiceForm({
   useEffect(() => {
     if (mode !== "create" || !selectedCitizenId) return;
     let cancelled = false;
-    api<any>(`/citizens/${selectedCitizenId}`).then((response) => {
-      if (cancelled || getValues("wardId")) return;
-      const wards = response.data.wards ?? [];
-      if (wards.length === 1) {
-        setValue("wardId", wards[0].wardId, { shouldDirty: true, shouldValidate: true });
-      }
-    }).catch(() => {});
-    return () => { cancelled = true; };
+    api<any>(`/citizens/${selectedCitizenId}`)
+      .then((response) => {
+        if (cancelled || getValues("wardId")) return;
+        const wards = response.data.wards ?? [];
+        if (wards.length === 1) {
+          setValue("wardId", wards[0].wardId, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [mode, selectedCitizenId, getValues, setValue]);
   useEffect(() => {
     if (!initialData) return;
@@ -383,7 +413,8 @@ export function ServiceForm({
                       placeholder="Select citizen"
                       onChange={(choice) => {
                         setCreatedCitizen(null);
-                        if (choice.value !== field.value) setValue("wardId", "", { shouldDirty: true });
+                        if (choice.value !== field.value)
+                          setValue("wardId", "", { shouldDirty: true });
                         field.onChange(choice.value);
                       }}
                       action={{
@@ -438,7 +469,25 @@ export function ServiceForm({
               }}
             />
             <Field label="Service date *">
-              <Input type="date" {...register("serviceDate")} />
+              <Controller
+                control={control}
+                name="serviceDate"
+                render={({ field }) => (
+                  <NepaliDatePicker
+                    value={field.value}
+                    onChange={(ad) => {
+                      field.onChange(ad);
+                      const bs = ad ? adToBsParts(ad) : null;
+                      if (bs) {
+                        setValue("nepaliYear", bs.year, { shouldDirty: true });
+                        setValue("nepaliMonth", months[bs.month - 1] ?? "", {
+                          shouldDirty: true,
+                        });
+                      }
+                    }}
+                  />
+                )}
+              />
             </Field>
             <Field label="Nepali year">
               <Input
@@ -472,13 +521,24 @@ export function ServiceForm({
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Upper value – Systolic (mmHg)">
-                  <Input type="number" placeholder="e.g. 120" {...register("systolic")} />
+                  <Input
+                    type="number"
+                    placeholder="e.g. 120"
+                    {...register("systolic")}
+                  />
                 </Field>
                 <Field label="Lower value – Diastolic (mmHg)">
-                  <Input type="number" placeholder="e.g. 80" {...register("diastolic")} />
+                  <Input
+                    type="number"
+                    placeholder="e.g. 80"
+                    {...register("diastolic")}
+                  />
                 </Field>
               </div>
-              <BloodPressureStatus systolic={watch("systolic")} diastolic={watch("diastolic")} />
+              <BloodPressureStatus
+                systolic={watch("systolic")}
+                diastolic={watch("diastolic")}
+              />
             </div>
             <Field label="Pulse rate / minute">
               <Input type="number" {...register("pulseRate")} />
@@ -486,7 +546,10 @@ export function ServiceForm({
             <Field label="Temperature °F">
               <Input type="number" step="0.1" {...register("temperatureF")} />
             </Field>
-            <TemperatureStatus value={watch("temperatureF")} className="sm:col-span-2" />
+            <TemperatureStatus
+              value={watch("temperatureF")}
+              className="sm:col-span-2"
+            />
           </CardContent>
         </Card>
         <Card>
@@ -519,14 +582,17 @@ export function ServiceForm({
           <CardHeader>
             <CardTitle>Medicines provided</CardTitle>
             <CardDescription>
-              Search for a medicine and click it to add. Then set the quantity given.
+              Search for a medicine and click it to add. Then set the quantity
+              given.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <MedicinePicker
               medicines={reference.medicines}
               loading={refLoading}
-              selectedIds={medicines.flatMap((m) => (m.medicineId ? [m.medicineId] : []))}
+              selectedIds={medicines.flatMap((m) =>
+                m.medicineId ? [m.medicineId] : [],
+              )}
               onAdd={addMedicine}
               onAddOther={addOtherMedicine}
             />
@@ -582,7 +648,8 @@ export function ServiceForm({
               </div>
             ) : (
               <div className="rounded-xl border border-dashed p-6 text-center text-sm text-slate-500">
-                No medicines added yet. Search above and click a medicine to add it.
+                No medicines added yet. Search above and click a medicine to add
+                it.
               </div>
             )}
           </CardContent>
@@ -600,11 +667,19 @@ export function ServiceForm({
           </CardHeader>
           <CardContent className="space-y-5">
             <LocationPicker
-              latitude={watch("latitude") == null ? "" : String(watch("latitude"))}
-              longitude={watch("longitude") == null ? "" : String(watch("longitude"))}
+              latitude={
+                watch("latitude") == null ? "" : String(watch("latitude"))
+              }
+              longitude={
+                watch("longitude") == null ? "" : String(watch("longitude"))
+              }
               onChange={(lat, lng) => {
-                setValue("latitude", lat === "" ? null : Number(lat), { shouldDirty: true });
-                setValue("longitude", lng === "" ? null : Number(lng), { shouldDirty: true });
+                setValue("latitude", lat === "" ? null : Number(lat), {
+                  shouldDirty: true,
+                });
+                setValue("longitude", lng === "" ? null : Number(lng), {
+                  shouldDirty: true,
+                });
               }}
             />
             <div className="grid gap-4 md:grid-cols-2">

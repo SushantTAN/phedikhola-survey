@@ -6,4 +6,66 @@ import { authStore } from "@/src/services/auth";
 import { syncNow } from "@/src/services/sync";
 import { getVersionState } from "@/src/services/version";
 import { Button, Card, H1, Input, Label, Screen } from "@/src/components/ui";
-export default function Login(){const[email,setEmail]=useState("");const[password,setPassword]=useState("");const[busy,setBusy]=useState(false);async function submit(){setBusy(true);try{const r=await api<any>("/auth/login",{method:"POST",body:JSON.stringify({email,password})});if(r.data.user.role!=="STAFF"&&r.data.user.role!=="ADMIN")throw new Error("Staff account required");await authStore.set(r.data.accessToken,r.data.refreshToken,r.data.user);try{await syncNow();}catch{}const version=await getVersionState();router.replace(version.required?"/update-required":"/(tabs)");}catch(e){Alert.alert("Login failed",e instanceof Error?e.message:"Unable to login");}finally{setBusy(false)}}return <Screen><View style={{height:60}}/><Text style={{color:"#047857",fontWeight:"700",letterSpacing:2}}>PHEDIKHOLA</Text><H1>Staff data collection</H1><Text style={{color:"#64748b",marginBottom:12}}>Sign in online once. After reference data is downloaded, field entry works offline.</Text><Card><Label>Email</Label><Input value={email} autoCapitalize="none" keyboardType="email-address" onChangeText={setEmail}/><Label>Password</Label><Input value={password} secureTextEntry onChangeText={setPassword}/><Button title={busy?"Signing in…":"Sign in"} onPress={submit} disabled={busy||!email||!password}/><Button variant="outline" title="Forgot password" onPress={()=>router.push("/forgot-password")}/></Card></Screen>}
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function submit() {
+    setBusy(true);
+    try {
+      const r = await api<any>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      if (r.data.user.role !== "STAFF" && r.data.user.role !== "ADMIN")
+        throw new Error("Staff account required");
+      await authStore.set(r.data.accessToken, r.data.refreshToken, r.data.user);
+      try {
+        await syncNow();
+      } catch {}
+      const version = await getVersionState();
+      router.replace(version.required ? "/update-required" : "/(tabs)");
+    } catch (e) {
+      Alert.alert(
+        "Login failed",
+        e instanceof Error ? e.message : "Unable to login",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Screen>
+      <View style={{ height: 60 }} />
+      <Text style={{ color: "#047857", fontWeight: "700", letterSpacing: 2 }}>
+        PHEDIKHOLA
+      </Text>
+      <H1>Staff data collection</H1>
+      <Text style={{ color: "#64748b", marginBottom: 12 }}>
+        Sign in online once. After reference data is downloaded, field entry
+        works offline.
+      </Text>
+      <Card>
+        <Label>Email</Label>
+        <Input
+          value={email}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          onChangeText={setEmail}
+        />
+        <Label>Password</Label>
+        <Input value={password} secureTextEntry onChangeText={setPassword} />
+        <Button
+          title={busy ? "Signing in…" : "Sign in"}
+          onPress={submit}
+          disabled={busy || !email || !password}
+        />
+        <Button
+          variant="outline"
+          title="Forgot password"
+          onPress={() => router.push("/forgot-password")}
+        />
+      </Card>
+    </Screen>
+  );
+}

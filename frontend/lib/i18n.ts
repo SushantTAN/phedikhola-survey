@@ -1,13 +1,31 @@
 export const dictionaries = {
   en: {
-    title: "Phedikhola Citizen Survey", citizenLookup: "Citizen information lookup", citizenId: "Citizen ID",
-    lookup: "View my information", adminLogin: "Administrator login", language: "Language", services: "Service history",
-    noServices: "No service records found", print: "Print", fullName: "Full name", gender: "Gender", phone: "Phone"
+    title: "Phedikhola Citizen Survey",
+    citizenLookup: "Citizen information lookup",
+    citizenId: "Citizen ID",
+    lookup: "View my information",
+    adminLogin: "Administrator login",
+    language: "Language",
+    services: "Service history",
+    noServices: "No service records found",
+    print: "Print",
+    fullName: "Full name",
+    gender: "Gender",
+    phone: "Phone",
   },
   ne: {
-    title: "फेदीखोला नागरिक सर्वेक्षण", citizenLookup: "नागरिक विवरण खोज्नुहोस्", citizenId: "नागरिक परिचय नं.",
-    lookup: "मेरो विवरण हेर्नुहोस्", adminLogin: "प्रशासक लगइन", language: "भाषा", services: "सेवा इतिहास",
-    noServices: "सेवा विवरण फेला परेन", print: "प्रिन्ट", fullName: "पूरा नाम", gender: "लिङ्ग", phone: "फोन"
-  }
+    title: "फेदीखोला नागरिक सर्वेक्षण",
+    citizenLookup: "नागरिक विवरण खोज्नुहोस्",
+    citizenId: "नागरिक परिचय नं.",
+    lookup: "मेरो विवरण हेर्नुहोस्",
+    adminLogin: "प्रशासक लगइन",
+    language: "भाषा",
+    services: "सेवा इतिहास",
+    noServices: "सेवा विवरण फेला परेन",
+    print: "प्रिन्ट",
+    fullName: "पूरा नाम",
+    gender: "लिङ्ग",
+    phone: "फोन",
+  },
 } as const;
 export type Locale = keyof typeof dictionaries;
