@@ -68,7 +68,11 @@ export function StaffForm({
       });
   }, [initialData, reset]);
   async function submit(v: any) {
-    const payload = { ...v, assignedWardId: v.assignedWardId || null, healthPostId: v.healthPostId || null };
+    const payload = {
+      ...v,
+      assignedWardId: v.assignedWardId || null,
+      healthPostId: v.healthPostId || null,
+    };
     const r = await api<any>(mode === "edit" ? `/staff/${id}` : "/staff", {
       method: mode === "edit" ? "PATCH" : "POST",
       body: JSON.stringify(payload),
@@ -132,15 +136,25 @@ export function StaffForm({
               render={({ field }) => {
                 const wardId = watch("assignedWardId");
                 const choices = healthPosts
-                  .filter((h) => !wardId || h.wardId === wardId || h.id === field.value)
-                  .map((h) => ({ value: h.id as string, label: `${h.name} (${h.ward?.nameEn ?? ""})` }));
+                  .filter(
+                    (h) =>
+                      !wardId || h.wardId === wardId || h.id === field.value,
+                  )
+                  .map((h) => ({
+                    value: h.id as string,
+                    label: `${h.name} (${h.ward?.nameEn ?? ""})`,
+                  }));
                 const current = initialData?.staffProfile?.healthPost;
                 return (
                   <FormSelect
                     selected={selectChoice(field.value, choices, current?.name)}
                     options={choices}
                     onChange={(choice) => field.onChange(choice.value)}
-                    placeholder={wardId ? "Select health post in ward" : "Select health post"}
+                    placeholder={
+                      wardId
+                        ? "Select health post in ward"
+                        : "Select health post"
+                    }
                     loading={postsLoading}
                   />
                 );

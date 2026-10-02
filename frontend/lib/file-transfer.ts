@@ -1,4 +1,56 @@
-import {API_URL,getAccessToken} from "@/lib/api";
-export async function exportResource(resource:string){const r=await fetch(`${API_URL}/data/export/${resource}`,{headers:{Authorization:`Bearer ${getAccessToken()}`}});if(!r.ok)throw new Error("Export failed");const blob=await r.blob();const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`phedikhola-${resource}-${new Date().toISOString().slice(0,10)}.xlsx`;a.click();URL.revokeObjectURL(url);}
-export async function importResource(resource:string,file:File){const buffer=await file.arrayBuffer();const bytes=new Uint8Array(buffer);let binary="";const chunk=0x8000;for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));const base64=btoa(binary);const r=await fetch(`${API_URL}/data/import/${resource}`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${getAccessToken()}`},body:JSON.stringify({fileName:file.name,base64})});const body=await r.json();if(!r.ok)throw new Error(body.message||"Import failed");return body.data;}
-export async function downloadReport(key:string,format:"xlsx"|"csv",query:URLSearchParams){const q=new URLSearchParams(query);q.set("format",format);const r=await fetch(`${API_URL}/reports/${key}/export?${q}`,{headers:{Authorization:`Bearer ${getAccessToken()}`}});if(!r.ok){const body=await r.json().catch(()=>null);throw new Error(body?.message||"Export failed");}const blob=await r.blob();const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`${key}-${new Date().toISOString().slice(0,10)}.${format}`;a.click();URL.revokeObjectURL(url);}
+import { API_URL, getAccessToken } from "@/lib/api";
+export async function exportResource(resource: string) {
+  const r = await fetch(`${API_URL}/data/export/${resource}`, {
+    headers: { Authorization: `Bearer ${getAccessToken()}` },
+  });
+  if (!r.ok) throw new Error("Export failed");
+  const blob = await r.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `phedikhola-${resource}-${new Date().toISOString().slice(0, 10)}.xlsx`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+export async function importResource(resource: string, file: File) {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk)
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  const base64 = btoa(binary);
+  const r = await fetch(`${API_URL}/data/import/${resource}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+    body: JSON.stringify({ fileName: file.name, base64 }),
+  });
+  const body = await r.json();
+  if (!r.ok) throw new Error(body.message || "Import failed");
+  return body.data;
+}
+export async function downloadReport(
+  key: string,
+  format: "xlsx" | "csv",
+  query: URLSearchParams,
+) {
+  const q = new URLSearchParams(query);
+  q.set("format", format);
+  const r = await fetch(`${API_URL}/reports/${key}/export?${q}`, {
+    headers: { Authorization: `Bearer ${getAccessToken()}` },
+  });
+  if (!r.ok) {
+    const body = await r.json().catch(() => null);
+    throw new Error(body?.message || "Export failed");
+  }
+  const blob = await r.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${key}-${new Date().toISOString().slice(0, 10)}.${format}`;
+  a.click();
+  URL.revokeObjectURL(url);
+}

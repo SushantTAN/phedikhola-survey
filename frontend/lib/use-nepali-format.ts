@@ -3,11 +3,25 @@
 import { useMemo } from "react";
 import { useNepaliDateUtils } from "nepali-bs-calendar-react";
 
-export const NP_MONTHS = ["बैशाख", "जेठ", "असार", "श्रावण", "भदौ", "आश्विन", "कार्तिक", "मंसिर", "पौष", "माघ", "फाल्गुन", "चैत्र"];
+export const NP_MONTHS = [
+  "बैशाख",
+  "जेठ",
+  "असार",
+  "श्रावण",
+  "भदौ",
+  "आश्विन",
+  "कार्तिक",
+  "मंसिर",
+  "पौष",
+  "माघ",
+  "फाल्गुन",
+  "चैत्र",
+];
 
 const AD_PATTERN = /^(\d{4})-(\d{2})-(\d{2})/;
 const pad = (n: number) => String(n).padStart(2, "0");
-const localKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const localKey = (d: Date) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 type Parts = { bs: string; ad: string };
 
@@ -22,21 +36,32 @@ export function useNepaliFormat() {
   return useMemo(() => {
     const years = utils.getAvailableYears();
     const lastYear = years[years.length - 1]!;
-    const rangeMin = utils.bsStringToAd(utils.formatBSDate(utils.getFirstValidDate()))!;
-    const rangeMax = utils.bsStringToAd(utils.formatBSDate({ year: lastYear, month: 12, day: utils.getMonthDays(lastYear, 12) }))!;
+    const rangeMin = utils.bsStringToAd(
+      utils.formatBSDate(utils.getFirstValidDate()),
+    )!;
+    const rangeMax = utils.bsStringToAd(
+      utils.formatBSDate({
+        year: lastYear,
+        month: 12,
+        day: utils.getMonthDays(lastYear, 12),
+      }),
+    )!;
 
     /** Nepali label for an English "YYYY-MM-DD" key, or "" when out of range. */
     const label = (key: string) => {
       const m = AD_PATTERN.exec(key);
       if (!m || key < rangeMin || key > rangeMax) return "";
-      const bs = utils.adToBs(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+      const bs = utils.adToBs(
+        new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])),
+      );
       return `${utils.toNepaliNumber(bs.day)} ${NP_MONTHS[bs.month - 1]} ${utils.toNepaliNumber(bs.year)}`;
     };
 
     /** Date-only values (date of birth, service date). Uses the stored calendar day, like the forms do. */
     const parts = (value?: string | Date | null): Parts => {
       if (!value) return { bs: "—", ad: "" };
-      const key = value instanceof Date ? localKey(value) : String(value).slice(0, 10);
+      const key =
+        value instanceof Date ? localKey(value) : String(value).slice(0, 10);
       const bs = label(key);
       return { bs: bs || key, ad: bs ? key : "" };
     };

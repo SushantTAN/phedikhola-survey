@@ -101,8 +101,23 @@ export function MedicineForm({
               control={control}
               name="defaultUnitId"
               render={({ field }) => {
-                const choices=units.map(u=>({value:u.id as string,label:u.nameEn as string}));
-                return <FormSelect selected={selectChoice(field.value,choices,initialData?.defaultUnit?.nameEn)} options={choices} onChange={choice=>field.onChange(choice.value)} placeholder="Select unit" loading={unitsLoading}/>;
+                const choices = units.map((u) => ({
+                  value: u.id as string,
+                  label: u.nameEn as string,
+                }));
+                return (
+                  <FormSelect
+                    selected={selectChoice(
+                      field.value,
+                      choices,
+                      initialData?.defaultUnit?.nameEn,
+                    )}
+                    options={choices}
+                    onChange={(choice) => field.onChange(choice.value)}
+                    placeholder="Select unit"
+                    loading={unitsLoading}
+                  />
+                );
               }}
             />
           </Field>
