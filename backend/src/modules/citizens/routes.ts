@@ -172,6 +172,7 @@ citizenRouter.post(
             : Number(req.body.approximateAge),
         gender: req.body.gender ?? "OTHER",
         phone: req.body.phone || null,
+        guardianPhone: req.body.guardianPhone ? String(req.body.guardianPhone).trim() : null,
         ...location(req.body),
         casteGroupCode: req.body.casteGroupCode || null,
         casteOther: req.body.casteOther || null,
@@ -266,6 +267,10 @@ citizenRouter.patch(
             req.body.approximateAge === "" ? null : req.body.approximateAge,
           gender: req.body.gender,
           phone: req.body.phone,
+          guardianPhone:
+            req.body.guardianPhone === undefined
+              ? undefined
+              : String(req.body.guardianPhone ?? "").trim() || null,
           ...location(req.body),
           casteGroupCode: req.body.casteGroupCode,
           casteOther: req.body.casteOther,

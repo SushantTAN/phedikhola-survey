@@ -11,6 +11,7 @@ import { dataRouter } from "../modules/data/routes.js";
 import { storageRouter } from "../modules/storage/routes.js";
 import { reportRouter } from "../modules/reports/routes.js";
 import { healthPostRouter } from "../modules/health-posts/routes.js";
+import { smsRouter } from "../modules/sms/routes.js";
 import { toleRouter } from "../modules/toles/routes.js";
 
 export const apiRouter = Router();
@@ -26,4 +27,5 @@ apiRouter.use("/data", dataRouter);
 apiRouter.use("/storage", storageRouter);
 apiRouter.use("/reports", reportRouter);
 apiRouter.use("/health-posts", healthPostRouter);
+apiRouter.use("/sms", smsRouter);
 apiRouter.use("/toles", toleRouter);

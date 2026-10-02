@@ -78,6 +78,7 @@ model Citizen {
   approximateAge             Int?
   gender                     Gender
   phone                      String?
+  guardianPhone              String?
   latitude                   Decimal? @db.Decimal(10,7)
   longitude                  Decimal? @db.Decimal(10,7)
   casteGroupCode             String?
@@ -235,6 +236,7 @@ model CitizenServiceRecord {
   notes        String?
   otherHealthProblem String?
   visitPhotoUrl String?
+  guardianPhone String?
   needsFollowup Boolean @default(false) @map("needs_followup")
   status       RecordStatus @default(ACTIVE)
   version      Int @default(1)

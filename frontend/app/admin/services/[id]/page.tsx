@@ -125,6 +125,7 @@ export default function ServiceDetail() {
               }
             />
             <Info label="Staff" value={s.createdBy?.name || "—"} />
+                <Info label="Guardian mobile" value={s.guardianPhone || "—"} />
             <Info
               label="Needs follow-up"
               value={s.needsFollowup ? "Yes" : "No"}

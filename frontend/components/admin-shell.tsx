@@ -15,6 +15,7 @@ import {
   LogOut,
   MapPinned,
   Menu,
+  MessageSquareText,
   PanelLeftClose,
   PanelLeftOpen,
   Pill,
@@ -36,6 +37,7 @@ const links = [
   [/^\/admin\/toles/, "/admin/toles", "Toles", MapPinned],
   [/^\/admin\/staff/, "/admin/staff", "Staff", UserCog],
   [/^\/admin\/reports/, "/admin/reports", "Reports", FileBarChart],
+  [/^\/admin\/bulk-sms/, "/admin/bulk-sms", "Bulk SMS", MessageSquareText],
   [/^\/admin\/data/, "/admin/data", "Import / Export", Database],
 ] as const;
 

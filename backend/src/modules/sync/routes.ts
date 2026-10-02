@@ -57,6 +57,7 @@ syncRouter.post(
             item.approximateAge == null ? null : Number(item.approximateAge),
           gender: item.gender || "OTHER",
           phone: item.phone || null,
+          guardianPhone: item.guardianPhone ? String(item.guardianPhone).trim() : null,
           casteGroupCode: item.casteGroupCode || null,
           casteOther: item.casteOther || null,
           maritalStatusCode: item.maritalStatusCode || null,
@@ -188,6 +189,7 @@ syncRouter.post(
           accuracy: item.accuracy ?? null,
           notes: item.notes || null,
           otherHealthProblem: item.otherHealthProblem || null,
+          guardianPhone: item.guardianPhone ? String(item.guardianPhone).trim() : null,
           visitPhotoUrl: item.visitPhotoUrl || null,
           needsFollowup:
             item.needsFollowup === true || item.needsFollowup === "true",
