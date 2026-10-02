@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PHONE_ERROR, PHONE_PATTERN } from "@/lib/phone";
 import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
@@ -36,6 +37,10 @@ const schema = yup
       .max(130),
     gender: yup.string().oneOf(["FEMALE", "MALE", "OTHER"]).required(),
     phone: yup.string().nullable(),
+    guardianPhone: yup
+      .string()
+      .nullable()
+      .test("guardian-phone", PHONE_ERROR, (v) => !v || PHONE_PATTERN.test(v)),
     latitude: yup
       .string()
       .nullable()
@@ -114,6 +119,7 @@ const empty: CitizenFormValues = {
   approximateAge: null,
   gender: "OTHER",
   phone: "",
+  guardianPhone: "",
   latitude: "",
   longitude: "",
   categoryId: "",
@@ -143,6 +149,7 @@ export function CitizenForm({
     id: string;
     fullName: string;
     publicId: string;
+    guardianPhone?: string | null;
   }) => void;
   onCancel?: () => void;
 }) {
@@ -185,6 +192,7 @@ export function CitizenForm({
       approximateAge: initialData.approximateAge ?? null,
       gender: initialData.gender ?? "OTHER",
       phone: initialData.phone ?? "",
+      guardianPhone: initialData.guardianPhone ?? "",
       latitude:
         initialData.latitude == null
           ? ""
@@ -336,6 +344,17 @@ export function CitizenForm({
           />
           <Field label="फोन नं. / Phone">
             <Input {...register("phone")} placeholder="98XXXXXXXX" />
+          </Field>
+          <Field
+            label="Guardian mobile number (optional)"
+            error={errors.guardianPhone?.message}
+          >
+            <Input
+              type="tel"
+              inputMode="tel"
+              {...register("guardianPhone")}
+              placeholder="98XXXXXXXX"
+            />
           </Field>
           <Controller
             control={control}

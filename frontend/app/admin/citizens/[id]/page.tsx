@@ -96,6 +96,7 @@ export default function CitizenDetail() {
                 <Info label="Date of birth" value={np.date(c.dateOfBirth)} />
                 <Info label="Approximate age" value={c.approximateAge ?? "—"} />
                 <Info label="Phone" value={c.phone || "—"} />
+                <Info label="Guardian mobile" value={c.guardianPhone || "—"} />
                 <Info
                   label="Coordinates"
                   value={

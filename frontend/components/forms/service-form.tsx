@@ -39,25 +39,18 @@ import { BloodPressureStatus } from "@/components/shared/bp-status";
 import { TemperatureStatus } from "@/components/shared/temperature-status";
 import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
 import { useNepaliDateUtils } from "nepali-bs-calendar-react";
+import { NEPALI_MONTH_NAMES } from "@/lib/nepali-months";
+import { PHONE_ERROR, PHONE_PATTERN } from "@/lib/phone";
 import { MedicinePicker } from "@/components/shared/medicine-picker";
-const months = [
-  "Baisakh",
-  "Jestha",
-  "Ashar",
-  "Shrawan",
-  "Bhadra",
-  "Ashwin",
-  "Kartik",
-  "Mangsir",
-  "Poush",
-  "Magh",
-  "Falgun",
-  "Chaitra",
-];
+const months = NEPALI_MONTH_NAMES;
 const schema = yup.object({
   citizenId: yup.string().required("Citizen is required"),
   wardId: yup.string().required("Ward is required"),
   createdById: yup.string().nullable(),
+  guardianPhone: yup
+    .string()
+    .nullable()
+    .test("guardian-phone", PHONE_ERROR, (v) => !v || PHONE_PATTERN.test(v)),
   serviceDate: yup.string().required(),
   nepaliYear: yup
     .number()
@@ -195,13 +188,14 @@ export function ServiceForm({
     setValue,
     getValues,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<Values>({
     resolver: yupResolver(schema) as any,
     defaultValues: {
       citizenId: defaultCitizenId || "",
       wardId: "",
       createdById: "",
+      guardianPhone: "",
       serviceDate: new Date().toISOString().slice(0, 10),
       nepaliYear: null,
       nepaliMonth: "",
@@ -268,6 +262,7 @@ export function ServiceForm({
       citizenId: initialData.citizenId,
       wardId: initialData.wardId,
       createdById: initialData.createdById ?? "",
+      guardianPhone: initialData.guardianPhone ?? "",
       serviceDate: String(initialData.serviceDate).slice(0, 10),
       nepaliYear: initialData.nepaliYear ?? null,
       nepaliMonth: initialData.nepaliMonth ?? "",
@@ -306,6 +301,18 @@ export function ServiceForm({
     );
     setPreview(initialData.visitPhotoUrl ?? "");
   }, [initialData, reset]);
+  // Guardian mobile number is copied from the citizen's profile, and can still be edited per record.
+  function fillGuardianPhone(citizen?: { guardianPhone?: string | null } | null) {
+    setValue("guardianPhone", citizen?.guardianPhone ?? "", { shouldDirty: true });
+  }
+  useEffect(() => {
+    if (!defaultCitizenId || mode !== "create") return;
+    api<any>(`/citizens/${defaultCitizenId}`)
+      .then((r) => {
+        if (!getValues("guardianPhone")) fillGuardianPhone(r.data);
+      })
+      .catch(() => {});
+  }, [defaultCitizenId, mode]); // eslint-disable-line react-hooks/exhaustive-deps
   function addMedicine(m: any) {
     setMedicines((v) =>
       v.some((x) => x.medicineId === m.id)
@@ -335,8 +342,17 @@ export function ServiceForm({
         const webp = await compressImageToWebp(photoFile);
         visitPhotoUrl = await uploadImage(webp, "service", serviceId || "new");
       }
+      // Records are filtered by Nepali year/month later (e.g. bulk SMS), so make sure both are stored.
+      const derived =
+        !values.nepaliYear || !values.nepaliMonth
+          ? adToBsParts(values.serviceDate)
+          : null;
       const payload = {
         ...values,
+        nepaliYear: values.nepaliYear || derived?.year || null,
+        nepaliMonth:
+          values.nepaliMonth ||
+          (derived ? (months[derived.month - 1] ?? "") : ""),
         visitPhotoUrl,
         conditionIds,
         medicines: medicines.map(({ label, ...m }) => m),
@@ -416,6 +432,9 @@ export function ServiceForm({
                         if (choice.value !== field.value)
                           setValue("wardId", "", { shouldDirty: true });
                         field.onChange(choice.value);
+                        fillGuardianPhone(
+                          citizens.find((c) => c.id === choice.value),
+                        );
                       }}
                       action={{
                         label: "Create new citizen",
@@ -468,6 +487,17 @@ export function ServiceForm({
                 );
               }}
             />
+            <Field label="Guardian mobile number (optional)">
+              <Input
+                type="tel"
+                inputMode="tel"
+                placeholder="98XXXXXXXX"
+                {...register("guardianPhone")}
+              />
+              {errors.guardianPhone && (
+                <p className="text-xs text-red-600">{errors.guardianPhone.message}</p>
+              )}
+            </Field>
             <Field label="Service date *">
               <Controller
                 control={control}
@@ -787,6 +817,7 @@ export function ServiceForm({
                     ...current.filter((c) => c.id !== citizen.id),
                   ]);
                   setValue("wardId", "", { shouldDirty: true });
+                  fillGuardianPhone(citizen);
                   setValue("citizenId", citizen.id, {
                     shouldDirty: true,
                     shouldTouch: true,

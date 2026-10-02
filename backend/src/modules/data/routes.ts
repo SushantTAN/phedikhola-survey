@@ -77,6 +77,7 @@ async function buildCitizensSheet(wb: XLSX.WorkBook) {
         approximate_age: c.approximateAge ?? "",
         gender: c.gender,
         phone: c.phone ?? "",
+        guardian_phone: c.guardianPhone ?? "",
         latitude: c.latitude?.toString() ?? "",
         longitude: c.longitude?.toString() ?? "",
         citizen_category: categoryCode(c),
@@ -131,6 +132,7 @@ async function buildServicesSheets(wb: XLSX.WorkBook) {
         altitude: s.altitude?.toString() ?? "",
         accuracy: s.accuracy?.toString() ?? "",
         other_health_problem: s.otherHealthProblem ?? "",
+        guardian_phone: s.guardianPhone ?? "",
         notes: s.notes ?? "",
         photo_url: s.visitPhotoUrl ?? "",
         needs_followup: s.needsFollowup ? "YES" : "NO",
@@ -289,6 +291,7 @@ async function importCitizens(rows: Row[], userId: string) {
             : Number(row.approximate_age),
         gender: String(row.gender || "OTHER").toUpperCase(),
         phone: row.phone ? String(row.phone) : null,
+        guardianPhone: row.guardian_phone ? String(row.guardian_phone).trim() : null,
         latitude:
           row.latitude === "" || row.latitude == null
             ? null
@@ -587,6 +590,7 @@ async function importServices(wb: XLSX.WorkBook, userId: string) {
             ? null
             : String(row.accuracy),
         otherHealthProblem: row.other_health_problem || null,
+        guardianPhone: row.guardian_phone ? String(row.guardian_phone).trim() : null,
         notes: row.notes || null,
         visitPhotoUrl: row.photo_url || null,
         needsFollowup: ["YES", "TRUE", "1"].includes(

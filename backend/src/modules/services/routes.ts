@@ -133,6 +133,7 @@ serviceRouter.post(
         accuracy: req.body.accuracy === "" ? null : (req.body.accuracy ?? null),
         notes: req.body.notes || null,
         otherHealthProblem: req.body.otherHealthProblem || null,
+        guardianPhone: req.body.guardianPhone ? String(req.body.guardianPhone).trim() : null,
         visitPhotoUrl: req.body.visitPhotoUrl || null,
         needsFollowup:
           req.body.needsFollowup === true || req.body.needsFollowup === "true",
@@ -226,6 +227,10 @@ serviceRouter.patch(
           accuracy: req.body.accuracy === "" ? null : req.body.accuracy,
           notes: req.body.notes,
           otherHealthProblem: req.body.otherHealthProblem,
+          guardianPhone:
+            req.body.guardianPhone === undefined
+              ? undefined
+              : String(req.body.guardianPhone ?? "").trim() || null,
           visitPhotoUrl: req.body.visitPhotoUrl,
           needsFollowup:
             req.body.needsFollowup == null
