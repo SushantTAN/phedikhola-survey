@@ -49,7 +49,6 @@ export type CitizenMinAggregateOutputType = {
   approximateAge: number | null
   gender: $Enums.Gender | null
   phone: string | null
-  address: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   casteGroupCode: string | null
@@ -78,7 +77,6 @@ export type CitizenMaxAggregateOutputType = {
   approximateAge: number | null
   gender: $Enums.Gender | null
   phone: string | null
-  address: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   casteGroupCode: string | null
@@ -107,7 +105,6 @@ export type CitizenCountAggregateOutputType = {
   approximateAge: number
   gender: number
   phone: number
-  address: number
   latitude: number
   longitude: number
   casteGroupCode: number
@@ -152,7 +149,6 @@ export type CitizenMinAggregateInputType = {
   approximateAge?: true
   gender?: true
   phone?: true
-  address?: true
   latitude?: true
   longitude?: true
   casteGroupCode?: true
@@ -181,7 +177,6 @@ export type CitizenMaxAggregateInputType = {
   approximateAge?: true
   gender?: true
   phone?: true
-  address?: true
   latitude?: true
   longitude?: true
   casteGroupCode?: true
@@ -210,7 +205,6 @@ export type CitizenCountAggregateInputType = {
   approximateAge?: true
   gender?: true
   phone?: true
-  address?: true
   latitude?: true
   longitude?: true
   casteGroupCode?: true
@@ -326,7 +320,6 @@ export type CitizenGroupByOutputType = {
   approximateAge: number | null
   gender: $Enums.Gender
   phone: string | null
-  address: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   casteGroupCode: string | null
@@ -378,7 +371,6 @@ export type CitizenWhereInput = {
   approximateAge?: Prisma.IntNullableFilter<"Citizen"> | number | null
   gender?: Prisma.EnumGenderFilter<"Citizen"> | $Enums.Gender
   phone?: Prisma.StringNullableFilter<"Citizen"> | string | null
-  address?: Prisma.StringNullableFilter<"Citizen"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.StringNullableFilter<"Citizen"> | string | null
@@ -412,7 +404,6 @@ export type CitizenOrderByWithRelationInput = {
   approximateAge?: Prisma.SortOrderInput | Prisma.SortOrder
   gender?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
-  address?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   casteGroupCode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -449,7 +440,6 @@ export type CitizenWhereUniqueInput = Prisma.AtLeast<{
   approximateAge?: Prisma.IntNullableFilter<"Citizen"> | number | null
   gender?: Prisma.EnumGenderFilter<"Citizen"> | $Enums.Gender
   phone?: Prisma.StringNullableFilter<"Citizen"> | string | null
-  address?: Prisma.StringNullableFilter<"Citizen"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.StringNullableFilter<"Citizen"> | string | null
@@ -483,7 +473,6 @@ export type CitizenOrderByWithAggregationInput = {
   approximateAge?: Prisma.SortOrderInput | Prisma.SortOrder
   gender?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
-  address?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   casteGroupCode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -520,7 +509,6 @@ export type CitizenScalarWhereWithAggregatesInput = {
   approximateAge?: Prisma.IntNullableWithAggregatesFilter<"Citizen"> | number | null
   gender?: Prisma.EnumGenderWithAggregatesFilter<"Citizen"> | $Enums.Gender
   phone?: Prisma.StringNullableWithAggregatesFilter<"Citizen"> | string | null
-  address?: Prisma.StringNullableWithAggregatesFilter<"Citizen"> | string | null
   latitude?: Prisma.DecimalNullableWithAggregatesFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableWithAggregatesFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.StringNullableWithAggregatesFilter<"Citizen"> | string | null
@@ -549,7 +537,6 @@ export type CitizenCreateInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -581,7 +568,6 @@ export type CitizenUncheckedCreateInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -613,7 +599,6 @@ export type CitizenUpdateInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -645,7 +630,6 @@ export type CitizenUncheckedUpdateInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -677,7 +661,6 @@ export type CitizenCreateManyInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -706,7 +689,6 @@ export type CitizenUpdateManyMutationInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -733,7 +715,6 @@ export type CitizenUncheckedUpdateManyInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -772,7 +753,6 @@ export type CitizenCountOrderByAggregateInput = {
   approximateAge?: Prisma.SortOrder
   gender?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   casteGroupCode?: Prisma.SortOrder
@@ -808,7 +788,6 @@ export type CitizenMaxOrderByAggregateInput = {
   approximateAge?: Prisma.SortOrder
   gender?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   casteGroupCode?: Prisma.SortOrder
@@ -837,7 +816,6 @@ export type CitizenMinOrderByAggregateInput = {
   approximateAge?: Prisma.SortOrder
   gender?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   casteGroupCode?: Prisma.SortOrder
@@ -1032,7 +1010,6 @@ export type CitizenCreateWithoutCreatedByInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1063,7 +1040,6 @@ export type CitizenUncheckedCreateWithoutCreatedByInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1123,7 +1099,6 @@ export type CitizenScalarWhereInput = {
   approximateAge?: Prisma.IntNullableFilter<"Citizen"> | number | null
   gender?: Prisma.EnumGenderFilter<"Citizen"> | $Enums.Gender
   phone?: Prisma.StringNullableFilter<"Citizen"> | string | null
-  address?: Prisma.StringNullableFilter<"Citizen"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Citizen"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.StringNullableFilter<"Citizen"> | string | null
@@ -1152,7 +1127,6 @@ export type CitizenCreateWithoutCategoriesInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1183,7 +1157,6 @@ export type CitizenUncheckedCreateWithoutCategoriesInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1230,7 +1203,6 @@ export type CitizenUpdateWithoutCategoriesInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1261,7 +1233,6 @@ export type CitizenUncheckedUpdateWithoutCategoriesInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1292,7 +1263,6 @@ export type CitizenCreateWithoutWardsInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1323,7 +1293,6 @@ export type CitizenUncheckedCreateWithoutWardsInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1370,7 +1339,6 @@ export type CitizenUpdateWithoutWardsInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1401,7 +1369,6 @@ export type CitizenUncheckedUpdateWithoutWardsInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1432,7 +1399,6 @@ export type CitizenCreateWithoutToleInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1463,7 +1429,6 @@ export type CitizenUncheckedCreateWithoutToleInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1520,7 +1485,6 @@ export type CitizenCreateWithoutServiceRecordsInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1551,7 +1515,6 @@ export type CitizenUncheckedCreateWithoutServiceRecordsInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1598,7 +1561,6 @@ export type CitizenUpdateWithoutServiceRecordsInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1629,7 +1591,6 @@ export type CitizenUncheckedUpdateWithoutServiceRecordsInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1660,7 +1621,6 @@ export type CitizenCreateManyCreatedByInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1688,7 +1648,6 @@ export type CitizenUpdateWithoutCreatedByInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1719,7 +1678,6 @@ export type CitizenUncheckedUpdateWithoutCreatedByInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1750,7 +1708,6 @@ export type CitizenUncheckedUpdateManyWithoutCreatedByInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1778,7 +1735,6 @@ export type CitizenCreateManyToleInput = {
   approximateAge?: number | null
   gender: $Enums.Gender
   phone?: string | null
-  address?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: string | null
@@ -1806,7 +1762,6 @@ export type CitizenUpdateWithoutToleInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1837,7 +1792,6 @@ export type CitizenUncheckedUpdateWithoutToleInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1868,7 +1822,6 @@ export type CitizenUncheckedUpdateManyWithoutToleInput = {
   approximateAge?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   casteGroupCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1945,7 +1898,6 @@ export type CitizenSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   approximateAge?: boolean
   gender?: boolean
   phone?: boolean
-  address?: boolean
   latitude?: boolean
   longitude?: boolean
   casteGroupCode?: boolean
@@ -1980,7 +1932,6 @@ export type CitizenSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   approximateAge?: boolean
   gender?: boolean
   phone?: boolean
-  address?: boolean
   latitude?: boolean
   longitude?: boolean
   casteGroupCode?: boolean
@@ -2011,7 +1962,6 @@ export type CitizenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   approximateAge?: boolean
   gender?: boolean
   phone?: boolean
-  address?: boolean
   latitude?: boolean
   longitude?: boolean
   casteGroupCode?: boolean
@@ -2042,7 +1992,6 @@ export type CitizenSelectScalar = {
   approximateAge?: boolean
   gender?: boolean
   phone?: boolean
-  address?: boolean
   latitude?: boolean
   longitude?: boolean
   casteGroupCode?: boolean
@@ -2062,7 +2011,7 @@ export type CitizenSelectScalar = {
   deletedAt?: boolean
 }
 
-export type CitizenOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientUuid" | "publicId" | "fullName" | "dateOfBirth" | "approximateAge" | "gender" | "phone" | "address" | "latitude" | "longitude" | "casteGroupCode" | "casteOther" | "maritalStatusCode" | "occupationCode" | "occupationOther" | "livingStatusCode" | "householdForeignEmployment" | "profilePhotoUrl" | "status" | "version" | "createdById" | "toleId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["citizen"]>
+export type CitizenOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientUuid" | "publicId" | "fullName" | "dateOfBirth" | "approximateAge" | "gender" | "phone" | "latitude" | "longitude" | "casteGroupCode" | "casteOther" | "maritalStatusCode" | "occupationCode" | "occupationOther" | "livingStatusCode" | "householdForeignEmployment" | "profilePhotoUrl" | "status" | "version" | "createdById" | "toleId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["citizen"]>
 export type CitizenInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.Citizen$createdByArgs<ExtArgs>
   tole?: boolean | Prisma.Citizen$toleArgs<ExtArgs>
@@ -2098,7 +2047,6 @@ export type $CitizenPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     approximateAge: number | null
     gender: $Enums.Gender
     phone: string | null
-    address: string | null
     latitude: runtime.Decimal | null
     longitude: runtime.Decimal | null
     casteGroupCode: string | null
@@ -2552,7 +2500,6 @@ export interface CitizenFieldRefs {
   readonly approximateAge: Prisma.FieldRef<"Citizen", 'Int'>
   readonly gender: Prisma.FieldRef<"Citizen", 'Gender'>
   readonly phone: Prisma.FieldRef<"Citizen", 'String'>
-  readonly address: Prisma.FieldRef<"Citizen", 'String'>
   readonly latitude: Prisma.FieldRef<"Citizen", 'Decimal'>
   readonly longitude: Prisma.FieldRef<"Citizen", 'Decimal'>
   readonly casteGroupCode: Prisma.FieldRef<"Citizen", 'String'>

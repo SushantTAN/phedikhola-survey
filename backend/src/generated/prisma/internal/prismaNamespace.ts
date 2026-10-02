@@ -2069,7 +2069,6 @@ export const CitizenScalarFieldEnum = {
   approximateAge: 'approximateAge',
   gender: 'gender',
   phone: 'phone',
-  address: 'address',
   latitude: 'latitude',
   longitude: 'longitude',
   casteGroupCode: 'casteGroupCode',

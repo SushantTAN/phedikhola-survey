@@ -34,7 +34,6 @@ const schema = yup.object({
     .max(130),
   gender: yup.string().oneOf(["FEMALE", "MALE", "OTHER"]).required(),
   phone: yup.string().nullable(),
-  address: yup.string().nullable(),
   latitude: yup.string().nullable().test("latitude-range", "Latitude must be between -90 and 90", (value) => !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 90)),
   longitude: yup.string().nullable().test("longitude-range", "Longitude must be between -180 and 180", (value) => !value || (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 180)),
   categoryId: yup.string().nullable(),
@@ -89,7 +88,6 @@ const empty: CitizenFormValues = {
   approximateAge: null,
   gender: "OTHER",
   phone: "",
-  address: "",
   latitude: "",
   longitude: "",
   categoryId: "",
@@ -161,7 +159,6 @@ export function CitizenForm({
       approximateAge: initialData.approximateAge ?? null,
       gender: initialData.gender ?? "OTHER",
       phone: initialData.phone ?? "",
-      address: initialData.address ?? "",
       latitude: initialData.latitude == null ? "" : String(Number(initialData.latitude)),
       longitude: initialData.longitude == null ? "" : String(Number(initialData.longitude)),
       categoryId:
@@ -209,7 +206,6 @@ export function CitizenForm({
         ...values,
         categoryId: values.categoryId || null,
         toleId: values.toleId || null,
-        address: values.address?.trim() || null,
         latitude: values.latitude ? Number(values.latitude) : null,
         longitude: values.longitude ? Number(values.longitude) : null,
         profilePhotoUrl,
@@ -289,9 +285,6 @@ export function CitizenForm({
           />
           <Field label="फोन नं. / Phone">
             <Input {...register("phone")} placeholder="98XXXXXXXX" />
-          </Field>
-          <Field label="Address">
-            <Input {...register("address")} placeholder="Street or local address" />
           </Field>
           <Controller
             control={control}

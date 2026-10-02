@@ -1,0 +1,1 @@
+ALTER TABLE "Citizen" DROP COLUMN IF EXISTS "address";
