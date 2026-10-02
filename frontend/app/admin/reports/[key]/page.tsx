@@ -1,4 +1,4 @@
-"use client";import {ReportSkeleton} from "@/components/shared/skeletons";
+"use client";import {useNepaliFormat} from "@/lib/use-nepali-format";import {ReportSkeleton} from "@/components/shared/skeletons";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import { downloadReport } from "@/lib/file-transfer";
 import { PageHeader } from "@/components/shared/page-header";
 import { FormSelect } from "@/components/shared/form-select";
 import { ReportChart, type ChartSpec } from "@/components/reports/report-chart";
+import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,7 @@ function toQuery(filters: Record<string, string>) {
 }
 
 export default function ReportPage() {
-  const { key } = useParams<{ key: string }>();
+  const { key } = useParams<{ key: string }>();const np=useNepaliFormat();
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [applied, setApplied] = useState<Record<string, string>>({});
   const [page, setPage] = useState(1);
@@ -123,11 +124,11 @@ export default function ReportPage() {
                         onChange={(c) => setFilter(f.key, c.value === ALL ? "" : c.value)}
                       />
                     ) : (
-                      <Input
-                        type={f.type === "date" ? "date" : "text"}
-                        value={draft[f.key] ?? ""}
-                        onChange={(e) => setFilter(f.key, e.target.value)}
-                      />
+                      f.type === "date" ? (
+                        <NepaliDatePicker value={draft[f.key] ?? ""} onChange={(ad) => setFilter(f.key, ad)} clearable />
+                      ) : (
+                        <Input value={draft[f.key] ?? ""} onChange={(e) => setFilter(f.key, e.target.value)} />
+                      )
                     )}
                   </div>
                 ))}
@@ -180,7 +181,7 @@ export default function ReportPage() {
                     <TableRow key={i}>
                       {d.columns.map((c) => (
                         <TableCell key={c.key} className={c.type === "number" ? "text-right tabular-nums" : "max-w-72"}>
-                          {r[c.key] === "" || r[c.key] == null ? "—" : String(r[c.key])}
+                          {r[c.key] === "" || r[c.key] == null ? "—" : c.type === "date" ? np.date(String(r[c.key])) : String(r[c.key])}
                         </TableCell>
                       ))}
                     </TableRow>

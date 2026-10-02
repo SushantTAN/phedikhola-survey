@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
 import { LocationPicker } from "@/components/shared/location-picker";
@@ -257,7 +258,19 @@ export function CitizenForm({
             <Input {...register("fullName")} placeholder="Full name" />
           </Field>
           <Field label="Date of birth">
-            <Input type="date" {...register("dateOfBirth")} />
+            <Controller
+              control={control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <NepaliDatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  max={new Date().toISOString().slice(0, 10)}
+                  defaultViewYearsAgo={60}
+                  clearable
+                />
+              )}
+            />
           </Field>
           <Field label="उमेर / Approximate age">
             <Input

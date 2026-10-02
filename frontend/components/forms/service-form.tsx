@@ -37,6 +37,8 @@ import { FormSelect, selectChoice } from "@/components/shared/form-select";
 import { LocationPicker } from "@/components/shared/location-picker";
 import { BloodPressureStatus } from "@/components/shared/bp-status";
 import { TemperatureStatus } from "@/components/shared/temperature-status";
+import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
+import { useNepaliDateUtils } from "nepali-bs-calendar-react";
 import { MedicinePicker } from "@/components/shared/medicine-picker";
 const months = [
   "Baisakh",
@@ -128,6 +130,18 @@ export function ServiceForm({
     units: [],
   });
   const [citizens, setCitizens] = useState<any[]>([]);
+  const nepaliUtils = useNepaliDateUtils();
+  // Service date is stored in English (AD); the Nepali year/month fields are filled in from it.
+  function adToBsParts(ad: string) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ad);
+    if (!m) return null;
+    try {
+      const bs = nepaliUtils.adToBs(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+      return nepaliUtils.bsStringToAd(nepaliUtils.formatBSDate(bs)) === `${m[1]}-${m[2]}-${m[3]}` ? bs : null;
+    } catch {
+      return null;
+    }
+  }
   const [staff, setStaff] = useState<any[]>([]);
   const [refLoading, setRefLoading] = useState(true);
   const [staffLoading, setStaffLoading] = useState(true);
@@ -438,7 +452,23 @@ export function ServiceForm({
               }}
             />
             <Field label="Service date *">
-              <Input type="date" {...register("serviceDate")} />
+              <Controller
+                control={control}
+                name="serviceDate"
+                render={({ field }) => (
+                  <NepaliDatePicker
+                    value={field.value}
+                    onChange={(ad) => {
+                      field.onChange(ad);
+                      const bs = ad ? adToBsParts(ad) : null;
+                      if (bs) {
+                        setValue("nepaliYear", bs.year, { shouldDirty: true });
+                        setValue("nepaliMonth", months[bs.month - 1] ?? "", { shouldDirty: true });
+                      }
+                    }}
+                  />
+                )}
+              />
             </Field>
             <Field label="Nepali year">
               <Input
