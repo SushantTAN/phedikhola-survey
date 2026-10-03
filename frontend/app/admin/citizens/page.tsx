@@ -99,14 +99,8 @@ export default function CitizensPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {c.wards?.length ? (
-                      <div className="flex flex-wrap gap-1">
-                        {c.wards.map((x: any) => (
-                          <Badge key={x.wardId} variant="outline">
-                            {x.ward.nameEn}
-                          </Badge>
-                        ))}
-                      </div>
+                    {c.ward ? (
+                      <Badge variant="outline">{c.ward.nameEn}</Badge>
                     ) : (
                       "—"
                     )}

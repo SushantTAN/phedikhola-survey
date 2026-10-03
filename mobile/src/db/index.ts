@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS citizens (
   client_uuid TEXT PRIMARY KEY, server_id TEXT UNIQUE, public_id TEXT, full_name TEXT NOT NULL, date_of_birth TEXT,
   approximate_age INTEGER, gender TEXT NOT NULL, phone TEXT, caste_group_code TEXT, caste_other TEXT, marital_status_code TEXT,
   occupation_code TEXT, occupation_other TEXT, living_status_code TEXT, household_foreign_employment INTEGER,
-  category_ids TEXT NOT NULL DEFAULT '[]', ward_ids TEXT NOT NULL DEFAULT '[]', profile_photo_uri TEXT, profile_photo_uploaded INTEGER NOT NULL DEFAULT 0,
+  category_ids TEXT NOT NULL DEFAULT '[]', ward_id TEXT, profile_photo_uri TEXT, profile_photo_uploaded INTEGER NOT NULL DEFAULT 0,
   version INTEGER NOT NULL DEFAULT 1, sync_status TEXT NOT NULL DEFAULT 'pending', sync_error TEXT, deleted_at TEXT,
   created_at TEXT NOT NULL, updated_at TEXT NOT NULL
 );
@@ -65,7 +65,15 @@ CREATE INDEX IF NOT EXISTS idx_services_citizen ON service_records(citizen_clien
 CREATE INDEX IF NOT EXISTS idx_services_sync ON service_records(sync_status);
 `);
   // Additive upgrades for databases created by earlier app versions. Existing rows keep their data.
-  await ensureColumn(db, "citizens", "ward_ids", "TEXT NOT NULL DEFAULT '[]'");
+  await ensureColumn(db, "citizens", "ward_id", "TEXT");
+  // Older versions stored a list of wards; a citizen now has one, so keep the first.
+  const hadWardList = (await db.getAllAsync<{ name: string }>("PRAGMA table_info(citizens)")).some(
+    (c) => c.name === "ward_ids",
+  );
+  if (hadWardList)
+    await db.execAsync(
+      "UPDATE citizens SET ward_id=json_extract(ward_ids,'$[0]') WHERE ward_id IS NULL AND ward_ids IS NOT NULL AND ward_ids<>'[]'",
+    );
   await ensureColumn(db, "citizens", "guardian_phone", "TEXT");
   await ensureColumn(db, "citizens", "tole_id", "TEXT");
   await ensureColumn(db, "citizens", "latitude", "REAL");
@@ -109,7 +117,7 @@ export type LocalCitizen = {
   living_status_code: string | null;
   household_foreign_employment: number | null;
   category_ids: string;
-  ward_ids: string;
+  ward_id: string | null;
   tole_id: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -204,7 +212,7 @@ export type CitizenInput = {
   livingStatusCode?: string | null;
   householdForeignEmployment?: boolean | null;
   categoryIds?: string[];
-  wardIds?: string[];
+  wardId?: string | null;
   toleId?: string | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -228,7 +236,7 @@ function citizenValues(c: CitizenInput) {
     c.livingStatusCode ?? null,
     c.householdForeignEmployment == null ? null : c.householdForeignEmployment ? 1 : 0,
     JSON.stringify(c.categoryIds ?? []),
-    JSON.stringify(c.wardIds ?? []),
+    c.wardId ?? null,
     c.toleId ?? null,
     c.latitude ?? null,
     c.longitude ?? null,
@@ -249,7 +257,7 @@ export async function saveCitizen(c: CitizenInput & { clientUuid: string }) {
   const db = await getDb();
   const now = new Date().toISOString();
   await db.runAsync(
-    `INSERT INTO citizens(client_uuid,full_name,date_of_birth,approximate_age,gender,phone,guardian_phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_ids,tole_id,latitude,longitude,profile_photo_uri,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    `INSERT INTO citizens(client_uuid,full_name,date_of_birth,approximate_age,gender,phone,guardian_phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_id,tole_id,latitude,longitude,profile_photo_uri,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     c.clientUuid,
     ...citizenValues(c),
     c.profilePhotoUri ?? null,
@@ -272,7 +280,7 @@ export async function updateCitizen(clientUuid: string, c: CitizenInput) {
   if (!existing) throw new Error("Citizen not found on this device");
   const photoChanged = (c.profilePhotoUri ?? null) !== (existing.profile_photo_uri ?? null);
   await db.runAsync(
-    `UPDATE citizens SET full_name=?,date_of_birth=?,approximate_age=?,gender=?,phone=?,guardian_phone=?,caste_group_code=?,caste_other=?,marital_status_code=?,occupation_code=?,occupation_other=?,living_status_code=?,household_foreign_employment=?,category_ids=?,ward_ids=?,tole_id=?,latitude=?,longitude=?,
+    `UPDATE citizens SET full_name=?,date_of_birth=?,approximate_age=?,gender=?,phone=?,guardian_phone=?,caste_group_code=?,caste_other=?,marital_status_code=?,occupation_code=?,occupation_other=?,living_status_code=?,household_foreign_employment=?,category_ids=?,ward_id=?,tole_id=?,latitude=?,longitude=?,
        profile_photo_uri=?,profile_photo_uploaded=CASE WHEN ? THEN 0 ELSE profile_photo_uploaded END,
        sync_status='pending',sync_error=NULL,updated_at=? WHERE client_uuid=?`,
     ...citizenValues(c),

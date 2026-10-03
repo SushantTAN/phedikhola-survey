@@ -250,9 +250,8 @@ export function ServiceForm({
     api<any>(`/citizens/${selectedCitizenId}`)
       .then((response) => {
         if (cancelled || getValues("wardId")) return;
-        const wards = response.data.wards ?? [];
-        if (wards.length === 1) {
-          setValue("wardId", wards[0].wardId, {
+        if (response.data.wardId) {
+          setValue("wardId", response.data.wardId, {
             shouldDirty: true,
             shouldValidate: true,
           });

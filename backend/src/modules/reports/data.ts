@@ -87,13 +87,13 @@ export async function fetchCitizens(f: ReportFilters) {
       deletedAt: null,
       ...citizenFilters(f),
       ...(f.staffId ? { createdById: f.staffId } : {}),
-      ...(f.wardId ? { wards: { some: { wardId: f.wardId } } } : {}),
+      ...(f.wardId ? { wardId: f.wardId } : {}),
       ...(range ? { createdAt: range } : {}),
       ...(f.q ? citizenSearch(f.q) : {}),
     },
     include: {
       categories: { include: { category: true } },
-      wards: { include: { ward: true } },
+      ward: true,
     },
     orderBy: { fullName: "asc" },
   });

@@ -67,11 +67,6 @@ export type CitizenCategory = Prisma.CitizenCategoryModel
  */
 export type CitizenCategoryAssignment = Prisma.CitizenCategoryAssignmentModel
 /**
- * Model CitizenWardAssignment
- * 
- */
-export type CitizenWardAssignment = Prisma.CitizenWardAssignmentModel
-/**
  * Model Ward
  * 
  */

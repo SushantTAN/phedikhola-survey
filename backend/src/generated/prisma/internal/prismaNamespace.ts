@@ -402,7 +402,6 @@ export const ModelName = {
   Citizen: 'Citizen',
   CitizenCategory: 'CitizenCategory',
   CitizenCategoryAssignment: 'CitizenCategoryAssignment',
-  CitizenWardAssignment: 'CitizenWardAssignment',
   Ward: 'Ward',
   Tole: 'Tole',
   HealthCondition: 'HealthCondition',
@@ -433,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "staffProfile" | "citizen" | "citizenCategory" | "citizenCategoryAssignment" | "citizenWardAssignment" | "ward" | "tole" | "healthCondition" | "medicineUnit" | "medicine" | "citizenServiceRecord" | "serviceHealthCondition" | "serviceMedicine" | "refreshToken" | "passwordResetOtp" | "syncLog" | "auditLog" | "appVersion" | "systemSetting" | "healthPost"
+    modelProps: "user" | "staffProfile" | "citizen" | "citizenCategory" | "citizenCategoryAssignment" | "ward" | "tole" | "healthCondition" | "medicineUnit" | "medicine" | "citizenServiceRecord" | "serviceHealthCondition" | "serviceMedicine" | "refreshToken" | "passwordResetOtp" | "syncLog" | "auditLog" | "appVersion" | "systemSetting" | "healthPost"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -804,80 +803,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CitizenCategoryAssignmentCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CitizenCategoryAssignmentCountAggregateOutputType> | number
-        }
-      }
-    }
-    CitizenWardAssignment: {
-      payload: Prisma.$CitizenWardAssignmentPayload<ExtArgs>
-      fields: Prisma.CitizenWardAssignmentFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.CitizenWardAssignmentFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.CitizenWardAssignmentFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>
-        }
-        findFirst: {
-          args: Prisma.CitizenWardAssignmentFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.CitizenWardAssignmentFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>
-        }
-        findMany: {
-          args: Prisma.CitizenWardAssignmentFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>[]
-        }
-        create: {
-          args: Prisma.CitizenWardAssignmentCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>
-        }
-        createMany: {
-          args: Prisma.CitizenWardAssignmentCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.CitizenWardAssignmentCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>[]
-        }
-        delete: {
-          args: Prisma.CitizenWardAssignmentDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>
-        }
-        update: {
-          args: Prisma.CitizenWardAssignmentUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>
-        }
-        deleteMany: {
-          args: Prisma.CitizenWardAssignmentDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.CitizenWardAssignmentUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.CitizenWardAssignmentUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>[]
-        }
-        upsert: {
-          args: Prisma.CitizenWardAssignmentUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CitizenWardAssignmentPayload>
-        }
-        aggregate: {
-          args: Prisma.CitizenWardAssignmentAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCitizenWardAssignment>
-        }
-        groupBy: {
-          args: Prisma.CitizenWardAssignmentGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CitizenWardAssignmentGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.CitizenWardAssignmentCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CitizenWardAssignmentCountAggregateOutputType> | number
         }
       }
     }
@@ -2084,6 +2009,7 @@ export const CitizenScalarFieldEnum = {
   version: 'version',
   createdById: 'createdById',
   toleId: 'toleId',
+  wardId: 'wardId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -2112,14 +2038,6 @@ export const CitizenCategoryAssignmentScalarFieldEnum = {
 } as const
 
 export type CitizenCategoryAssignmentScalarFieldEnum = (typeof CitizenCategoryAssignmentScalarFieldEnum)[keyof typeof CitizenCategoryAssignmentScalarFieldEnum]
-
-
-export const CitizenWardAssignmentScalarFieldEnum = {
-  citizenId: 'citizenId',
-  wardId: 'wardId'
-} as const
-
-export type CitizenWardAssignmentScalarFieldEnum = (typeof CitizenWardAssignmentScalarFieldEnum)[keyof typeof CitizenWardAssignmentScalarFieldEnum]
 
 
 export const WardScalarFieldEnum = {
@@ -2692,7 +2610,6 @@ export type GlobalOmitConfig = {
   citizen?: Prisma.CitizenOmit
   citizenCategory?: Prisma.CitizenCategoryOmit
   citizenCategoryAssignment?: Prisma.CitizenCategoryAssignmentOmit
-  citizenWardAssignment?: Prisma.CitizenWardAssignmentOmit
   ward?: Prisma.WardOmit
   tole?: Prisma.ToleOmit
   healthCondition?: Prisma.HealthConditionOmit

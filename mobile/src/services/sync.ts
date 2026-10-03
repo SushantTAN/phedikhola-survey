@@ -31,7 +31,7 @@ function citizenPayload(c: LocalCitizen) {
         ? null
         : Boolean(c.household_foreign_employment),
     categoryId: cats[0] ?? null,
-    wardIds: JSON.parse(c.ward_ids || "[]"),
+    wardId: c.ward_id,
     toleId: c.tole_id,
     latitude: c.latitude,
     longitude: c.longitude,
@@ -252,9 +252,9 @@ async function saveReferenceData(ref: any) {
 async function upsertPulledCitizen(c: any) {
   const db = await getDb();
   await db.runAsync(
-    `INSERT INTO citizens(client_uuid,server_id,public_id,full_name,date_of_birth,approximate_age,gender,phone,guardian_phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_ids,tole_id,latitude,longitude,profile_photo_uri,profile_photo_uploaded,version,sync_status,sync_error,deleted_at,created_at,updated_at)
+    `INSERT INTO citizens(client_uuid,server_id,public_id,full_name,date_of_birth,approximate_age,gender,phone,guardian_phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_id,tole_id,latitude,longitude,profile_photo_uri,profile_photo_uploaded,version,sync_status,sync_error,deleted_at,created_at,updated_at)
      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'synced',NULL,?,?,?)
-     ON CONFLICT(client_uuid) DO UPDATE SET server_id=excluded.server_id,public_id=excluded.public_id,full_name=excluded.full_name,date_of_birth=excluded.date_of_birth,approximate_age=excluded.approximate_age,gender=excluded.gender,phone=excluded.phone,guardian_phone=excluded.guardian_phone,caste_group_code=excluded.caste_group_code,caste_other=excluded.caste_other,marital_status_code=excluded.marital_status_code,occupation_code=excluded.occupation_code,occupation_other=excluded.occupation_other,living_status_code=excluded.living_status_code,household_foreign_employment=excluded.household_foreign_employment,category_ids=excluded.category_ids,ward_ids=excluded.ward_ids,tole_id=excluded.tole_id,latitude=excluded.latitude,longitude=excluded.longitude,
+     ON CONFLICT(client_uuid) DO UPDATE SET server_id=excluded.server_id,public_id=excluded.public_id,full_name=excluded.full_name,date_of_birth=excluded.date_of_birth,approximate_age=excluded.approximate_age,gender=excluded.gender,phone=excluded.phone,guardian_phone=excluded.guardian_phone,caste_group_code=excluded.caste_group_code,caste_other=excluded.caste_other,marital_status_code=excluded.marital_status_code,occupation_code=excluded.occupation_code,occupation_other=excluded.occupation_other,living_status_code=excluded.living_status_code,household_foreign_employment=excluded.household_foreign_employment,category_ids=excluded.category_ids,ward_id=excluded.ward_id,tole_id=excluded.tole_id,latitude=excluded.latitude,longitude=excluded.longitude,
        profile_photo_uri=CASE WHEN citizens.profile_photo_uploaded=0 AND citizens.profile_photo_uri IS NOT NULL THEN citizens.profile_photo_uri ELSE excluded.profile_photo_uri END,
        profile_photo_uploaded=CASE WHEN citizens.profile_photo_uploaded=0 AND citizens.profile_photo_uri IS NOT NULL THEN 0 ELSE excluded.profile_photo_uploaded END,
        version=excluded.version,sync_status='synced',sync_error=NULL,deleted_at=excluded.deleted_at,updated_at=excluded.updated_at
@@ -276,7 +276,7 @@ async function upsertPulledCitizen(c: any) {
     c.livingStatusCode ?? null,
     c.householdForeignEmployment == null ? null : c.householdForeignEmployment ? 1 : 0,
     JSON.stringify((c.categories ?? []).map((x: any) => x.categoryId).slice(0, 1)),
-    JSON.stringify((c.wards ?? []).map((x: any) => x.wardId)),
+    c.wardId ?? null,
     c.toleId ?? null,
     asNumber(c.latitude),
     asNumber(c.longitude),

@@ -107,7 +107,7 @@ export const reports: ReportDef[] = [
         phone: c.phone ?? "",
         guardianPhone: c.guardianPhone ?? "",
         category: c.categories.map((x) => x.category.nameEn).join(", "),
-        wards: c.wards.map((x) => x.ward.nameEn).join(", "),
+        ward: c.ward?.nameEn ?? "",
         caste: c.casteGroupCode ?? "",
         maritalStatus: c.maritalStatusCode ?? "",
         occupation: c.occupationCode ?? "",
@@ -131,7 +131,7 @@ export const reports: ReportDef[] = [
           { key: "phone", label: "Phone" },
           { key: "guardianPhone", label: "Guardian mobile" },
           { key: "category", label: "Category" },
-          { key: "wards", label: "Wards" },
+          { key: "ward", label: "Ward" },
           { key: "caste", label: "Caste group" },
           { key: "maritalStatus", label: "Marital status" },
           { key: "occupation", label: "Occupation" },
@@ -243,7 +243,7 @@ export const reports: ReportDef[] = [
         .filter((w) => !f.wardId || w.id === f.wardId)
         .map((w) => {
           const list = citizens.filter((c) =>
-            c.wards.some((x) => x.wardId === w.id),
+            c.wardId === w.id,
           );
           const female = list.filter((c) => c.gender === "FEMALE").length;
           const male = list.filter((c) => c.gender === "MALE").length;
@@ -887,7 +887,7 @@ export const reports: ReportDef[] = [
             deletedAt: null,
             createdById: { in: ids },
             ...(hasRange ? { createdAt: range } : {}),
-            ...(f.wardId ? { wards: { some: { wardId: f.wardId } } } : {}),
+            ...(f.wardId ? { wardId: f.wardId } : {}),
           },
           select: { createdById: true },
         }),

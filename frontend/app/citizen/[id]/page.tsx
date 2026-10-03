@@ -96,7 +96,7 @@ export default function PublicCitizenPage() {
             }
           />
           <Info
-            l="Ward(s)"
+            l="Ward"
             v={
               c.wards?.map((w: any) => w.nameEn || w.ward?.nameEn).join(", ") ||
               "—"

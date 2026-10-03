@@ -140,16 +140,14 @@ export default function CitizenDetail() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPinned className="text-emerald-600" />
-                Assigned wards
+                Ward
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
-              {c.wards?.length ? (
-                c.wards.map((x: any) => (
-                  <Badge key={x.wardId}>
-                    {x.ward.nameNe} / {x.ward.nameEn}
-                  </Badge>
-                ))
+              {c.ward ? (
+                <Badge>
+                  {c.ward.nameNe} / {c.ward.nameEn}
+                </Badge>
               ) : (
                 <span className="text-sm text-slate-500">
                   No ward assigned.

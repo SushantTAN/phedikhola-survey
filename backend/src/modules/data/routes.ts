@@ -53,8 +53,8 @@ function sendWorkbook(res: any, wb: XLSX.WorkBook, name: string) {
 function categoryCode(c: any) {
   return c.categories?.[0]?.category?.code ?? "";
 }
-function wardCodes(c: any) {
-  return c.wards?.map((x: any) => x.ward.code).join("|") ?? "";
+function wardCode(c: any) {
+  return c.ward?.code ?? "";
 }
 
 async function buildCitizensSheet(wb: XLSX.WorkBook) {
@@ -62,7 +62,7 @@ async function buildCitizensSheet(wb: XLSX.WorkBook) {
     where: { deletedAt: null },
     include: {
       categories: { include: { category: true } },
-      wards: { include: { ward: true } },
+      ward: true,
     },
     orderBy: { fullName: "asc" },
   });
@@ -81,7 +81,7 @@ async function buildCitizensSheet(wb: XLSX.WorkBook) {
         latitude: c.latitude?.toString() ?? "",
         longitude: c.longitude?.toString() ?? "",
         citizen_category: categoryCode(c),
-        ward_codes: wardCodes(c),
+        ward_code: wardCode(c),
         caste_group: c.casteGroupCode ?? "",
         caste_other: c.casteOther ?? "",
         marital_status: c.maritalStatusCode ?? "",
@@ -275,15 +275,17 @@ async function importCitizens(rows: Row[], userId: string) {
             where: { code: categoryCode },
           })
         : null;
-      const wardCodes = String(row.ward_codes ?? "")
-        .split("|")
-        .map((x: string) => x.trim())
-        .filter(Boolean);
-      const wards = wardCodes.length
-        ? await prisma.ward.findMany({ where: { code: { in: wardCodes } } })
-        : [];
+      // A citizen has one ward; an old multi-ward "A|B" value keeps only the first.
+      const wardCode = String(row.ward_code ?? row.ward_codes ?? "")
+        .split("|")[0]!
+        .trim();
+      const ward = wardCode
+        ? await prisma.ward.findUnique({ where: { code: wardCode } })
+        : null;
+      if (wardCode && !ward) throw new Error(`Unknown ward: ${wardCode}`);
       const data: any = {
         fullName,
+        wardId: ward?.id ?? null,
         dateOfBirth: row.date_of_birth ? new Date(row.date_of_birth) : null,
         approximateAge:
           row.approximate_age === "" || row.approximate_age == null
@@ -352,13 +354,6 @@ async function importCitizens(rows: Row[], userId: string) {
         if (category)
           await tx.citizenCategoryAssignment.create({
             data: { citizenId: citizen!.id, categoryId: category.id },
-          });
-        await tx.citizenWardAssignment.deleteMany({
-          where: { citizenId: citizen!.id },
-        });
-        if (wards.length)
-          await tx.citizenWardAssignment.createMany({
-            data: wards.map((w) => ({ citizenId: citizen!.id, wardId: w.id })),
           });
       });
       results.push({ row: i + 2, status: "imported" });

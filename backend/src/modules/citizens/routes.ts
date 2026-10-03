@@ -9,11 +9,11 @@ citizenRouter.use(requireAuth);
 
 const citizenInclude = {
   categories: { include: { category: true } },
-  wards: { include: { ward: true } },
+  ward: true,
   tole: { include: { ward: true, healthPost: true } },
 } as const;
 
-async function validateTole(toleId: string | null, wardIds: string[]) {
+async function validateTole(toleId: string | null, wardId: string | null) {
   if (!toleId) return;
   const tole = await prisma.tole.findFirst({
     where: {
@@ -24,11 +24,11 @@ async function validateTole(toleId: string | null, wardIds: string[]) {
     },
   });
   if (!tole) throw new HttpError(400, "INVALID_TOLE", "Select an active tole");
-  if (!wardIds.includes(tole.wardId))
+  if (tole.wardId !== wardId)
     throw new HttpError(
       400,
       "TOLE_WARD_MISMATCH",
-      "The selected tole must belong to an assigned ward",
+      "The selected tole must belong to the citizen's ward",
     );
 }
 
@@ -69,10 +69,10 @@ function selectedCategoryIds(body: any): string[] | null {
   return null;
 }
 
-function selectedWardIds(body: any): string[] | null {
-  if (Array.isArray(body.wardIds))
-    return [...new Set<string>(body.wardIds.map(String))];
-  return null;
+/** undefined = not sent (leave unchanged), null = clear the ward. */
+function selectedWardId(body: any): string | null | undefined {
+  if (body.wardId === undefined) return undefined;
+  return body.wardId ? String(body.wardId) : null;
 }
 
 citizenRouter.get(
@@ -96,7 +96,7 @@ citizenRouter.get(
             ],
           }
         : {}),
-      ...(wardId ? { wards: { some: { wardId } } } : {}),
+      ...(wardId ? { wardId } : {}),
       ...(categoryId ? { categories: { some: { categoryId } } } : {}),
     };
     const [items, total] = await Promise.all([
@@ -154,9 +154,9 @@ citizenRouter.post(
     if (!fullName)
       throw new HttpError(400, "FULL_NAME_REQUIRED", "Full name is required");
     const categoryIds = selectedCategoryIds(req.body) ?? [];
-    const wardIds = selectedWardIds(req.body) ?? [];
+    const wardId = selectedWardId(req.body) ?? null;
     const toleId = req.body.toleId ? String(req.body.toleId) : null;
-    await validateTole(toleId, wardIds);
+    await validateTole(toleId, wardId);
     const clientUuid = String(req.body.clientUuid ?? randomUUID());
     const citizen = await prisma.citizen.create({
       data: {
@@ -187,10 +187,10 @@ citizenRouter.post(
         profilePhotoUrl: req.body.profilePhotoUrl || null,
         createdById: req.user!.sub,
         toleId,
+        wardId,
         categories: {
           create: categoryIds.map((categoryId) => ({ categoryId })),
         },
-        wards: { create: wardIds.map((wardId) => ({ wardId })) },
       },
       include: citizenInclude,
     });
@@ -213,23 +213,15 @@ citizenRouter.patch(
         "Citizen was updated elsewhere",
       );
     const categoryIds = selectedCategoryIds(req.body);
-    const wardIds = selectedWardIds(req.body);
+    const wardId = selectedWardId(req.body);
     const toleId =
       req.body.toleId === undefined
         ? current.toleId
         : req.body.toleId
           ? String(req.body.toleId)
           : null;
-    if (req.body.toleId !== undefined || wardIds) {
-      const assignedWardIds =
-        wardIds ??
-        (
-          await prisma.citizenWardAssignment.findMany({
-            where: { citizenId: current.id },
-            select: { wardId: true },
-          })
-        ).map((x) => x.wardId);
-      await validateTole(toleId, assignedWardIds);
+    if (req.body.toleId !== undefined || wardId !== undefined) {
+      await validateTole(toleId, wardId === undefined ? current.wardId : wardId);
     }
     const citizen = await prisma.$transaction(async (tx) => {
       if (categoryIds) {
@@ -242,15 +234,6 @@ citizenRouter.patch(
               citizenId: current.id,
               categoryId,
             })),
-          });
-      }
-      if (wardIds) {
-        await tx.citizenWardAssignment.deleteMany({
-          where: { citizenId: current.id },
-        });
-        if (wardIds.length)
-          await tx.citizenWardAssignment.createMany({
-            data: wardIds.map((wardId) => ({ citizenId: current.id, wardId })),
           });
       }
       return tx.citizen.update({
@@ -281,6 +264,7 @@ citizenRouter.patch(
           householdForeignEmployment: req.body.householdForeignEmployment,
           profilePhotoUrl: req.body.profilePhotoUrl,
           toleId: req.body.toleId === undefined ? undefined : toleId,
+          wardId,
           version: { increment: 1 },
         },
         include: citizenInclude,
