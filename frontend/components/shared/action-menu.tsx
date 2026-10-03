@@ -28,7 +28,7 @@ export function ActionMenu({
           <span className="sr-only">Actions</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
         {onView && (
           <DropdownMenuItem onSelect={onView}>
             <Eye />
