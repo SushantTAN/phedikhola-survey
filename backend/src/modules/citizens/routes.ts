@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import { prisma } from "../../lib/prisma.js";
 import { asyncHandler, HttpError } from "../../utils/http.js";
-import { requireAuth } from "../../middleware/auth.js";
+import { requireAuth, requireRole } from "../../middleware/auth.js";
 
 export const citizenRouter = Router();
 citizenRouter.use(requireAuth);
@@ -292,6 +292,7 @@ citizenRouter.patch(
 
 citizenRouter.delete(
   "/:id",
+  requireRole("ADMIN"),
   asyncHandler(async (req, res) => {
     await prisma.citizen.update({
       where: { id: req.params.id },

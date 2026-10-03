@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { api, clearTokens, getAccessToken } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { RoleContext, type Role } from "@/components/role-context";
 import { Button } from "@/components/ui/button";
 
 const links = [
@@ -45,11 +46,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const path = usePathname();
   const [ready, setReady] = useState(false);
+  const [role, setRole] = useState<Role | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     if (path === "/admin/login") {
+      setRole(null);
       setReady(true);
       return;
     }
@@ -59,7 +62,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
     api<any>("/auth/me")
       .then((r) => {
-        if (r.data.role !== "ADMIN") throw new Error("Not admin");
+        if (r.data.role !== "ADMIN" && r.data.role !== "STAFF")
+          throw new Error("Not allowed");
+        setRole(r.data.role);
         setReady(true);
       })
       .catch(() => {
@@ -80,16 +85,30 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [mobileOpen]);
 
+  // Staff only get the dashboard, citizens and service records.
+  const staffAllowed = (p: string) =>
+    /^\/admin(\/(citizens|services)(\/|$))?$/.test(p);
+  const isStaff = role === "STAFF";
+  const visibleLinks = isStaff
+    ? links.filter(([, href]) => staffAllowed(href))
+    : links;
+  const blocked = isStaff && !staffAllowed(path);
+  useEffect(() => {
+    if (blocked) router.replace("/admin");
+  }, [blocked, router]);
+
   if (!ready) return <AdminShellSkeleton />;
   if (path === "/admin/login") return <>{children}</>;
+  // Right after signing in, wait for /auth/me so the wrong dashboard never flashes.
+  if (role === null || blocked) return <AdminShellSkeleton />;
 
   const navigation = (mobile: boolean) => (
     <>
       <nav
-        aria-label="Admin navigation"
+        aria-label={isStaff ? "Staff navigation" : "Admin navigation"}
         className="flex-1 space-y-1 overflow-y-auto p-3"
       >
-        {links.map(([re, href, label, Icon]) => {
+        {visibleLinks.map(([re, href, label, Icon]) => {
           const active = re.test(path);
           return (
             <Link
@@ -237,7 +256,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             Citizen portal →
           </Link>
         </div>
-        <div className="p-5 md:p-8 xl:p-10">{children}</div>
+        <div className="p-5 md:p-8 xl:p-10">
+          <RoleContext.Provider value={role}>{children}</RoleContext.Provider>
+        </div>
       </main>
     </div>
   );

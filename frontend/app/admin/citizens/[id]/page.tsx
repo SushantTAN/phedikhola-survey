@@ -14,6 +14,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { useRole } from "@/components/role-context";
 import { exportResource } from "@/lib/file-transfer";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export default function CitizenDetail() {
   const { id } = useParams<{ id: string }>();
   const np = useNepaliFormat();
   const router = useRouter();
+  const isAdmin = useRole() === "ADMIN";
   const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["citizen", id],
@@ -181,14 +183,16 @@ export default function CitizenDetail() {
                 Every recorded visit is retained independently.
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => exportResource("services")}
-            >
-              <Download />
-              Export services
-            </Button>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportResource("services")}
+              >
+                <Download />
+                Export services
+              </Button>
+            )}
           </CardHeader>
           <Table>
             <TableHeader>
@@ -247,10 +251,14 @@ export default function CitizenDetail() {
                         onEdit={() =>
                           router.push(`/admin/services/${s.id}/edit`)
                         }
-                        onDelete={() => {
-                          if (confirm("Archive this service record?"))
-                            delService.mutate(s.id);
-                        }}
+                        onDelete={
+                          isAdmin
+                            ? () => {
+                                if (confirm("Archive this service record?"))
+                                  delService.mutate(s.id);
+                              }
+                            : undefined
+                        }
                       />
                     </TableCell>
                   </TableRow>

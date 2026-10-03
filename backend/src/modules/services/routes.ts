@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import { prisma } from "../../lib/prisma.js";
 import { asyncHandler, HttpError } from "../../utils/http.js";
-import { requireAuth } from "../../middleware/auth.js";
+import { requireAuth, requireRole } from "../../middleware/auth.js";
 
 export const serviceRouter = Router();
 serviceRouter.use(requireAuth);
@@ -100,9 +100,11 @@ serviceRouter.post(
         clientUuid: String(req.body.clientUuid ?? randomUUID()),
         citizenId: String(req.body.citizenId),
         wardId: String(req.body.wardId),
-        createdById: req.body.createdById
-          ? String(req.body.createdById)
-          : req.user!.sub,
+        // Staff always record under their own account; only admins may attribute a visit to someone else.
+        createdById:
+          req.user!.role === "ADMIN" && req.body.createdById
+            ? String(req.body.createdById)
+            : req.user!.sub,
         serviceType: req.body.serviceType || "SENIOR_CITIZEN_HEALTH",
         serviceDate: req.body.serviceDate
           ? new Date(req.body.serviceDate)
@@ -208,9 +210,10 @@ serviceRouter.patch(
         data: {
           citizenId: req.body.citizenId,
           wardId: req.body.wardId,
-          createdById: req.body.createdById
-            ? String(req.body.createdById)
-            : undefined,
+          createdById:
+            req.user!.role === "ADMIN" && req.body.createdById
+              ? String(req.body.createdById)
+              : undefined,
           serviceDate: req.body.serviceDate
             ? new Date(req.body.serviceDate)
             : undefined,
@@ -248,6 +251,7 @@ serviceRouter.patch(
 
 serviceRouter.delete(
   "/:id",
+  requireRole("ADMIN"),
   asyncHandler(async (req, res) => {
     await prisma.citizenServiceRecord.update({
       where: { id: req.params.id },
