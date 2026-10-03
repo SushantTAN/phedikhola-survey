@@ -11,11 +11,15 @@
     "doctor": "expo-doctor"
   },
   "dependencies": {
+    "@expo-google-fonts/manrope": "^0.4.2",
+    "@expo-google-fonts/noto-sans-devanagari": "^0.4.1",
+    "@expo/vector-icons": "^15.0.2",
     "@hookform/resolvers": "^5.2.1",
     "@supabase/supabase-js": "^2.57.4",
     "@tanstack/react-query": "^5.85.5",
     "expo": "~57.0.23",
     "expo-dev-client": "~57.0.19",
+    "expo-font": "~57.0.4",
     "expo-image-manipulator": "*",
     "expo-image-picker": "~57.0.20",
     "expo-location": "*",

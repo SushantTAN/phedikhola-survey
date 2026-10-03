@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, View } from "react-native";
+import { Text } from "./text";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

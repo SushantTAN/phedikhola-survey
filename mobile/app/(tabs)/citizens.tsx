@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
+import { Text } from "@/src/components/text";
 import { router, useFocusEffect } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "@/src/constants/theme";
 import {
   Button,
   Card,
@@ -11,6 +14,15 @@ import {
   StatusBadge,
 } from "@/src/components/ui";
 import { listCitizens, type LocalCitizen } from "@/src/db";
+const avatarStyle = {
+  width: 42,
+  height: 42,
+  borderRadius: 21,
+  backgroundColor: colors.greenTint,
+  alignItems: "center",
+  justifyContent: "center",
+} as const;
+
 export default function Citizens() {
   const [q, setQ] = useState("");
   const [items, setItems] = useState<LocalCitizen[]>([]);
@@ -36,9 +48,10 @@ export default function Citizens() {
         }}
       >
         <H1>Citizens</H1>
-        <View style={{ width: 130 }}>
+        <View style={{ width: 110 }}>
           <Button
-            title="+ Add citizen"
+            title="Add"
+            icon="add"
             onPress={() => router.push("/citizens/new")}
           />
         </View>
@@ -69,20 +82,27 @@ export default function Citizens() {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                gap: 10,
+                alignItems: "center",
+                gap: 12,
               }}
             >
+              <View style={avatarStyle}>
+                <Text style={{ color: colors.green, fontWeight: "800", fontSize: 16 }}>
+                  {c.full_name.trim().charAt(0).toUpperCase()}
+                </Text>
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontWeight: "700", fontSize: 16 }}>
                   {c.full_name}
                 </Text>
-                <Text style={{ color: "#64748b", fontSize: 12 }}>
+                <Text style={{ color: colors.muted, fontSize: 12 }}>
                   {c.public_id || "ID assigned after sync"} ·{" "}
                   {c.phone || "No phone"}
                   {c.guardian_phone ? ` · Guardian ${c.guardian_phone}` : ""}
                 </Text>
               </View>
               <StatusBadge status={c.sync_status} />
+              <Ionicons name="chevron-forward" size={18} color={colors.subtle} />
             </View>
           </Card>
         </Pressable>

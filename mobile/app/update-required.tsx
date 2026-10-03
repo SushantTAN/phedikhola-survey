@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Text } from "@/src/components/text";
 import { router } from "expo-router";
 import { Button, Card, H1, Screen } from "@/src/components/ui";
 import { CURRENT_APP_VERSION } from "@/src/services/version";

@@ -32,8 +32,11 @@
           "photosPermission": "Allow Phedikhola Citizen Survey to choose citizen/service photos.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-font"
     ],
-    "experiments": { "typedRoutes": true }
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }

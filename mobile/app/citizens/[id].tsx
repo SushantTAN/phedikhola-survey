@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, View } from "react-native";
+import { Text } from "@/src/components/text";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Button, Card, Chip, H1, Screen, SectionTitle, StatusBadge } from "@/src/components/ui";
 import {

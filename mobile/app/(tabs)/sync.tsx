@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, View } from "react-native";
+import { Text } from "@/src/components/text";
 import { useFocusEffect } from "expo-router";
 import { Button, Card, H1, Screen, StatusBadge } from "@/src/components/ui";
 import { getMeta, syncCounts } from "@/src/db";
@@ -62,6 +63,7 @@ export default function SyncScreen() {
           {last ? new Date(last).toLocaleString() : "Never"}
         </Text>
         <Button
+          icon="sync"
           title={busy ? "Synchronizing…" : "Sync now"}
           onPress={run}
           disabled={busy}
