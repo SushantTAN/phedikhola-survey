@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import {
   Button,
   Card,
+  EmptyState,
   H1,
   Input,
   Screen,
@@ -13,7 +14,13 @@ import { listCitizens, type LocalCitizen } from "@/src/db";
 export default function Citizens() {
   const [q, setQ] = useState("");
   const [items, setItems] = useState<LocalCitizen[]>([]);
-  const load = useCallback(async () => setItems(await listCitizens(q)), [q]);
+  const latest = useRef(0);
+  // Only the newest search may update the list, so a slow older query cannot overwrite it.
+  const load = useCallback(async () => {
+    const ticket = ++latest.current;
+    const rows = await listCitizens(q);
+    if (ticket === latest.current) setItems(rows);
+  }, [q]);
   useFocusEffect(
     useCallback(() => {
       void load();
@@ -39,11 +46,14 @@ export default function Citizens() {
       <Input
         placeholder="Search name, citizen ID or phone"
         value={q}
-        onChangeText={(v) => {
-          setQ(v);
-          void listCitizens(v).then(setItems);
-        }}
+        onChangeText={setQ}
       />
+      {items.length === 0 && (
+        <EmptyState
+          title={q ? "No results found" : "No citizens on this device"}
+          detail={q ? `Nothing matches “${q}”` : "Add a citizen, or sync to download existing records."}
+        />
+      )}
       {items.map((c) => (
         <Pressable
           key={c.client_uuid}
@@ -69,6 +79,7 @@ export default function Citizens() {
                 <Text style={{ color: "#64748b", fontSize: 12 }}>
                   {c.public_id || "ID assigned after sync"} ·{" "}
                   {c.phone || "No phone"}
+                  {c.guardian_phone ? ` · Guardian ${c.guardian_phone}` : ""}
                 </Text>
               </View>
               <StatusBadge status={c.sync_status} />

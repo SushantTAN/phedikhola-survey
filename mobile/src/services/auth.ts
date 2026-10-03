@@ -13,6 +13,9 @@ export const authStore = {
   async access() {
     return SecureStore.getItemAsync(ACCESS);
   },
+  async setAccess(accessToken: string) {
+    await SecureStore.setItemAsync(ACCESS, accessToken);
+  },
   async refresh() {
     return SecureStore.getItemAsync(REFRESH);
   },

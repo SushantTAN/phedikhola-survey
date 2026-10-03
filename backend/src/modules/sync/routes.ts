@@ -6,6 +6,19 @@ import { requireAuth, requireRole } from "../../middleware/auth.js";
 export const syncRouter = Router();
 syncRouter.use(requireAuth, requireRole("STAFF", "ADMIN"));
 
+// Older app versions do not send newer fields; `undefined` leaves the stored value untouched.
+const optionalText = (v: unknown) =>
+  v === undefined ? undefined : String(v ?? "").trim() || null;
+
+function optionalCoordinate(v: unknown, name: string, limit: number) {
+  if (v === undefined) return undefined;
+  if (v === null || v === "") return null;
+  const n = Number(v);
+  if (!Number.isFinite(n) || Math.abs(n) > limit)
+    throw new Error(`Invalid ${name}`);
+  return n;
+}
+
 type SyncResult = {
   clientUuid: string;
   status: "synced" | "conflict" | "failed";
@@ -57,7 +70,10 @@ syncRouter.post(
             item.approximateAge == null ? null : Number(item.approximateAge),
           gender: item.gender || "OTHER",
           phone: item.phone || null,
-          guardianPhone: item.guardianPhone ? String(item.guardianPhone).trim() : null,
+          guardianPhone: optionalText(item.guardianPhone),
+          toleId: item.toleId === undefined ? undefined : item.toleId || null,
+          latitude: optionalCoordinate(item.latitude, "latitude", 90),
+          longitude: optionalCoordinate(item.longitude, "longitude", 180),
           casteGroupCode: item.casteGroupCode || null,
           casteOther: item.casteOther || null,
           maritalStatusCode: item.maritalStatusCode || null,
@@ -68,7 +84,7 @@ syncRouter.post(
             item.householdForeignEmployment == null
               ? null
               : Boolean(item.householdForeignEmployment),
-          profilePhotoUrl: item.profilePhotoUrl || null,
+          profilePhotoUrl: item.profilePhotoUrl || undefined,
           createdById: req.user!.sub,
         };
         let saved;
@@ -189,10 +205,14 @@ syncRouter.post(
           accuracy: item.accuracy ?? null,
           notes: item.notes || null,
           otherHealthProblem: item.otherHealthProblem || null,
-          guardianPhone: item.guardianPhone ? String(item.guardianPhone).trim() : null,
-          visitPhotoUrl: item.visitPhotoUrl || null,
+          guardianPhone: optionalText(item.guardianPhone),
+          visitPhotoUrl: item.visitPhotoUrl || undefined,
           needsFollowup:
-            item.needsFollowup === true || item.needsFollowup === "true",
+            item.needsFollowup === undefined
+              ? undefined
+              : item.needsFollowup === true ||
+                item.needsFollowup === "true" ||
+                item.needsFollowup === 1,
         };
         const saved = existing
           ? await prisma.citizenServiceRecord.update({
@@ -280,51 +300,83 @@ syncRouter.post(
   }),
 );
 
+const PULL_PAGE_SIZE = 1000;
+// Apps that do not ask for paging (older releases) keep getting one large response, as before.
+const LEGACY_PULL_LIMIT = 5000;
+
+// Returns changes after `since`, oldest first. With `paged=true` the response is split into pages: the client keeps
+// calling with `nextSince` (and inclusive=true) while `hasMore` is true, so large datasets are not silently cut off.
 syncRouter.get(
   "/pull",
   asyncHandler(async (req, res) => {
-    const since = req.query.since
-      ? new Date(String(req.query.since))
-      : new Date(0);
+    // Taken before reading so a record changed while this request runs is picked up by the next pull.
+    const serverTime = new Date();
+    const since = req.query.since ? new Date(String(req.query.since)) : new Date(0);
+    const range = req.query.inclusive === "true" ? { gte: since } : { gt: since };
+    const withReference = req.query.reference !== "false";
+    const paged = req.query.paged === "true";
+    const limit = paged ? PULL_PAGE_SIZE : LEGACY_PULL_LIMIT;
+
     const [citizens, services, referenceData] = await Promise.all([
       prisma.citizen.findMany({
-        where: { updatedAt: { gt: since } },
+        where: { updatedAt: range },
         include: { categories: true, wards: true },
-        take: 5000,
+        orderBy: { updatedAt: "asc" },
+        take: limit,
       }),
       prisma.citizenServiceRecord.findMany({
-        where: { updatedAt: { gt: since } },
+        where: { updatedAt: range },
         include: { conditions: true, medicines: true },
-        take: 5000,
+        orderBy: { updatedAt: "asc" },
+        take: limit,
       }),
-      Promise.all([
-        prisma.ward.findMany({ where: { active: true } }),
-        prisma.citizenCategory.findMany({ where: { active: true } }),
-        prisma.healthCondition.findMany({ where: { active: true } }),
-        prisma.medicine.findMany({
-          where: { active: true },
-          include: { defaultUnit: true },
-        }),
-        prisma.medicineUnit.findMany({ where: { active: true } }),
-        prisma.appVersion.findFirst({ where: { platform: "ANDROID" } }),
-      ]),
+      withReference
+        ? Promise.all([
+            prisma.ward.findMany({ where: { active: true } }),
+            prisma.citizenCategory.findMany({ where: { active: true } }),
+            prisma.healthCondition.findMany({ where: { active: true } }),
+            prisma.medicine.findMany({
+              where: { active: true },
+              include: { defaultUnit: true },
+            }),
+            prisma.medicineUnit.findMany({ where: { active: true } }),
+            prisma.tole.findMany({
+              where: {
+                active: true,
+                ward: { active: true },
+                healthPost: { active: true },
+              },
+              select: { id: true, name: true, wardId: true, healthPostId: true },
+              orderBy: { name: "asc" },
+            }),
+            prisma.appVersion.findFirst({ where: { platform: "ANDROID" } }),
+          ])
+        : null,
     ]);
-    const [wards, categories, conditions, medicines, units, appVersion] =
-      referenceData;
+
+    const cursors: number[] = [];
+    if (paged && citizens.length === limit)
+      cursors.push(citizens[citizens.length - 1]!.updatedAt.getTime());
+    if (paged && services.length === limit)
+      cursors.push(services[services.length - 1]!.updatedAt.getTime());
+    const hasMore = cursors.length > 0;
+    const nextSince = hasMore
+      ? new Date(Math.min(...cursors)).toISOString()
+      : serverTime.toISOString();
+
+    const [wards, categories, conditions, medicines, units, toles, appVersion] =
+      referenceData ?? [];
     res.json({
       success: true,
       data: {
         citizens,
         serviceRecords: services,
-        referenceData: {
-          wards,
-          categories,
-          conditions,
-          medicines,
-          units,
-          appVersion,
-        },
-        serverTime: new Date().toISOString(),
+        referenceData: referenceData
+          ? { wards, categories, conditions, medicines, units, toles, appVersion }
+          : null,
+        hasMore,
+        nextSince,
+        serverTime: serverTime.toISOString(),
       },
     });
   }),

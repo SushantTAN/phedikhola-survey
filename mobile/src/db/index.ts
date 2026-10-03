@@ -6,7 +6,33 @@ export function getDb() {
   return dbPromise;
 }
 
-export async function initDb() {
+async function ensureColumn(
+  db: SQLite.SQLiteDatabase,
+  table: string,
+  column: string,
+  definition: string,
+) {
+  const columns = await db.getAllAsync<{ name: string }>(
+    `PRAGMA table_info(${table})`,
+  );
+  if (!columns.some((c) => c.name === column)) {
+    await db.execAsync(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+let initPromise: Promise<void> | null = null;
+/** Creates / upgrades the local database. Safe to call many times; every screen can await it. */
+export function initDb() {
+  if (!initPromise) {
+    initPromise = runInit().catch((e) => {
+      initPromise = null;
+      throw e;
+    });
+  }
+  return initPromise;
+}
+
+async function runInit() {
   const db = await getDb();
   await db.execAsync(`
 PRAGMA journal_mode=WAL;
@@ -38,14 +64,14 @@ CREATE TABLE IF NOT EXISTS service_records (
 CREATE INDEX IF NOT EXISTS idx_services_citizen ON service_records(citizen_client_uuid,service_date);
 CREATE INDEX IF NOT EXISTS idx_services_sync ON service_records(sync_status);
 `);
-  const citizenColumns = await db.getAllAsync<{ name: string }>(
-    "PRAGMA table_info(citizens)",
-  );
-  if (!citizenColumns.some((column) => column.name === "ward_ids")) {
-    await db.execAsync(
-      "ALTER TABLE citizens ADD COLUMN ward_ids TEXT NOT NULL DEFAULT '[]'",
-    );
-  }
+  // Additive upgrades for databases created by earlier app versions. Existing rows keep their data.
+  await ensureColumn(db, "citizens", "ward_ids", "TEXT NOT NULL DEFAULT '[]'");
+  await ensureColumn(db, "citizens", "guardian_phone", "TEXT");
+  await ensureColumn(db, "citizens", "tole_id", "TEXT");
+  await ensureColumn(db, "citizens", "latitude", "REAL");
+  await ensureColumn(db, "citizens", "longitude", "REAL");
+  await ensureColumn(db, "service_records", "guardian_phone", "TEXT");
+  await ensureColumn(db, "service_records", "needs_followup", "INTEGER NOT NULL DEFAULT 0");
 }
 
 export async function setMeta(key: string, value: string) {
@@ -74,6 +100,7 @@ export type LocalCitizen = {
   approximate_age: number | null;
   gender: string;
   phone: string | null;
+  guardian_phone: string | null;
   caste_group_code: string | null;
   caste_other: string | null;
   marital_status_code: string | null;
@@ -83,6 +110,9 @@ export type LocalCitizen = {
   household_foreign_employment: number | null;
   category_ids: string;
   ward_ids: string;
+  tole_id: string | null;
+  latitude: number | null;
+  longitude: number | null;
   profile_photo_uri: string | null;
   profile_photo_uploaded: number;
   version: number;
@@ -110,6 +140,8 @@ export type LocalService = {
   accuracy: number | null;
   notes: string | null;
   other_health_problem: string | null;
+  guardian_phone: string | null;
+  needs_followup: number;
   condition_ids: string;
   medicines: string;
   visit_photo_uri: string | null;
@@ -124,12 +156,28 @@ export type LocalService = {
 
 export async function listCitizens(q = "") {
   const db = await getDb();
+  const like = `%${q}%`;
   return db.getAllAsync<LocalCitizen>(
-    "SELECT * FROM citizens WHERE deleted_at IS NULL AND (full_name LIKE ? OR public_id LIKE ? OR phone LIKE ?) ORDER BY updated_at DESC LIMIT 500",
-    `%${q}%`,
-    `%${q}%`,
-    `%${q}%`,
+    "SELECT * FROM citizens WHERE deleted_at IS NULL AND (full_name LIKE ? OR public_id LIKE ? OR phone LIKE ? OR guardian_phone LIKE ?) ORDER BY updated_at DESC LIMIT 500",
+    like,
+    like,
+    like,
+    like,
   );
+}
+export async function countCitizens() {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ n: number }>(
+    "SELECT COUNT(*) n FROM citizens WHERE deleted_at IS NULL",
+  );
+  return row?.n ?? 0;
+}
+export async function countServices() {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ n: number }>(
+    "SELECT COUNT(*) n FROM service_records WHERE deleted_at IS NULL",
+  );
+  return row?.n ?? 0;
 }
 export async function getCitizen(id: string) {
   const db = await getDb();
@@ -140,13 +188,14 @@ export async function getCitizen(id: string) {
     id,
   );
 }
-export async function saveCitizen(c: {
-  clientUuid: string;
+
+export type CitizenInput = {
   fullName: string;
   dateOfBirth?: string | null;
   approximateAge?: number | null;
   gender: string;
   phone?: string | null;
+  guardianPhone?: string | null;
   casteGroupCode?: string | null;
   casteOther?: string | null;
   maritalStatusCode?: string | null;
@@ -156,41 +205,80 @@ export async function saveCitizen(c: {
   householdForeignEmployment?: boolean | null;
   categoryIds?: string[];
   wardIds?: string[];
+  toleId?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  /** Local file URI of a newly taken photo, or the unchanged existing value. */
   profilePhotoUri?: string | null;
-}) {
-  const db = await getDb();
-  const now = new Date().toISOString();
-  await db.runAsync(
-    `INSERT INTO citizens(client_uuid,full_name,date_of_birth,approximate_age,gender,phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_ids,profile_photo_uri,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    c.clientUuid,
+};
+
+function citizenValues(c: CitizenInput) {
+  return [
     c.fullName,
     c.dateOfBirth ?? null,
     c.approximateAge ?? null,
     c.gender,
     c.phone ?? null,
+    c.guardianPhone ?? null,
     c.casteGroupCode ?? null,
     c.casteOther ?? null,
     c.maritalStatusCode ?? null,
     c.occupationCode ?? null,
     c.occupationOther ?? null,
     c.livingStatusCode ?? null,
-    c.householdForeignEmployment == null
-      ? null
-      : c.householdForeignEmployment
-        ? 1
-        : 0,
+    c.householdForeignEmployment == null ? null : c.householdForeignEmployment ? 1 : 0,
     JSON.stringify(c.categoryIds ?? []),
     JSON.stringify(c.wardIds ?? []),
+    c.toleId ?? null,
+    c.latitude ?? null,
+    c.longitude ?? null,
+  ];
+}
+
+/**
+ * Timestamp for an edit. It is always later than the record's previous `updated_at`, even if two edits land in the
+ * same millisecond or the clock moved backwards, because sync uses `updated_at` to notice edits made mid-sync.
+ */
+function nextUpdatedAt(previous?: string | null) {
+  const now = Date.now();
+  const before = previous ? Date.parse(previous) : NaN;
+  return new Date(Number.isNaN(before) || now > before ? now : before + 1).toISOString();
+}
+
+export async function saveCitizen(c: CitizenInput & { clientUuid: string }) {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  await db.runAsync(
+    `INSERT INTO citizens(client_uuid,full_name,date_of_birth,approximate_age,gender,phone,guardian_phone,caste_group_code,caste_other,marital_status_code,occupation_code,occupation_other,living_status_code,household_foreign_employment,category_ids,ward_ids,tole_id,latitude,longitude,profile_photo_uri,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    c.clientUuid,
+    ...citizenValues(c),
     c.profilePhotoUri ?? null,
     now,
     now,
   );
 }
-export async function markCitizenDirty(clientUuid: string) {
+
+/**
+ * Edits a citizen on the device and queues it for sync.
+ * `version` is deliberately NOT changed: it is the server version this edit is based on, and the server
+ * uses it to detect that someone else changed the record in the meantime.
+ */
+export async function updateCitizen(clientUuid: string, c: CitizenInput) {
   const db = await getDb();
+  const existing = await db.getFirstAsync<{ profile_photo_uri: string | null; updated_at: string }>(
+    "SELECT profile_photo_uri,updated_at FROM citizens WHERE client_uuid=?",
+    clientUuid,
+  );
+  if (!existing) throw new Error("Citizen not found on this device");
+  const photoChanged = (c.profilePhotoUri ?? null) !== (existing.profile_photo_uri ?? null);
   await db.runAsync(
-    "UPDATE citizens SET sync_status='pending',updated_at=?,version=version+1 WHERE client_uuid=?",
-    new Date().toISOString(),
+    `UPDATE citizens SET full_name=?,date_of_birth=?,approximate_age=?,gender=?,phone=?,guardian_phone=?,caste_group_code=?,caste_other=?,marital_status_code=?,occupation_code=?,occupation_other=?,living_status_code=?,household_foreign_employment=?,category_ids=?,ward_ids=?,tole_id=?,latitude=?,longitude=?,
+       profile_photo_uri=?,profile_photo_uploaded=CASE WHEN ? THEN 0 ELSE profile_photo_uploaded END,
+       sync_status='pending',sync_error=NULL,updated_at=? WHERE client_uuid=?`,
+    ...citizenValues(c),
+    c.profilePhotoUri ?? null,
+    photoChanged ? 1 : 0,
+    nextUpdatedAt(existing.updated_at),
     clientUuid,
   );
 }
@@ -206,8 +294,16 @@ export async function listServices(citizenClientUuid?: string) {
         "SELECT * FROM service_records WHERE deleted_at IS NULL ORDER BY service_date DESC LIMIT 500",
       );
 }
-export async function saveService(s: {
-  clientUuid: string;
+export async function getService(id: string) {
+  const db = await getDb();
+  return db.getFirstAsync<LocalService>(
+    "SELECT * FROM service_records WHERE client_uuid=? OR server_id=?",
+    id,
+    id,
+  );
+}
+
+export type ServiceInput = {
   citizenClientUuid: string;
   wardId: string;
   serviceDate: string;
@@ -223,16 +319,15 @@ export async function saveService(s: {
   accuracy?: number | null;
   notes?: string | null;
   otherHealthProblem?: string | null;
+  guardianPhone?: string | null;
+  needsFollowup?: boolean;
   conditionIds?: string[];
   medicines?: unknown[];
   visitPhotoUri?: string | null;
-}) {
-  const db = await getDb();
-  const now = new Date().toISOString();
-  await db.runAsync(
-    `INSERT INTO service_records(client_uuid,citizen_client_uuid,ward_id,service_date,nepali_year,nepali_month,systolic,diastolic,pulse_rate,temperature_f,latitude,longitude,altitude,accuracy,notes,other_health_problem,condition_ids,medicines,visit_photo_uri,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    s.clientUuid,
-    s.citizenClientUuid,
+};
+
+function serviceValues(s: ServiceInput) {
+  return [
     s.wardId,
     s.serviceDate,
     s.nepaliYear ?? null,
@@ -247,11 +342,45 @@ export async function saveService(s: {
     s.accuracy ?? null,
     s.notes ?? null,
     s.otherHealthProblem ?? null,
+    s.guardianPhone ?? null,
+    s.needsFollowup ? 1 : 0,
     JSON.stringify(s.conditionIds ?? []),
     JSON.stringify(s.medicines ?? []),
+  ];
+}
+
+export async function saveService(s: ServiceInput & { clientUuid: string }) {
+  const db = await getDb();
+  const now = new Date().toISOString();
+  await db.runAsync(
+    `INSERT INTO service_records(client_uuid,citizen_client_uuid,ward_id,service_date,nepali_year,nepali_month,systolic,diastolic,pulse_rate,temperature_f,latitude,longitude,altitude,accuracy,notes,other_health_problem,guardian_phone,needs_followup,condition_ids,medicines,visit_photo_uri,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    s.clientUuid,
+    s.citizenClientUuid,
+    ...serviceValues(s),
     s.visitPhotoUri ?? null,
     now,
     now,
+  );
+}
+
+/** Edits a service record on the device and queues it for sync. `version` is left alone (see updateCitizen). */
+export async function updateService(clientUuid: string, s: ServiceInput) {
+  const db = await getDb();
+  const existing = await db.getFirstAsync<{ visit_photo_uri: string | null; updated_at: string }>(
+    "SELECT visit_photo_uri,updated_at FROM service_records WHERE client_uuid=?",
+    clientUuid,
+  );
+  if (!existing) throw new Error("Service record not found on this device");
+  const photoChanged = (s.visitPhotoUri ?? null) !== (existing.visit_photo_uri ?? null);
+  await db.runAsync(
+    `UPDATE service_records SET ward_id=?,service_date=?,nepali_year=?,nepali_month=?,systolic=?,diastolic=?,pulse_rate=?,temperature_f=?,latitude=?,longitude=?,altitude=?,accuracy=?,notes=?,other_health_problem=?,guardian_phone=?,needs_followup=?,condition_ids=?,medicines=?,
+       visit_photo_uri=?,visit_photo_uploaded=CASE WHEN ? THEN 0 ELSE visit_photo_uploaded END,
+       sync_status='pending',sync_error=NULL,updated_at=? WHERE client_uuid=?`,
+    ...serviceValues(s),
+    s.visitPhotoUri ?? null,
+    photoChanged ? 1 : 0,
+    nextUpdatedAt(existing.updated_at),
+    clientUuid,
   );
 }
 

@@ -8,3 +8,4 @@ dist/
 uploads/*
 !uploads/.gitkeep
 .DS_Store
+android/
