@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text } from "./text";
 import { colors } from "../constants/theme";
 import {
   adDay,
@@ -48,6 +50,7 @@ export function NepaliDatePicker({
   placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<Mode>("days");
   const [view, setView] = useState({ year: FIRST_BS_YEAR, month: 1 });
 
@@ -115,7 +118,10 @@ export function NepaliDatePicker({
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={s.overlay} onPress={() => setOpen(false)}>
+        <Pressable
+          style={[s.overlay, { paddingTop: 16 + insets.top, paddingBottom: 16 + insets.bottom }]}
+          onPress={() => setOpen(false)}
+        >
           <Pressable style={s.card} onPress={() => {}}>
             <View style={s.header}>
               <Pressable style={s.nav} onPress={() => shiftMonth(-1)} disabled={mode !== "days"}>

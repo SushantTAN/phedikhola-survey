@@ -14,6 +14,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { useRole } from "@/components/role-context";
 import { exportResource } from "@/lib/file-transfer";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export default function CitizenDetail() {
   const { id } = useParams<{ id: string }>();
   const np = useNepaliFormat();
   const router = useRouter();
+  const isAdmin = useRole() === "ADMIN";
   const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["citizen", id],
@@ -138,16 +140,14 @@ export default function CitizenDetail() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPinned className="text-emerald-600" />
-                Assigned wards
+                Ward
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
-              {c.wards?.length ? (
-                c.wards.map((x: any) => (
-                  <Badge key={x.wardId}>
-                    {x.ward.nameNe} / {x.ward.nameEn}
-                  </Badge>
-                ))
+              {c.ward ? (
+                <Badge>
+                  {c.ward.nameNe} / {c.ward.nameEn}
+                </Badge>
               ) : (
                 <span className="text-sm text-slate-500">
                   No ward assigned.
@@ -181,14 +181,16 @@ export default function CitizenDetail() {
                 Every recorded visit is retained independently.
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => exportResource("services")}
-            >
-              <Download />
-              Export services
-            </Button>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportResource("services")}
+              >
+                <Download />
+                Export services
+              </Button>
+            )}
           </CardHeader>
           <Table>
             <TableHeader>
@@ -247,10 +249,14 @@ export default function CitizenDetail() {
                         onEdit={() =>
                           router.push(`/admin/services/${s.id}/edit`)
                         }
-                        onDelete={() => {
-                          if (confirm("Archive this service record?"))
-                            delService.mutate(s.id);
-                        }}
+                        onDelete={
+                          isAdmin
+                            ? () => {
+                                if (confirm("Archive this service record?"))
+                                  delService.mutate(s.id);
+                              }
+                            : undefined
+                        }
                       />
                     </TableCell>
                   </TableRow>

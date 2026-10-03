@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, View } from "react-native";
+import { Text } from "@/src/components/text";
 import { router } from "expo-router";
 import { api } from "@/src/api/client";
 import { authStore } from "@/src/services/auth";

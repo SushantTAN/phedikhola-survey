@@ -21,8 +21,8 @@ export default function AdminLoginPage() {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      if (r.data.user.role !== "ADMIN")
-        throw new Error("This account is not an administrator");
+      if (r.data.user.role !== "ADMIN" && r.data.user.role !== "STAFF")
+        throw new Error("This account is not allowed to sign in here");
       setTokens(r.data.accessToken, r.data.refreshToken);
       router.replace("/admin");
     } catch (e) {
@@ -43,16 +43,16 @@ export default function AdminLoginPage() {
           <div className="text-[10px] font-bold uppercase tracking-[.25em] text-emerald-700">
             Phedikhola Rural Municipality
           </div>
-          <CardTitle className="mt-1 text-2xl">Administrator login</CardTitle>
+          <CardTitle className="mt-1 text-2xl">Staff &amp; administrator login</CardTitle>
           <p className="text-sm text-slate-500">
-            Sign in to manage citizens, service records, wards and staff.
+            Sign in to manage citizen and service records.
           </p>
         </CardHeader>
         <CardContent className="pt-6">
           <form className="space-y-4" onSubmit={submit}>
             <Input
               type="email"
-              placeholder="Administrator email"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

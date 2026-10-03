@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { api } from "@/lib/api";
+import { useRole } from "@/components/role-context";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { PageHeader } from "@/components/shared/page-header";
 import { TableToolbar } from "@/components/shared/table-toolbar";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/table";
 export default function ServicesPage() {
   const router = useRouter();
+  const isAdmin = useRole() === "ADMIN";
   const np = useNepaliFormat();
   const qc = useQueryClient();
   const [q, setQ] = useState("");
@@ -114,10 +116,14 @@ export default function ServicesPage() {
                     <ActionMenu
                       onView={() => router.push(`/admin/services/${s.id}`)}
                       onEdit={() => router.push(`/admin/services/${s.id}/edit`)}
-                      onDelete={() => {
-                        if (confirm("Archive this service record?"))
-                          del.mutate(s.id);
-                      }}
+                      onDelete={
+                        isAdmin
+                          ? () => {
+                              if (confirm("Archive this service record?"))
+                                del.mutate(s.id);
+                            }
+                          : undefined
+                      }
                     />
                   </TableCell>
                 </TableRow>

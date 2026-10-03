@@ -25,6 +25,44 @@ textarea {
 .nepali {
   font-family: var(--font-devanagari);
 }
+/* Slim, rounded scrollbars with an emerald accent on hover. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+  transition: background-color 0.2s;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #34d399;
+}
+*::-webkit-scrollbar-thumb:active {
+  background-color: #059669;
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* Dark sidebar */
+aside {
+  scrollbar-color: #334155 transparent;
+}
+aside *::-webkit-scrollbar-thumb {
+  background-color: #334155;
+}
+aside *::-webkit-scrollbar-thumb:hover {
+  background-color: #10b981;
+}
 ::selection {
   background: #a7f3d0;
   color: #064e3b;

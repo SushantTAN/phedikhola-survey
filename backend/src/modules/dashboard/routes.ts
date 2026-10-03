@@ -4,10 +4,73 @@ import { asyncHandler } from "../../utils/http.js";
 import { requireAuth, requireRole } from "../../middleware/auth.js";
 
 export const dashboardRouter = Router();
-dashboardRouter.use(requireAuth, requireRole("ADMIN"));
+dashboardRouter.use(requireAuth);
+
+// Staff dashboard: only the signed-in user's own work.
+dashboardRouter.get(
+  "/my-summary",
+  requireRole("STAFF", "ADMIN"),
+  asyncHandler(async (req, res) => {
+    const userId = req.user!.sub;
+    const now = new Date();
+    const monthStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
+    );
+    const dayStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+    );
+    const mine = { deletedAt: null, createdById: userId };
+    const [
+      citizensRegistered,
+      servicesTotal,
+      servicesToday,
+      servicesThisMonth,
+      followups,
+      recent,
+    ] = await Promise.all([
+      prisma.citizen.count({ where: mine }),
+      prisma.citizenServiceRecord.count({ where: mine }),
+      prisma.citizenServiceRecord.count({
+        where: { ...mine, serviceDate: { gte: dayStart } },
+      }),
+      prisma.citizenServiceRecord.count({
+        where: { ...mine, serviceDate: { gte: monthStart } },
+      }),
+      prisma.citizenServiceRecord.count({
+        where: { ...mine, needsFollowup: true },
+      }),
+      prisma.citizenServiceRecord.findMany({
+        where: mine,
+        select: {
+          id: true,
+          serviceDate: true,
+          needsFollowup: true,
+          citizen: { select: { id: true, fullName: true, publicId: true } },
+          ward: { select: { nameEn: true, nameNe: true } },
+        },
+        orderBy: { serviceDate: "desc" },
+        take: 8,
+      }),
+    ]);
+    res.json({
+      success: true,
+      data: {
+        cards: {
+          citizensRegistered,
+          servicesTotal,
+          servicesToday,
+          servicesThisMonth,
+          followups,
+        },
+        recent,
+      },
+    });
+  }),
+);
 
 dashboardRouter.get(
   "/summary",
+  requireRole("ADMIN"),
   asyncHandler(async (_req, res) => {
     const now = new Date();
     const monthStart = new Date(

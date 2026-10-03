@@ -72,6 +72,7 @@ syncRouter.post(
           phone: item.phone || null,
           guardianPhone: optionalText(item.guardianPhone),
           toleId: item.toleId === undefined ? undefined : item.toleId || null,
+          wardId: item.wardId === undefined ? undefined : item.wardId || null,
           latitude: optionalCoordinate(item.latitude, "latitude", 90),
           longitude: optionalCoordinate(item.longitude, "longitude", 180),
           casteGroupCode: item.casteGroupCode || null,
@@ -111,10 +112,7 @@ syncRouter.post(
           : Array.isArray(item.categoryIds)
             ? item.categoryIds.map(String).slice(0, 1)
             : null;
-        const wardIds = Array.isArray(item.wardIds)
-          ? [...new Set(item.wardIds.map(String))]
-          : null;
-        if (categoryIds || wardIds) {
+        if (categoryIds) {
           await prisma.$transaction(async (tx) => {
             if (categoryIds) {
               await tx.citizenCategoryAssignment.deleteMany({
@@ -125,18 +123,6 @@ syncRouter.post(
                   data: categoryIds.map((categoryId: string) => ({
                     citizenId: saved.id,
                     categoryId,
-                  })),
-                });
-            }
-            if (wardIds) {
-              await tx.citizenWardAssignment.deleteMany({
-                where: { citizenId: saved.id },
-              });
-              if (wardIds.length)
-                await tx.citizenWardAssignment.createMany({
-                  data: wardIds.map((wardId: string) => ({
-                    citizenId: saved.id,
-                    wardId,
                   })),
                 });
             }
@@ -320,7 +306,7 @@ syncRouter.get(
     const [citizens, services, referenceData] = await Promise.all([
       prisma.citizen.findMany({
         where: { updatedAt: range },
-        include: { categories: true, wards: true },
+        include: { categories: true },
         orderBy: { updatedAt: "asc" },
         take: limit,
       }),

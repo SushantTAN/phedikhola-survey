@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
-import { Alert, Text } from "react-native";
+import { Alert } from "react-native";
+import { Text } from "@/src/components/text";
 import { router, useFocusEffect } from "expo-router";
 import { Button, Card, H1, Screen } from "@/src/components/ui";
 import { getMeta } from "@/src/db";
@@ -64,6 +65,7 @@ export default function Settings() {
       </Card>
       <Button
         variant="danger"
+        icon="log-out-outline"
         title="Sign out"
         onPress={() =>
           Alert.alert(

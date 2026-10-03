@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Image, Text, View } from "react-native";
+import { Alert, Image, View } from "react-native";
+import { Text } from "./text";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,7 +12,6 @@ import {
   H1,
   Input,
   Label,
-  MultiSelect,
   Screen,
   SectionTitle,
   SelectField,
@@ -139,7 +139,7 @@ export function CitizenForm({ mode, citizenId }: { mode: "create" | "edit"; citi
   const [toles, setToles] = useState<Ref[]>([]);
   const [categories, setCategories] = useState<Ref[]>([]);
   const [refLoading, setRefLoading] = useState(true);
-  const [selectedWards, setSelectedWards] = useState<string[]>([]);
+  const [selectedWard, setSelectedWard] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [loadingRecord, setLoadingRecord] = useState(mode === "edit");
   const [missing, setMissing] = useState(false);
@@ -194,7 +194,7 @@ export function CitizenForm({ mode, citizenId }: { mode: "create" | "edit"; citi
           householdForeignEmployment:
             c.household_foreign_employment == null ? "" : c.household_foreign_employment ? "YES" : "NO",
         });
-        setSelectedWards(JSON.parse(c.ward_ids || "[]"));
+        setSelectedWard(c.ward_id);
         setPhoto(c.profile_photo_uri);
       })
       .finally(() => setLoadingRecord(false));
@@ -214,11 +214,11 @@ export function CitizenForm({ mode, citizenId }: { mode: "create" | "edit"; citi
   const toleOptions = useMemo(
     () =>
       toles
-        .filter((t) => selectedWards.includes(JSON.parse(t.payload).wardId))
+        .filter((t) => selectedWard != null && JSON.parse(t.payload).wardId === selectedWard)
         .map((t) => ({ value: t.id, label: `${t.label_en} · ${wardName.get(JSON.parse(t.payload).wardId) ?? ""}` })),
-    [toles, selectedWards, wardName],
+    [toles, selectedWard, wardName],
   );
-  // A tole must belong to one of the selected wards.
+  // A tole must belong to the selected ward.
   useEffect(() => {
     if (toleValue && toles.length && !toleOptions.some((o) => o.value === toleValue)) setValue("toleId", "");
   }, [toleValue, toleOptions, toles.length, setValue]);
@@ -242,7 +242,7 @@ export function CitizenForm({ mode, citizenId }: { mode: "create" | "edit"; citi
         householdForeignEmployment:
           v.householdForeignEmployment ? v.householdForeignEmployment === "YES" : null,
         categoryIds: v.categoryId ? [v.categoryId] : [],
-        wardIds: selectedWards,
+        wardId: selectedWard,
         toleId: v.toleId || null,
         latitude: v.latitude ? Number(v.latitude) : null,
         longitude: v.longitude ? Number(v.longitude) : null,
@@ -372,17 +372,16 @@ export function CitizenForm({ mode, citizenId }: { mode: "create" | "edit"; citi
                 />
               )}
             />
-            <MultiSelect
-              label="Ward(s)"
+            <SelectField
+              label="Ward"
               loading={refLoading}
-              items={wards.map((r) => {
+              value={selectedWard}
+              onChange={(v) => setSelectedWard(v || null)}
+              placeholder="Select ward"
+              options={wards.map((r) => {
                 const loc = JSON.parse(r.payload).locationNameNe;
-                return { id: r.id, label: `${bothLabel(r)}${loc ? ` · ${loc}` : ""}` };
+                return { value: r.id, label: `${bothLabel(r)}${loc ? ` · ${loc}` : ""}` };
               })}
-              selected={selectedWards}
-              onToggle={(id) =>
-                setSelectedWards((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
-              }
             />
             <Controller
               control={control}
@@ -393,7 +392,7 @@ export function CitizenForm({ mode, citizenId }: { mode: "create" | "edit"; citi
                   loading={refLoading}
                   value={field.value || null}
                   onChange={field.onChange}
-                  placeholder={selectedWards.length ? "Select tole" : "Select a ward first"}
+                  placeholder={selectedWard ? "Select tole" : "Select a ward first"}
                   clearLabel="No tole"
                   options={toleOptions}
                 />

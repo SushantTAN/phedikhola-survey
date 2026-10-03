@@ -8,6 +8,15 @@ export const AGE_GROUPS = [
   { value: "unknown", label: "Unknown" },
 ] as const;
 
+export const CASTE_LABELS: Record<string, string> = {
+  DALIT: "Dalit",
+  BRAHMIN_CHHETRI: "Brahmin / Chhetri",
+  JANAJATI: "Janajati",
+  MADHESI: "Madhesi",
+  MUSLIM: "Muslim",
+  OTHER: "Other",
+};
+
 export function ageOf(
   c: { dateOfBirth: Date | null; approximateAge: number | null },
   now = new Date(),
@@ -49,22 +58,42 @@ const citizenSearch = (q: string) => ({
   ],
 });
 
+/** Citizen-level conditions shared by citizen reports and (through the citizen relation) service reports. */
+function citizenFilters(f: ReportFilters) {
+  return {
+    ...(f.gender ? { gender: f.gender as any } : {}),
+    ...(f.toleId ? { toleId: f.toleId } : {}),
+    ...(f.casteGroupCode ? { casteGroupCode: f.casteGroupCode } : {}),
+    ...(f.foreignEmployment
+      ? {
+          householdForeignEmployment:
+            f.foreignEmployment === "yes"
+              ? true
+              : f.foreignEmployment === "no"
+                ? false
+                : null,
+        }
+      : {}),
+    ...(f.categoryId
+      ? { categories: { some: { categoryId: f.categoryId } } }
+      : {}),
+  };
+}
+
 export async function fetchCitizens(f: ReportFilters) {
   const range = dateRange(f);
   const rows = await prisma.citizen.findMany({
     where: {
       deletedAt: null,
-      ...(f.gender ? { gender: f.gender as any } : {}),
-      ...(f.wardId ? { wards: { some: { wardId: f.wardId } } } : {}),
-      ...(f.categoryId
-        ? { categories: { some: { categoryId: f.categoryId } } }
-        : {}),
+      ...citizenFilters(f),
+      ...(f.staffId ? { createdById: f.staffId } : {}),
+      ...(f.wardId ? { wardId: f.wardId } : {}),
       ...(range ? { createdAt: range } : {}),
       ...(f.q ? citizenSearch(f.q) : {}),
     },
     include: {
       categories: { include: { category: true } },
-      wards: { include: { ward: true } },
+      ward: true,
     },
     orderBy: { fullName: "asc" },
   });
@@ -88,14 +117,10 @@ export async function fetchServices(f: ReportFilters) {
       ...(f.medicineId
         ? { medicines: { some: { medicineId: f.medicineId } } }
         : {}),
-      ...(f.gender || f.q
-        ? {
-            citizen: {
-              ...(f.gender ? { gender: f.gender as any } : {}),
-              ...(f.q ? citizenSearch(f.q) : {}),
-            },
-          }
-        : {}),
+      citizen: {
+        ...citizenFilters(f),
+        ...(f.q ? citizenSearch(f.q) : {}),
+      },
     },
     include: {
       citizen: true,

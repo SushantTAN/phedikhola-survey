@@ -1,22 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../constants/theme";
+import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, View } from "react-native";
+import { Text, TextInput } from "./text";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { colors, radius, shadow } from "../constants/theme";
 import { TONES, type Status, type Tone } from "../lib/health";
 
 export function Screen({ children }: { children: React.ReactNode }) {
   return (
-    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.bg }}>
+    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView
         contentContainerStyle={styles.screen}
         keyboardShouldPersistTaps="handled"
@@ -26,6 +18,46 @@ export function Screen({ children }: { children: React.ReactNode }) {
     </SafeAreaView>
   );
 }
+/** Green banner at the top of a tab screen. */
+export function Hero({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <View style={styles.hero}>
+      {eyebrow ? <Text style={styles.heroEyebrow}>{eyebrow}</Text> : null}
+      <Text style={styles.heroTitle}>{title}</Text>
+      {subtitle ? <Text style={styles.heroSubtitle}>{subtitle}</Text> : null}
+    </View>
+  );
+}
+
+/** Number + label tile with a round icon. */
+export function StatCard({
+  value,
+  label,
+  icon,
+}: {
+  value: number | string;
+  label: string;
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+}) {
+  return (
+    <View style={[styles.card, { flex: 1 }]}>
+      <View style={styles.statIcon}>
+        <Ionicons name={icon} size={20} color={colors.green} />
+      </View>
+      <Text style={{ fontSize: 30, fontWeight: "800", color: colors.text }}>{value}</Text>
+      <Text style={{ color: colors.muted, fontSize: 12 }}>{label}</Text>
+    </View>
+  );
+}
+
 export function Card({ children }: { children: React.ReactNode }) {
   return <View style={styles.card}>{children}</View>;
 }
@@ -60,11 +92,13 @@ export function Button({
   onPress,
   disabled,
   variant = "primary",
+  icon,
 }: {
   title: string;
   onPress: () => void;
   disabled?: boolean;
   variant?: "primary" | "outline" | "danger";
+  icon?: React.ComponentProps<typeof Ionicons>["name"];
 }) {
   return (
     <Pressable
@@ -77,6 +111,13 @@ export function Button({
         (disabled || pressed) && { opacity: 0.65 },
       ]}
     >
+      {icon ? (
+        <Ionicons
+          name={icon}
+          size={18}
+          color={variant === "outline" ? colors.green : "white"}
+        />
+      ) : null}
       <Text
         style={[
           styles.buttonText,
@@ -122,7 +163,8 @@ export function StatusBanner({ status, reading }: { status: Status | "invalid" |
   if (status === "invalid") {
     return (
       <View style={[styles.banner, { backgroundColor: "#f8fafc", borderColor: "#e2e8f0" }]}>
-        <Text style={{ color: "#475569", flex: 1 }}>⚠️ This reading looks unusual. Please check the values.</Text>
+        <Ionicons name="warning-outline" size={18} color="#475569" />
+        <Text style={{ color: "#475569", flex: 1 }}>This reading looks unusual. Please check the values.</Text>
       </View>
     );
   }
@@ -142,7 +184,9 @@ export function StatusBanner({ status, reading }: { status: Status | "invalid" |
 export function EmptyState({ title = "No results found", detail }: { title?: string; detail?: string }) {
   return (
     <View style={styles.empty}>
-      <Text style={{ fontSize: 28 }}>📭</Text>
+      <View style={styles.emptyIcon}>
+        <Ionicons name="file-tray-outline" size={26} color={colors.green} />
+      </View>
       <Text style={{ fontWeight: "600", color: colors.text }}>{title}</Text>
       {detail ? <Text style={{ color: colors.muted, fontSize: 12 }}>{detail}</Text> : null}
     </View>
@@ -187,7 +231,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
     <TextInput
       value={value}
       onChangeText={onChange}
-      placeholder="🔍 Search…"
+      placeholder="Search…"
       placeholderTextColor="#94a3b8"
       autoCorrect={false}
       style={[styles.input, { marginBottom: 8 }]}
@@ -215,6 +259,8 @@ export function SelectField({
 }) {
   const [open, setOpen] = useState(false);
   const [term, setTerm] = useState("");
+  // A Modal sits above the screen's SafeAreaView, so the sheet pads for the system bar itself.
+  const insets = useSafeAreaInsets();
   useEffect(() => {
     if (!open) setTerm("");
   }, [open]);
@@ -228,11 +274,15 @@ export function SelectField({
       <Label>{label}</Label>
       <Pressable style={[styles.input, styles.row]} onPress={() => setOpen(true)}>
         <Text style={{ flex: 1, color: selected ? colors.text : "#94a3b8" }}>{selected?.label ?? placeholder}</Text>
-        {loading ? <ActivityIndicator size="small" color={colors.muted} /> : <Text style={{ color: colors.muted }}>▾</Text>}
+        {loading ? <ActivityIndicator size="small" color={colors.muted} /> : <Ionicons name="chevron-down" size={18} color={colors.muted} />}
       </Pressable>
       <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.overlay} onPress={() => setOpen(false)}>
-          <Pressable style={styles.sheet} onPress={() => {}}>
+          <Pressable
+            style={[styles.sheet, { paddingBottom: 16 + insets.bottom }]}
+            onPress={() => {}}
+          >
+            <View style={styles.sheetHandle} />
             <Text style={styles.sheetTitle}>{label}</Text>
             {options.length >= SEARCH_THRESHOLD && <SearchBox value={term} onChange={setTerm} />}
             <ScrollView keyboardShouldPersistTaps="handled">
@@ -332,6 +382,30 @@ export function MultiSelect({
   );
 }
 export const styles = StyleSheet.create({
+  hero: {
+    backgroundColor: colors.greenDark,
+    borderRadius: radius.lg + 4,
+    padding: 20,
+    gap: 4,
+    overflow: "hidden",
+  },
+  heroEyebrow: {
+    color: "#6ee7b7",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 2,
+  },
+  heroTitle: { color: "white", fontSize: 26, fontWeight: "800", letterSpacing: -0.3 },
+  heroSubtitle: { color: "#a7f3d0", fontSize: 13, marginTop: 2 },
+  statIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.greenTint,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
   screen: {
     padding: 16,
     paddingBottom: 48,
@@ -340,14 +414,15 @@ export const styles = StyleSheet.create({
     gap: 14,
   },
   card: {
-    backgroundColor: "white",
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
     padding: 16,
     gap: 10,
+    ...shadow,
   },
-  h1: { fontSize: 26, fontWeight: "700", color: colors.text },
+  h1: { fontSize: 28, fontWeight: "800", color: colors.text, letterSpacing: -0.4 },
   sectionTitle: { fontSize: 16, fontWeight: "700", color: colors.text },
   hint: { fontSize: 12, color: colors.muted, marginTop: 2 },
   label: {
@@ -358,11 +433,11 @@ export const styles = StyleSheet.create({
   },
   error: { color: colors.danger, fontSize: 12 },
   input: {
-    minHeight: 46,
+    minHeight: 48,
     borderWidth: 1,
-    borderColor: "#cbd5e1",
+    borderColor: colors.borderStrong,
     backgroundColor: "white",
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     paddingHorizontal: 12,
     paddingVertical: 10,
     color: colors.text,
@@ -370,9 +445,11 @@ export const styles = StyleSheet.create({
   },
   row: { flexDirection: "row", alignItems: "center", gap: 8 },
   button: {
-    minHeight: 46,
+    minHeight: 50,
     backgroundColor: colors.green,
-    borderRadius: 10,
+    borderRadius: radius.md,
+    flexDirection: "row",
+    gap: 8,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
@@ -400,6 +477,15 @@ export const styles = StyleSheet.create({
   },
   bannerDot: { width: 14, height: 14, borderRadius: 7 },
   empty: { alignItems: "center", gap: 4, paddingVertical: 20 },
+  emptyIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.greenTint,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 4,
+  },
   checkRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -418,9 +504,17 @@ export const styles = StyleSheet.create({
   sheet: {
     maxHeight: "75%",
     backgroundColor: "white",
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     padding: 16,
+  },
+  sheetHandle: {
+    alignSelf: "center",
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.borderStrong,
+    marginBottom: 12,
   },
   sheetTitle: { fontSize: 18, fontWeight: "700", marginBottom: 12 },
   option: {

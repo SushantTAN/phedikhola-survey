@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, View } from "react-native";
+import { Text } from "@/src/components/text";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Button, Card, Chip, H1, Screen, SectionTitle, StatusBadge } from "@/src/components/ui";
 import {
@@ -54,7 +55,6 @@ export default function CitizenDetail() {
     );
 
   const categoryId = JSON.parse(c.category_ids || "[]")[0] as string | undefined;
-  const wardIds = JSON.parse(c.ward_ids || "[]") as string[];
   const hasLocation = c.latitude != null && c.longitude != null;
 
   return (
@@ -79,7 +79,7 @@ export default function CitizenDetail() {
         <Row label="Phone" value={c.phone} />
         <Row label="Guardian mobile" value={c.guardian_phone} />
         <Row label="Category" value={categoryId ? names[categoryId] ?? "Assigned" : null} />
-        <Row label="Ward(s)" value={wardIds.map((w) => names[w] ?? w).join(", ")} />
+        <Row label="Ward" value={c.ward_id ? (names[c.ward_id] ?? c.ward_id) : ""} />
         <Row label="Tole" value={c.tole_id ? names[c.tole_id] ?? "Assigned" : null} />
         <Row label="Location" value={hasLocation ? `${c.latitude!.toFixed(6)}, ${c.longitude!.toFixed(6)}` : null} />
       </Card>

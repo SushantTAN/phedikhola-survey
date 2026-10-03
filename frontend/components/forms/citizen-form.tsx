@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/card";
 import { PHONE_ERROR, PHONE_PATTERN } from "@/lib/phone";
 import { NepaliDatePicker } from "@/components/shared/nepali-date-picker";
-import { MultiSelect } from "@/components/shared/multi-select";
 import { FormSelect, selectChoice } from "@/components/shared/form-select";
 import { LocationPicker } from "@/components/shared/location-picker";
 
@@ -62,7 +61,7 @@ const schema = yup
           (Number.isFinite(Number(value)) && Math.abs(Number(value)) <= 180),
       ),
     categoryId: yup.string().nullable(),
-    wardIds: yup.array(yup.string().required()).default([]),
+    wardId: yup.string().nullable().default(""),
     toleId: yup.string().nullable(),
     casteGroupCode: yup.string().nullable(),
     casteOther: yup.string().nullable(),
@@ -123,7 +122,7 @@ const empty: CitizenFormValues = {
   latitude: "",
   longitude: "",
   categoryId: "",
-  wardIds: [],
+  wardId: "",
   toleId: "",
   casteGroupCode: "",
   casteOther: "",
@@ -205,7 +204,7 @@ export function CitizenForm({
         initialData.categories?.[0]?.categoryId ??
         initialData.categories?.[0]?.category?.id ??
         "",
-      wardIds: initialData.wards?.map((x: any) => x.wardId ?? x.ward?.id) ?? [],
+      wardId: initialData.wardId ?? initialData.ward?.id ?? "",
       toleId: initialData.toleId ?? "",
       casteGroupCode: initialData.casteGroupCode ?? "",
       casteOther: initialData.casteOther ?? "",
@@ -223,7 +222,7 @@ export function CitizenForm({
   }, [initialData, reset]);
   const casteValue = watch("casteGroupCode"),
     occupationValue = watch("occupationCode");
-  const selectedWardIds = watch("wardIds") || [];
+  const selectedWardId = watch("wardId") || "";
   const selectedToleId = watch("toleId");
   useEffect(() => {
     if (
@@ -231,12 +230,12 @@ export function CitizenForm({
       reference.toles.length &&
       !reference.toles.some(
         (t: any) =>
-          t.id === selectedToleId && selectedWardIds.includes(t.wardId),
+          t.id === selectedToleId && selectedWardId === t.wardId,
       )
     ) {
       setValue("toleId", "");
     }
-  }, [selectedWardIds, selectedToleId, reference.toles, setValue]);
+  }, [selectedWardId, selectedToleId, reference.toles, setValue]);
   async function submit(values: CitizenFormValues) {
     setServerError("");
     try {
@@ -253,6 +252,7 @@ export function CitizenForm({
         ...values,
         categoryId: values.categoryId || null,
         toleId: values.toleId || null,
+        wardId: values.wardId || null,
         latitude: values.latitude ? Number(values.latitude) : null,
         longitude: values.longitude ? Number(values.longitude) : null,
         profilePhotoUrl,
@@ -375,20 +375,19 @@ export function CitizenForm({
           />
           <Controller
             control={control}
-            name="wardIds"
+            name="wardId"
             render={({ field }) => (
-              <Field label="Ward(s)">
-                <MultiSelect
-                  value={field.value || []}
-                  onChange={field.onChange}
-                  placeholder="Select one or more wards"
-                  loading={refLoading}
-                  options={reference.wards.map((w: any) => ({
-                    value: w.id,
-                    label: `${w.nameNe} / ${w.nameEn}${w.locationNameNe ? ` · ${w.locationNameNe}` : ""}`,
-                  }))}
-                />
-              </Field>
+              <SelectField
+                label="Ward"
+                loading={refLoading}
+                value={field.value || ""}
+                onValueChange={field.onChange}
+                placeholder="Select ward"
+                options={reference.wards.map((w: any) => [
+                  w.id,
+                  `${w.nameNe} / ${w.nameEn}${w.locationNameNe ? ` · ${w.locationNameNe}` : ""}`,
+                ])}
+              />
             )}
           />
           <Controller
@@ -403,12 +402,12 @@ export function CitizenForm({
                   field.onChange(value === "__none" ? "" : value)
                 }
                 placeholder={
-                  selectedWardIds.length ? "Select tole" : "Select a ward first"
+                  selectedWardId ? "Select tole" : "Select a ward first"
                 }
                 options={[
                   ["__none", "No tole"],
                   ...reference.toles
-                    .filter((t: any) => selectedWardIds.includes(t.wardId))
+                    .filter((t: any) => t.wardId === selectedWardId)
                     .map((t: any) => [t.id, `${t.name} · ${t.ward.nameEn}`]),
                 ]}
               />

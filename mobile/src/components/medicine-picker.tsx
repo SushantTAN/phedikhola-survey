@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, View } from "react-native";
+import { Text, TextInput } from "./text";
 import { colors } from "../constants/theme";
 import { EmptyState, Label, LoadingRow, styles } from "./ui";
 

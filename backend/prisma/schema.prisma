@@ -93,19 +93,21 @@ model Citizen {
   version                    Int @default(1)
   createdById                String?
   toleId                     String?
+  wardId                     String?
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
   deletedAt                  DateTime?
   createdBy                  User? @relation("CitizenCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   tole                       Tole? @relation(fields: [toleId], references: [id], onDelete: SetNull)
+  ward                       Ward? @relation(fields: [wardId], references: [id], onDelete: Restrict)
   categories                 CitizenCategoryAssignment[]
-  wards                      CitizenWardAssignment[]
   serviceRecords             CitizenServiceRecord[]
 
   @@index([fullName])
   @@index([phone])
   @@index([status, updatedAt])
   @@index([toleId])
+  @@index([wardId])
 }
 
 model CitizenCategory {
@@ -129,16 +131,6 @@ model CitizenCategoryAssignment {
   @@id([citizenId, categoryId])
 }
 
-model CitizenWardAssignment {
-  citizenId String
-  wardId    String
-  citizen   Citizen @relation(fields: [citizenId], references: [id], onDelete: Cascade)
-  ward      Ward @relation(fields: [wardId], references: [id], onDelete: Restrict)
-
-  @@id([citizenId, wardId])
-  @@index([wardId])
-}
-
 model Ward {
   id        String @id @default(uuid())
   code      String @unique
@@ -152,7 +144,7 @@ model Ward {
   updatedAt DateTime @updatedAt
   services  CitizenServiceRecord[]
   staff     StaffProfile[]
-  citizens  CitizenWardAssignment[]
+  citizens  Citizen[]
   healthPosts HealthPost[]
   toles     Tole[]
 }

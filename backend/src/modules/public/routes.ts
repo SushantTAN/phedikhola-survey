@@ -17,7 +17,7 @@ publicRouter.post(
       where: { publicId },
       include: {
         categories: { include: { category: true } },
-        wards: { include: { ward: true } },
+        ward: true,
         serviceRecords: {
           where: { deletedAt: null },
           orderBy: { serviceDate: "desc" },
@@ -57,7 +57,7 @@ publicRouter.post(
         gender: citizen.gender,
         profilePhotoUrl: citizen.profilePhotoUrl,
         categories: citizen.categories.map((c) => c.category),
-        wards: citizen.wards.map((w) => w.ward),
+        wards: citizen.ward ? [citizen.ward] : [],
         serviceRecords: citizen.serviceRecords.map((s) => ({
           id: s.id,
           serviceDate: s.serviceDate,

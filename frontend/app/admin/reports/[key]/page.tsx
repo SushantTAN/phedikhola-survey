@@ -58,6 +58,10 @@ type ReportData = {
 type Meta = { page: number; limit: number; total: number; pages: number };
 
 const ALL = "__all__";
+
+// The citizen register hides the "Other" gender for now (filter option and pie slice).
+const HIDE_OTHER_GENDER = new Set(["citizen-register"]);
+const isOtherGender = (v: unknown) => String(v).toUpperCase() === "OTHER";
 const PAGE_SIZES = [10, 20, 50, 100];
 
 function toQuery(filters: Record<string, string>) {
@@ -85,6 +89,15 @@ export default function ReportPage() {
     queryFn: () => api<Record<string, Choice[]>>("/reports/filter-options"),
     staleTime: 60_000,
   });
+  const choicesFor = (f: FilterDef) =>
+    (options.data?.data[f.options ?? ""] ?? []).filter(
+      (o) =>
+        !(
+          f.key === "gender" &&
+          HIDE_OTHER_GENDER.has(key) &&
+          isOtherGender(o.value)
+        ),
+    );
   const filters =
     catalog.data?.data.flatMap((g) => g.reports).find((r) => r.key === key)
       ?.filters ?? [];
@@ -102,6 +115,11 @@ export default function ReportPage() {
   const d = report.data?.data;
   const meta = report.data?.meta as Meta | undefined;
 
+  // Drops the "Other" slice from the gender pie on reports that hide it.
+  const visibleChart = (c: ChartSpec): ChartSpec =>
+    HIDE_OTHER_GENDER.has(key) && c.id === "gender"
+      ? { ...c, data: c.data.filter((x) => !isOtherGender(x.name)) }
+      : c;
   function apply() {
     setPage(1);
     setApplied({ ...draft });
@@ -186,13 +204,13 @@ export default function ReportPage() {
                         placeholder="All"
                         loading={options.isLoading}
                         selected={
-                          (options.data?.data[f.options ?? ""] ?? []).find(
+                          choicesFor(f).find(
                             (o) => o.value === draft[f.key],
                           ) ?? null
                         }
                         options={[
                           { value: ALL, label: "All" },
-                          ...(options.data?.data[f.options ?? ""] ?? []),
+                          ...choicesFor(f),
                         ]}
                         onChange={(c) =>
                           setFilter(f.key, c.value === ALL ? "" : c.value)
@@ -214,13 +232,22 @@ export default function ReportPage() {
                 ))}
               </div>
               <div className="mt-5 flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={reset}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={reset}
+                  disabled={report.isFetching}
+                >
                   <RotateCcw />
                   Reset
                 </Button>
-                <Button type="submit">
-                  <Search />
-                  Apply filters
+                <Button type="submit" disabled={report.isFetching}>
+                  {report.isFetching ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Search />
+                  )}
+                  {report.isFetching ? "Loading…" : "Apply filters"}
                 </Button>
               </div>
             </form>
@@ -234,13 +261,15 @@ export default function ReportPage() {
       {report.isLoading && <ReportSkeleton />}
 
       {d && (
-        <div
-          className={
-            report.isFetching
-              ? "opacity-70 transition-opacity"
-              : "transition-opacity"
-          }
-        >
+        <div className="relative" aria-busy={report.isFetching}>
+          {report.isFetching && (
+            <div className="absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-white/60 pt-24 backdrop-blur-[1px]">
+              <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-lg">
+                <Loader2 className="animate-spin text-emerald-600" size={16} />
+                Updating report…
+              </div>
+            </div>
+          )}
           {d.summary.length > 0 && (
             <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {d.summary.map((s) => (
@@ -263,7 +292,7 @@ export default function ReportPage() {
               className={`mb-6 grid gap-6 ${d.charts.length > 1 ? "xl:grid-cols-2" : ""}`}
             >
               {d.charts.map((c) => (
-                <ReportChart key={c.id} spec={c} />
+                <ReportChart key={c.id} spec={visibleChart(c)} />
               ))}
             </div>
           )}

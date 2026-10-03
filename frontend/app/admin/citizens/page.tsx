@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, UsersRound } from "lucide-react";
 import { api } from "@/lib/api";
+import { useRole } from "@/components/role-context";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { PageHeader } from "@/components/shared/page-header";
 import { TableToolbar } from "@/components/shared/table-toolbar";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/table";
 export default function CitizensPage() {
   const router = useRouter();
+  const isAdmin = useRole() === "ADMIN";
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const dq = useDebouncedValue(q, 350);
@@ -97,14 +99,8 @@ export default function CitizensPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {c.wards?.length ? (
-                      <div className="flex flex-wrap gap-1">
-                        {c.wards.map((x: any) => (
-                          <Badge key={x.wardId} variant="outline">
-                            {x.ward.nameEn}
-                          </Badge>
-                        ))}
-                      </div>
+                    {c.ward ? (
+                      <Badge variant="outline">{c.ward.nameEn}</Badge>
                     ) : (
                       "—"
                     )}
@@ -119,7 +115,7 @@ export default function CitizensPage() {
                     <ActionMenu
                       onView={() => router.push(`/admin/citizens/${c.id}`)}
                       onEdit={() => router.push(`/admin/citizens/${c.id}/edit`)}
-                      onDelete={() => remove(c.id, c.fullName)}
+                      onDelete={isAdmin ? () => remove(c.id, c.fullName) : undefined}
                     />
                   </TableCell>
                 </TableRow>

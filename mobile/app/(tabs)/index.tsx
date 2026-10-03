@@ -1,7 +1,8 @@
 import { useCallback, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Text } from "@/src/components/text";
 import { useFocusEffect, router } from "expo-router";
-import { Card, H1, Button, Screen, StatusBadge } from "@/src/components/ui";
+import { Card, Button, Hero, Screen, StatCard, StatusBadge } from "@/src/components/ui";
 import { countCitizens, countServices, syncCounts } from "@/src/db";
 import { getVersionState } from "@/src/services/version";
 
@@ -29,28 +30,14 @@ export default function Home() {
   }
   return (
     <Screen>
-      <View>
-        <Text
-          style={{ color: "#047857", fontWeight: "700", letterSpacing: 1.5 }}
-        >
-          PHEDIKHOLA FIELD APP
-        </Text>
-        <H1>Data collection</H1>
-        <Text style={{ color: "#64748b" }}>
-          Offline-first citizen and service entry.
-        </Text>
-      </View>
-      <View style={{ flexDirection: "row", gap: 10 }}>
-        <Card>
-          <Text style={{ fontSize: 28, fontWeight: "700" }}>
-            {totalCitizens}
-          </Text>
-          <Text style={{ color: "#64748b" }}>Citizens on device</Text>
-        </Card>
-        <Card>
-          <Text style={{ fontSize: 28, fontWeight: "700" }}>{services}</Text>
-          <Text style={{ color: "#64748b" }}>Service records</Text>
-        </Card>
+      <Hero
+        eyebrow="PHEDIKHOLA FIELD APP"
+        title="Data collection"
+        subtitle="Offline-first citizen and service entry."
+      />
+      <View style={{ flexDirection: "row", gap: 12 }}>
+        <StatCard value={totalCitizens} label="Citizens on device" icon="people" />
+        <StatCard value={services} label="Service records" icon="medkit" />
       </View>
       {update?.optional && (
         <Card>
@@ -78,6 +65,7 @@ export default function Home() {
         </View>
         <Button
           title="Open sync center"
+          icon="sync"
           onPress={() => router.push("/(tabs)/sync")}
         />
       </Card>
@@ -85,11 +73,13 @@ export default function Home() {
         <Text style={{ fontWeight: "700", fontSize: 16 }}>Quick actions</Text>
         <Button
           title="Add citizen"
+          icon="person-add"
           onPress={() => router.push("/citizens/new")}
         />
         <Button
           variant="outline"
           title="Browse citizens"
+          icon="search"
           onPress={() => router.push("/(tabs)/citizens")}
         />
       </Card>

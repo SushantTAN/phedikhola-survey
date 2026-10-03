@@ -3,8 +3,8 @@ import * as XLSX from "xlsx";
 import { prisma } from "../../lib/prisma.js";
 import { asyncHandler, HttpError } from "../../utils/http.js";
 import { requireAuth, requireRole } from "../../middleware/auth.js";
-import { AGE_GROUPS } from "./data.js";
-import { reportRegistry, reports } from "./definitions.js";
+import { AGE_GROUPS, CASTE_LABELS } from "./data.js";
+import { reportRegistry, reports } from "./registry.js";
 import type { ReportDef, ReportFilters } from "./types.js";
 
 export const reportRouter = Router();
@@ -37,6 +37,14 @@ function parseFilters(
     conditionId: str(query.conditionId),
     medicineId: str(query.medicineId),
     staffId: str(query.staffId),
+    toleId: str(query.toleId),
+    casteGroupCode: str(query.casteGroupCode),
+    foreignEmployment:
+      query.foreignEmployment === "yes" ||
+      query.foreignEmployment === "no" ||
+      query.foreignEmployment === "unknown"
+        ? query.foreignEmployment
+        : undefined,
     followup:
       query.followup === "yes" || query.followup === "no"
         ? query.followup
@@ -87,7 +95,8 @@ reportRouter.get(
 reportRouter.get(
   "/filter-options",
   asyncHandler(async (_req, res) => {
-    const [wards, categories, conditions, medicines, staff] = await Promise.all(
+    const [wards, categories, conditions, medicines, staff, toles] =
+      await Promise.all(
       [
         prisma.ward.findMany({ orderBy: { sortOrder: "asc" } }),
         prisma.citizenCategory.findMany({ orderBy: { sortOrder: "asc" } }),
@@ -96,6 +105,11 @@ reportRouter.get(
         prisma.user.findMany({
           where: { role: "STAFF" },
           orderBy: { name: "asc" },
+        }),
+        prisma.tole.findMany({
+          where: { active: true },
+          include: { ward: true },
+          orderBy: [{ ward: { sortOrder: "asc" } }, { name: "asc" }],
         }),
       ],
     );
@@ -110,6 +124,19 @@ reportRouter.get(
         conditions: conditions.map((c) => ({ value: c.id, label: c.nameEn })),
         medicines: medicines.map((m) => ({ value: m.id, label: m.name })),
         staff: staff.map((u) => ({ value: u.id, label: u.name })),
+        toles: toles.map((t) => ({
+          value: t.id,
+          label: `${t.ward.nameEn} – ${t.name}`,
+        })),
+        castes: Object.entries(CASTE_LABELS).map(([value, label]) => ({
+          value,
+          label,
+        })),
+        foreignEmployment: [
+          { value: "yes", label: "Yes" },
+          { value: "no", label: "No" },
+          { value: "unknown", label: "Not recorded" },
+        ],
         gender: [
           { value: "FEMALE", label: "Female" },
           { value: "MALE", label: "Male" },

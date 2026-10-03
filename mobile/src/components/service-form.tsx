@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, View } from "react-native";
+import { Text } from "./text";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -195,13 +196,12 @@ export function ServiceForm({
         setCitizen(cit);
         const today = todayAd();
         const np = nepaliPartsOf(today);
-        const citizenWards: string[] = JSON.parse(cit.ward_ids || "[]");
         reset({
           ...blank,
           serviceDate: today,
           // The guardian number comes from the citizen's profile and can still be changed for this visit.
           guardianPhone: cit.guardian_phone ?? "",
-          wardId: citizenWards.length === 1 ? citizenWards[0]! : "",
+          wardId: cit.ward_id ?? "",
           nepaliYear: np?.year ?? null,
           nepaliMonth: np?.month ?? "",
         });

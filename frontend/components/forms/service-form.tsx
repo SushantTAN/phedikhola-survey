@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { useRole } from "@/components/role-context";
 import { uploadImage } from "@/lib/supabase-storage";
 import { compressImageToWebp } from "@/lib/image";
 import { Button } from "@/components/ui/button";
@@ -230,7 +231,13 @@ export function ServiceForm({
       })
       .finally(() => setRefLoading(false));
   }, []);
+  const isAdmin = useRole() === "ADMIN";
   useEffect(() => {
+    // Staff accounts can't list other staff; their visits are always recorded under themselves.
+    if (!isAdmin) {
+      setStaffLoading(false);
+      return;
+    }
     api<any>("/staff")
       .then((r) => setStaff(r.data.filter((u: any) => u.isActive)))
       .catch(() => setStaff([]))
@@ -243,9 +250,8 @@ export function ServiceForm({
     api<any>(`/citizens/${selectedCitizenId}`)
       .then((response) => {
         if (cancelled || getValues("wardId")) return;
-        const wards = response.data.wards ?? [];
-        if (wards.length === 1) {
-          setValue("wardId", wards[0].wardId, {
+        if (response.data.wardId) {
+          setValue("wardId", response.data.wardId, {
             shouldDirty: true,
             shouldValidate: true,
           });
