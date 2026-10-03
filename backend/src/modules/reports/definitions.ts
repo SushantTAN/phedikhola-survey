@@ -15,7 +15,7 @@ const select = (
   label: string,
   options: FilterDef["options"],
 ): FilterDef => ({ key, label, type: "select", options });
-const F = {
+export const F = {
   dateFrom: (label = "From date"): FilterDef => ({
     key: "dateFrom",
     label,
@@ -41,7 +41,7 @@ const F = {
   }),
 };
 
-const sortDesc = (a: [string, number], b: [string, number]) => b[1] - a[1];
+export const sortDesc = (a: [string, number], b: [string, number]) => b[1] - a[1];
 const num = (v: unknown) => (v == null ? 0 : Number(v));
 const round2 = (n: number) => Math.round(n * 100) / 100;
 const avg = (values: number[]) =>
@@ -74,7 +74,7 @@ const BP_ORDER = [
   "High (Stage 2)",
 ];
 
-const genderCols = [
+export const genderCols = [
   { key: "female", label: "Female", type: "number" as const },
   { key: "male", label: "Male", type: "number" as const },
   { key: "other", label: "Other", type: "number" as const },

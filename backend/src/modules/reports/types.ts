@@ -8,6 +8,9 @@ export type ReportFilters = {
   conditionId?: string;
   medicineId?: string;
   staffId?: string;
+  toleId?: string;
+  casteGroupCode?: string;
+  foreignEmployment?: "yes" | "no" | "unknown";
   followup?: "yes" | "no";
   q?: string;
 };
@@ -19,6 +22,9 @@ export type FilterOptionsSource =
   | "conditions"
   | "medicines"
   | "staff"
+  | "toles"
+  | "castes"
+  | "foreignEmployment"
   | "gender"
   | "ageGroup"
   | "followup";
