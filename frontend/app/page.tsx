@@ -37,7 +37,7 @@ export default function HomePage() {
     );
   };
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(16,185,129,.25),transparent_28%),linear-gradient(180deg,#022c22_0%,#064e3b_55%,#f8fafc_55%)]">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(16,185,129,.25),transparent_28%),linear-gradient(180deg,#022c22_0%,#064e3b_100%)]">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 text-white">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[.28em] text-emerald-200">
