@@ -22,9 +22,11 @@ export async function capturePhoto() {
 export async function captureLocation() {
   const permission = await Location.requestForegroundPermissionsAsync();
   if (!permission.granted) throw new Error("Location permission is required");
-  const location = await Location.getCurrentPositionAsync({
-    accuracy: Location.Accuracy.High,
-  });
+  // GPS can take very long (or never answer) indoors, so give up after 20 s and fall back to the last known fix.
+  const fix = Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 20_000));
+  const location = (await Promise.race([fix, timeout])) ?? (await Location.getLastKnownPositionAsync());
+  if (!location) throw new Error("Could not get a GPS fix. Move to an open area and try again.");
   return {
     latitude: location.coords.latitude,
     longitude: location.coords.longitude,

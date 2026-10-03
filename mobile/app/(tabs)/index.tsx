@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import { useFocusEffect, router } from "expo-router";
 import { Card, H1, Button, Screen, StatusBadge } from "@/src/components/ui";
-import { listCitizens, listServices, syncCounts } from "@/src/db";
+import { countCitizens, countServices, syncCounts } from "@/src/db";
 import { getVersionState } from "@/src/services/version";
 
 export default function Home() {
@@ -13,8 +13,8 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const load = useCallback(async () => {
     setCounts(await syncCounts());
-    setTotalCitizens((await listCitizens()).length);
-    setServices((await listServices()).length);
+    setTotalCitizens(await countCitizens());
+    setServices(await countServices());
     setUpdate(await getVersionState());
   }, []);
   useFocusEffect(

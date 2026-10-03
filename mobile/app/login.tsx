@@ -8,15 +8,18 @@ import { getVersionState } from "@/src/services/version";
 import { Button, Card, H1, Input, Label, Screen } from "@/src/components/ui";
 export default function Login() {
   const [email, setEmail] = useState("");
+  console.log("here")
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   async function submit() {
+    console.log("in submit", { email, password })
     setBusy(true);
     try {
       const r = await api<any>("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
+      console.log("response", r)
       if (r.data.user.role !== "STAFF" && r.data.user.role !== "ADMIN")
         throw new Error("Staff account required");
       await authStore.set(r.data.accessToken, r.data.refreshToken, r.data.user);
